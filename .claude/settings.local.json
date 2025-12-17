@@ -1,0 +1,18 @@
+{
+  "description": "Local Claude Code settings for Ambient Code Reference Repository",
+  "note": "This is a placeholder configuration. Users should customize for their projects.",
+  "agent": {
+    "name": "codebase-agent",
+    "personality": "See .claude/agents/codebase-agent.md for configuration"
+  },
+  "context": {
+    "modules": [
+      ".claude/context/architecture.md",
+      ".claude/context/security-standards.md",
+      ".claude/context/testing-patterns.md"
+    ]
+  },
+  "commands": {
+    "quickstart": ".claude/commands/quickstart.md"
+  }
+}
