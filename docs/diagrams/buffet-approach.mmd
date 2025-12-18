@@ -1,0 +1,79 @@
+graph TB
+    subgraph Template["Ambient Code Reference Repository"]
+        FullTemplate["Full Template<br/>(All Features)"]
+    end
+
+    subgraph Features["Independent Features"]
+        DualDocs["Dual Documentation<br/>System"]
+        AgentConfig["AI Agent<br/>Configuration"]
+        CICD["CI/CD<br/>Workflows"]
+        Scripts["Validation<br/>Scripts"]
+        Diagrams["Diagram<br/>System"]
+        StyleGuide["Style Guide &<br/>Standards"]
+    end
+
+    subgraph Adoption["Adoption Scenarios"]
+        Scenario1["Project A:<br/>Just Documentation"]
+        Scenario2["Project B:<br/>Documentation + Agent"]
+        Scenario3["Project C:<br/>Full Template"]
+        Scenario4["Project D:<br/>CI/CD Only"]
+    end
+
+    %% Template to features
+    FullTemplate -.contains.-> DualDocs
+    FullTemplate -.contains.-> AgentConfig
+    FullTemplate -.contains.-> CICD
+    FullTemplate -.contains.-> Scripts
+    FullTemplate -.contains.-> Diagrams
+    FullTemplate -.contains.-> StyleGuide
+
+    %% Scenario 1: Just Documentation
+    DualDocs --> Scenario1
+    StyleGuide --> Scenario1
+    Scenario1 -.needs.-> DualDocs
+    Scenario1 -.needs.-> StyleGuide
+    Scenario1 -.uses.-> Scripts
+
+    %% Scenario 2: Documentation + Agent
+    DualDocs --> Scenario2
+    AgentConfig --> Scenario2
+    StyleGuide --> Scenario2
+    Scenario2 -.needs.-> DualDocs
+    Scenario2 -.needs.-> AgentConfig
+    Scenario2 -.needs.-> StyleGuide
+
+    %% Scenario 3: Full Template
+    FullTemplate --> Scenario3
+
+    %% Scenario 4: CI/CD Only
+    CICD --> Scenario4
+    Scripts --> Scenario4
+    Scenario4 -.needs.-> CICD
+    Scenario4 -.needs.-> Scripts
+
+    %% Feature Independence
+    DualDocs -.independent.-> AgentConfig
+    DualDocs -.independent.-> CICD
+    AgentConfig -.independent.-> CICD
+    Scripts -.independent.-> Diagrams
+
+    %% Annotations
+    note1["✓ Take what you need<br/>✓ Works standalone<br/>✓ No forced dependencies"]
+    note2["docs/*<br/>docs/*-terry.md<br/>STYLE_GUIDE.md<br/>scripts/check-doc-pairs.sh"]
+    note3[".claude/<br/>CLAUDE.md"]
+    note4[".github/workflows/<br/>scripts/"]
+
+    Scenario1 -.includes.-> note2
+    AgentConfig -.files.-> note3
+    CICD -.files.-> note4
+
+    %% Styling
+    classDef templateClass fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef featureClass fill:#fff9c4,stroke:#f57c00,stroke-width:2px
+    classDef scenarioClass fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef noteClass fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px,stroke-dasharray: 5 5
+
+    class FullTemplate templateClass
+    class DualDocs,AgentConfig,CICD,Scripts,Diagrams,StyleGuide featureClass
+    class Scenario1,Scenario2,Scenario3,Scenario4 scenarioClass
+    class note1,note2,note3,note4 noteClass

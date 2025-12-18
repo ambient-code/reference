@@ -1,0 +1,239 @@
+name: Validate Documentation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'docs/**'
+      - 'scripts/**'
+      - '.markdownlint.json'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'docs/**'
+      - 'scripts/**'
+      - '.markdownlint.json'
+  workflow_dispatch:
+
+jobs:
+  validate-markdown:
+    name: Validate Markdown Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli
+
+      - name: Run markdownlint
+        run: markdownlint 'docs/**/*.md' --config .markdownlint.json
+
+  validate-doc-pairs:
+    name: Validate Documentation Pairs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Check documentation pairs
+        run: ./scripts/check-doc-pairs.sh
+
+      - name: Verify pair count
+        run: |
+          STANDARD_COUNT=$(find docs -maxdepth 1 -name "*.md" ! -name "*-terry.md" ! -name "STYLE_GUIDE.md" | wc -l)
+          TERRY_COUNT=$(find docs -maxdepth 1 -name "*-terry.md" | wc -l)
+
+          echo "Standard docs: $STANDARD_COUNT"
+          echo "Terry docs: $TERRY_COUNT"
+
+          if [ "$STANDARD_COUNT" -ne "$TERRY_COUNT" ]; then
+            echo "❌ Mismatch: $STANDARD_COUNT standard docs but $TERRY_COUNT Terry docs"
+            exit 1
+          fi
+
+          echo "✅ Documentation pairs match: $STANDARD_COUNT pairs"
+
+  validate-diagrams:
+    name: Validate Mermaid Diagrams
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Mermaid CLI
+        run: npm install -g @mermaid-js/mermaid-cli
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Validate Mermaid diagrams
+        run: ./scripts/validate-mermaid.sh
+
+  validate-scripts:
+    name: Validate Shell Scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Run lint-all.sh
+        run: ./scripts/lint-all.sh
+
+  validate-links:
+    name: Validate Documentation Links
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check internal links
+        run: |
+          EXIT_CODE=0
+
+          # Check for broken relative links in markdown files
+          for doc in docs/*.md; do
+            echo "Checking links in $doc..."
+
+            # Extract markdown links: [text](path)
+            grep -oP '\]\(\K[^)]+' "$doc" | while read -r link; do
+              # Skip external URLs
+              if [[ "$link" =~ ^https?:// ]]; then
+                continue
+              fi
+
+              # Skip anchors
+              if [[ "$link" =~ ^# ]]; then
+                continue
+              fi
+
+              # Resolve relative path
+              DIR=$(dirname "$doc")
+              TARGET="$DIR/$link"
+
+              # Check if file exists
+              if [ ! -f "$TARGET" ] && [ ! -d "$TARGET" ]; then
+                echo "❌ Broken link in $doc: $link (resolved to $TARGET)"
+                EXIT_CODE=1
+              fi
+            done
+          done
+
+          exit $EXIT_CODE
+
+  validate-style-guide:
+    name: Validate Style Guide Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for AI slop patterns
+        run: |
+          EXIT_CODE=0
+
+          # Patterns to avoid (from STYLE_GUIDE.md)
+          PATTERNS=(
+            "it's worth noting"
+            "it's important to note"
+            "dive deep"
+            "let's explore"
+            "game-changer"
+            "revolutionary"
+            "cutting-edge"
+          )
+
+          for pattern in "${PATTERNS[@]}"; do
+            if grep -ri "$pattern" docs/*.md; then
+              echo "❌ Found AI slop pattern: '$pattern'"
+              EXIT_CODE=1
+            fi
+          done
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "✅ No AI slop patterns detected"
+          fi
+
+          exit $EXIT_CODE
+
+      - name: Check for prohibited terminology
+        run: |
+          EXIT_CODE=0
+
+          # Check for "Amber" (should use "Codebase Agent" or "CBA")
+          if grep -ri "Amber" docs/ .claude/ --exclude-dir=.git; then
+            echo "❌ Found 'Amber' terminology (use 'Codebase Agent' or 'CBA')"
+            EXIT_CODE=1
+          fi
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "✅ No prohibited terminology found"
+          fi
+
+          exit $EXIT_CODE
+
+      - name: Verify Terry version markers
+        run: |
+          EXIT_CODE=0
+
+          # Check that Terry versions have "What Just Happened?" sections
+          for terry_doc in docs/*-terry.md; do
+            if [ ! -f "$terry_doc" ]; then
+              continue
+            fi
+
+            if ! grep -q "What Just Happened?" "$terry_doc"; then
+              echo "⚠ $terry_doc missing 'What Just Happened?' sections"
+              # Warning only, don't fail
+            else
+              echo "✅ $terry_doc has 'What Just Happened?' sections"
+            fi
+          done
+
+          exit $EXIT_CODE
+
+  summary:
+    name: Validation Summary
+    runs-on: ubuntu-latest
+    needs: [validate-markdown, validate-doc-pairs, validate-diagrams, validate-scripts, validate-links, validate-style-guide]
+    if: always()
+
+    steps:
+      - name: Check all validations passed
+        run: |
+          if [ "${{ needs.validate-markdown.result }}" != "success" ] ||
+             [ "${{ needs.validate-doc-pairs.result }}" != "success" ] ||
+             [ "${{ needs.validate-diagrams.result }}" != "success" ] ||
+             [ "${{ needs.validate-scripts.result }}" != "success" ] ||
+             [ "${{ needs.validate-links.result }}" != "success" ] ||
+             [ "${{ needs.validate-style-guide.result }}" != "success" ]; then
+            echo "❌ Some validations failed"
+            exit 1
+          fi
+
+          echo "✅ All validations passed!"

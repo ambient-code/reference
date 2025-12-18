@@ -1,0 +1,119 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for the template
+title: "[FEATURE] "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please provide as much detail as possible to help us understand your request.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: I'm trying to do X but the template doesn't support it...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like this feature to work?
+      placeholder: Add a new script that...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the template should this feature affect?
+      options:
+        - Documentation
+        - Scripts (setup, validation, etc.)
+        - CI/CD Workflows
+        - Agent Configuration
+        - Diagrams
+        - Templates
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Critical - Blocking my adoption
+        - High - Would significantly improve usability
+        - Medium - Nice to have
+        - Low - Minor improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches have you considered?
+      placeholder: I've tried workaround X, but...
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Provide examples of how this would work
+      placeholder: |
+        ```bash
+        # New command example
+        ./scripts/new-feature.sh --option value
+        ```
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other information that would help
+      placeholder: This would be useful because...
+
+  - type: dropdown
+    id: buffet
+    attributes:
+      label: Buffet Approach Compatibility
+      description: Can this feature be adopted independently?
+      options:
+        - "Yes - Works standalone"
+        - "Partial - Requires some dependencies"
+        - "No - Requires multiple components"
+        - "Unsure"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: volunteer
+    attributes:
+      label: Implementation
+      description: Are you willing to help?
+      options:
+        - label: I'm willing to implement this feature
+        - label: I can help with documentation
+        - label: I can help with testing
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following before submitting
+      options:
+        - label: I have searched existing feature requests to avoid duplicates
+          required: true
+        - label: This feature aligns with the template's infrastructure-only scope
+          required: true
+        - label: I have provided sufficient detail for evaluation
+          required: true

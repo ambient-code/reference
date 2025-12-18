@@ -1,0 +1,120 @@
+graph TB
+    subgraph Developer["Developer Workflow"]
+        Create["Create Feature Branch<br/>git checkout -b feature/my-change"]
+        MakeChanges["Make Changes<br/>- Add/modify files<br/>- Follow style guide"]
+        LocalValidate["Local Validation<br/>- check-doc-pairs.sh<br/>- validate-mermaid.sh<br/>- lint-all.sh"]
+        Commit["Commit Changes<br/>git commit -m 'message'"]
+        Push["Push Branch<br/>git push origin feature/my-change"]
+    end
+
+    subgraph GitHub["GitHub Actions"]
+        Trigger["PR Created/Updated<br/>Triggers CI/CD"]
+
+        subgraph SecurityChecks["Security Checks"]
+            SecretScan["Scan for Secrets<br/>- AWS keys (AKIA)<br/>- GitHub tokens (ghp_)<br/>- Generic secrets"]
+            AppCodeCheck["Check for App Code<br/>- No src/, app/, lib/<br/>- No framework imports"]
+            BrandingCheck["Branding Check<br/>- No Red Hat<br/>- No 'Amber'"]
+        end
+
+        subgraph DocValidation["Documentation Validation"]
+            MarkdownLint["Markdown Lint<br/>markdownlint 'docs/**/*.md'"]
+            DocPairs["Doc Pairs Check<br/>check-doc-pairs.sh"]
+            StyleCompliance["Style Guide<br/>- No AI slop<br/>- Terry has 'What Just Happened?'"]
+            LinkCheck["Link Validation<br/>Internal links valid"]
+        end
+
+        subgraph DiagramValidation["Diagram Validation"]
+            MermaidSyntax["Mermaid Syntax<br/>validate-mermaid.sh"]
+        end
+
+        subgraph ScriptValidation["Script Validation"]
+            Shellcheck["Shellcheck<br/>All scripts/*.sh"]
+            Executable["Permissions<br/>Scripts executable"]
+            LintAll["Run lint-all.sh<br/>Comprehensive validation"]
+        end
+
+        Summary["Validation Summary<br/>All checks must pass"]
+    end
+
+    subgraph Review["Code Review"]
+        HumanReview["Human Review<br/>- Code quality<br/>- Documentation<br/>- Buffet approach"]
+        AgentReview["Agent Review<br/>@codebase-agent review"]
+        Approve["Approve PR<br/>LGTM"]
+    end
+
+    subgraph Merge["Merge & Deploy"]
+        MergePR["Merge to Main<br/>Squash or merge commit"]
+        UpdateDocs["Update Docs<br/>Comparison page refreshes"]
+        TagRelease["Tag Release (optional)<br/>git tag v1.0.0"]
+    end
+
+    %% Developer flow
+    Create --> MakeChanges
+    MakeChanges --> LocalValidate
+    LocalValidate -->|Pass| Commit
+    LocalValidate -->|Fail| MakeChanges
+    Commit --> Push
+
+    %% GitHub Actions trigger
+    Push --> Trigger
+
+    %% Parallel checks
+    Trigger --> SecretScan
+    Trigger --> AppCodeCheck
+    Trigger --> BrandingCheck
+    Trigger --> MarkdownLint
+    Trigger --> DocPairs
+    Trigger --> StyleCompliance
+    Trigger --> LinkCheck
+    Trigger --> MermaidSyntax
+    Trigger --> Shellcheck
+    Trigger --> Executable
+    Trigger --> LintAll
+
+    %% All checks to summary
+    SecretScan --> Summary
+    AppCodeCheck --> Summary
+    BrandingCheck --> Summary
+    MarkdownLint --> Summary
+    DocPairs --> Summary
+    StyleCompliance --> Summary
+    LinkCheck --> Summary
+    MermaidSyntax --> Summary
+    Shellcheck --> Summary
+    Executable --> Summary
+    LintAll --> Summary
+
+    %% Summary to review
+    Summary -->|All Pass| HumanReview
+    Summary -->|Fail| MakeChanges
+
+    %% Review flow
+    HumanReview -->|Request Changes| MakeChanges
+    HumanReview -->|Optional| AgentReview
+    AgentReview -->|Suggestions| HumanReview
+    HumanReview -->|Approved| Approve
+
+    %% Merge flow
+    Approve --> MergePR
+    MergePR --> UpdateDocs
+    MergePR -->|Optional| TagRelease
+
+    %% Performance annotations
+    LocalTime["⏱ <5 minutes<br/>Fast feedback"]
+    CITime["⏱ <5 minutes<br/>Parallel execution"]
+
+    LocalValidate -.timing.-> LocalTime
+    Summary -.timing.-> CITime
+
+    %% Styling
+    classDef devClass fill:#e1f5ff,stroke:#0066cc,stroke-width:2px
+    classDef ciClass fill:#fff4e6,stroke:#ff9800,stroke-width:2px
+    classDef reviewClass fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    classDef mergeClass fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef timeClass fill:#ffebee,stroke:#c62828,stroke-width:1px,stroke-dasharray: 5 5
+
+    class Create,MakeChanges,LocalValidate,Commit,Push devClass
+    class Trigger,SecretScan,AppCodeCheck,BrandingCheck,MarkdownLint,DocPairs,StyleCompliance,LinkCheck,MermaidSyntax,Shellcheck,Executable,LintAll,Summary ciClass
+    class HumanReview,AgentReview,Approve reviewClass
+    class MergePR,UpdateDocs,TagRelease mergeClass
+    class LocalTime,CITime timeClass
