@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Comparison - Ambient Code Reference</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            background-color: #f6f8fa;
+        }
+
+        header {
+            background: #24292e;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+
+        nav {
+            background: white;
+            border-bottom: 1px solid #e1e4e8;
+            padding: 0 2rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #586069;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        nav button:hover {
+            color: #24292e;
+            background-color: #f6f8fa;
+        }
+
+        nav button.active {
+            color: #0366d6;
+            border-bottom-color: #0366d6;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .doc-column {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .doc-column h2 {
+            background: #f6f8fa;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-bottom: 1px solid #e1e4e8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-standard {
+            background: #0366d6;
+            color: white;
+        }
+
+        .badge-terry {
+            background: #28a745;
+            color: white;
+        }
+
+        .doc-content {
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 300px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #586069;
+        }
+
+        .error {
+            text-align: center;
+            padding: 3rem;
+            color: #d73a49;
+        }
+
+        /* Markdown styling */
+        .doc-content h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .doc-content h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .doc-content h3 {
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .doc-content p {
+            margin-bottom: 1rem;
+        }
+
+        .doc-content ul, .doc-content ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        .doc-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-content pre {
+            background: #f6f8fa;
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .doc-content code {
+            background: #f6f8fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9em;
+        }
+
+        .doc-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .doc-content blockquote {
+            border-left: 4px solid #dfe2e5;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            color: #6a737d;
+        }
+
+        .doc-content a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+
+        .doc-content a:hover {
+            text-decoration: underline;
+        }
+
+        .doc-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+
+        .doc-content th, .doc-content td {
+            border: 1px solid #e1e4e8;
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .doc-content th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            nav {
+                padding: 0 1rem;
+            }
+
+            nav button {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0366d6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Documentation Comparison</h1>
+        <p>Side-by-side view of Standard (developer-focused) and Terry (accessible) documentation</p>
+    </header>
+
+    <nav id="nav-tabs">
+        <button class="tab-btn active" data-topic="quickstart">Quickstart</button>
+        <button class="tab-btn" data-topic="architecture">Architecture</button>
+        <button class="tab-btn" data-topic="tutorial">Tutorial</button>
+        <button class="tab-btn" data-topic="api-reference">API Reference</button>
+        <button class="tab-btn" data-topic="contributing">Contributing</button>
+        <button class="tab-btn" data-topic="deployment">Deployment</button>
+        <button class="tab-btn" data-topic="development">Development</button>
+        <button class="tab-btn" data-topic="agent-workflow">Agent Workflow</button>
+    </nav>
+
+    <div class="container">
+        <div class="comparison-grid">
+            <div class="doc-column">
+                <h2>
+                    <span class="badge badge-standard">Standard</span>
+                    <span id="standard-title">Technical Documentation</span>
+                </h2>
+                <div class="doc-content" id="standard-content">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading standard documentation...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="doc-column">
+                <h2>
+                    <span class="badge badge-terry">Terry</span>
+                    <span id="terry-title">Accessible Documentation</span>
+                </h2>
+                <div class="doc-content" id="terry-content">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading Terry documentation...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configure marked for syntax highlighting
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return hljs.highlight(code, { language: lang }).value;
+                    } catch (err) {}
+                }
+                return code;
+            },
+            breaks: true,
+            gfm: true
+        });
+
+        let currentTopic = 'quickstart';
+
+        // Load documentation
+        async function loadDocs(topic) {
+            const standardContent = document.getElementById('standard-content');
+            const terryContent = document.getElementById('terry-content');
+            const standardTitle = document.getElementById('standard-title');
+            const terryTitle = document.getElementById('terry-title');
+
+            // Show loading state
+            standardContent.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
+            terryContent.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
+
+            try {
+                // Load standard version
+                const standardPath = `../${topic}.md`;
+                const standardResponse = await fetch(standardPath);
+
+                if (!standardResponse.ok) {
+                    throw new Error(`Standard version not found: ${standardPath}`);
+                }
+
+                const standardText = await standardResponse.text();
+                const standardHtml = marked.parse(standardText);
+                standardContent.innerHTML = standardHtml;
+                standardTitle.textContent = topic.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+                // Load Terry version
+                const terryPath = `../${topic}-terry.md`;
+                const terryResponse = await fetch(terryPath);
+
+                if (!terryResponse.ok) {
+                    throw new Error(`Terry version not found: ${terryPath}`);
+                }
+
+                const terryText = await terryResponse.text();
+                const terryHtml = marked.parse(terryText);
+                terryContent.innerHTML = terryHtml;
+                terryTitle.textContent = topic.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+                // Scroll to top
+                standardContent.scrollTop = 0;
+                terryContent.scrollTop = 0;
+
+            } catch (error) {
+                console.error('Error loading documentation:', error);
+                standardContent.innerHTML = `<div class="error"><p>⚠️ Error loading standard documentation</p><p>${error.message}</p></div>`;
+                terryContent.innerHTML = `<div class="error"><p>⚠️ Error loading Terry documentation</p><p>${error.message}</p></div>`;
+            }
+        }
+
+        // Handle tab clicks
+        document.getElementById('nav-tabs').addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-btn')) {
+                // Update active state
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+
+                // Load new topic
+                currentTopic = e.target.dataset.topic;
+                loadDocs(currentTopic);
+            }
+        });
+
+        // Load initial topic
+        loadDocs(currentTopic);
+    </script>
+</body>
+</html>
