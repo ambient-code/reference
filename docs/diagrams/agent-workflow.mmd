@@ -1,0 +1,73 @@
+graph TB
+    subgraph UserSpace["User Space"]
+        Issue["GitHub Issue<br/>Feature Request or Bug"]
+        Review["Review PR<br/>Approve/Request Changes"]
+        Merge["Merge PR<br/>Deploy Changes"]
+    end
+
+    subgraph AgentSpace["Codebase Agent (CBA) Space"]
+        Trigger["Triggered by:<br/>- Label: cba:implement<br/>- Comment: @codebase-agent"]
+        Analyze["Analyze Issue<br/>- Read requirements<br/>- Check acceptance criteria<br/>- Review context modules"]
+        Plan["Create Implementation Plan<br/>- List files to change<br/>- Identify patterns to use<br/>- Estimate complexity"]
+        Confirm["Request Approval<br/>- Present plan<br/>- Ask clarifying questions"]
+        Implement["Execute Plan<br/>- Create/modify files<br/>- Follow style guide<br/>- Apply patterns"]
+        Validate["Run Validation<br/>- check-doc-pairs.sh<br/>- validate-mermaid.sh<br/>- markdownlint"]
+        Commit["Create Commit<br/>- Descriptive message<br/>- Link to issue"]
+        PR["Create Pull Request<br/>- Summary of changes<br/>- Testing checklist<br/>- Screenshots/examples"]
+    end
+
+    subgraph ContextModules["Context Modules"]
+        ArchContext[".claude/context/<br/>architecture.md"]
+        SecContext[".claude/context/<br/>security-standards.md"]
+        TestContext[".claude/context/<br/>testing-patterns.md"]
+    end
+
+    subgraph Validation["Validation Layer"]
+        SecurityCheck["Security Checks<br/>- No secrets<br/>- No app code<br/>- No branding"]
+        DocsCheck["Documentation Checks<br/>- Doc pairs exist<br/>- Markdown lint<br/>- Style compliance"]
+        DiagramCheck["Diagram Validation<br/>- Mermaid syntax<br/>- Valid structure"]
+    end
+
+    %% User flow
+    Issue --> Trigger
+    Trigger --> Analyze
+    Analyze --> Plan
+
+    %% Context module usage
+    Analyze -.reads.-> ArchContext
+    Analyze -.reads.-> SecContext
+    Analyze -.reads.-> TestContext
+
+    Plan --> Confirm
+    Confirm -->|Approved| Implement
+    Confirm -->|Changes Needed| Analyze
+
+    Implement --> Validate
+    Validate -->|Pass| Commit
+    Validate -->|Fail| Implement
+
+    Commit --> PR
+    PR --> Review
+
+    %% Validation checks
+    PR -.triggers.-> SecurityCheck
+    PR -.triggers.-> DocsCheck
+    PR -.triggers.-> DiagramCheck
+
+    SecurityCheck -->|Pass| Review
+    DocsCheck -->|Pass| Review
+    DiagramCheck -->|Pass| Review
+
+    Review -->|Approved| Merge
+    Review -->|Changes Requested| Implement
+
+    %% Styling
+    classDef userClass fill:#e1f5ff,stroke:#0066cc,stroke-width:2px
+    classDef agentClass fill:#fff4e6,stroke:#ff9800,stroke-width:2px
+    classDef contextClass fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef validationClass fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+
+    class Issue,Review,Merge userClass
+    class Trigger,Analyze,Plan,Confirm,Implement,Validate,Commit,PR agentClass
+    class ArchContext,SecContext,TestContext contextClass
+    class SecurityCheck,DocsCheck,DiagramCheck validationClass
