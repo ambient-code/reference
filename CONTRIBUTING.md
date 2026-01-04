@@ -19,13 +19,13 @@ Run all linters:
 black app/ tests/
 isort app/ tests/
 ruff check app/ tests/
-```
+```text
 
 Run tests:
 
 ```bash
 pytest
-```
+```text
 
 All linters and tests must pass before submitting a PR.
 
@@ -64,12 +64,12 @@ All linters and tests must pass before submitting a PR.
 
 Follow existing repository patterns:
 
-```
+```text
 Add feature for X
 
 - Implement Y
 - Update Z
-```
+```text
 
 Focus on "why" rather than "what".
 
@@ -77,9 +77,9 @@ Focus on "why" rather than "what".
 
 For significant architectural changes, add an ADR to `docs/adr/`:
 
-```
+```text
 docs/adr/YYYYMMDD-title.md
-```
+```text
 
 See `docs/adr/template.md` for format.
 

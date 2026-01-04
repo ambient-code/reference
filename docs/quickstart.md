@@ -136,6 +136,7 @@ Want to see these patterns in action?
 → **[demo-fastapi](https://github.com/jeremyeder/demo-fastapi)** - Working FastAPI application demonstrating CBA patterns
 
 The demo includes:
+
 - Full CRUD API with FastAPI
 - CBA agent configured for the app
 - Complete test suite
@@ -144,6 +145,7 @@ The demo includes:
 ## Troubleshooting
 
 **Markdown linting fails?**
+
 ```bash
 # Install markdownlint
 npm install -g markdownlint-cli
@@ -153,6 +155,7 @@ markdownlint docs/**/*.md --fix
 ```
 
 **Mermaid validation fails?**
+
 ```bash
 # Install mermaid-cli
 npm install -g @mermaid-js/mermaid-cli
@@ -162,6 +165,7 @@ npm install -g @mermaid-js/mermaid-cli
 ```
 
 **Need help with patterns?**
+
 - Read detailed docs in `docs/`
 - Check examples in `.claude/`
 - See working implementation in [demo-fastapi](https://github.com/jeremyeder/demo-fastapi)

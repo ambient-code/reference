@@ -7,34 +7,17 @@ on:
     branches: [main]
 
 jobs:
-  documentation-quality:
+  documentation-structure:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install markdownlint-cli
-
-      - name: Lint markdown files
-        run: |
-          markdownlint docs/**/*.md README.md CLAUDE.md || true
-
-      - name: Validate Mermaid diagrams
-        run: |
-          npm install -g @mermaid-js/mermaid-cli
-          ./scripts/validate-mermaid.sh || true
-
       - name: Check documentation structure
         run: |
           # Verify required documentation files exist
-          test -f docs/quickstart.md || echo "Warning: docs/quickstart.md missing"
-          test -f docs/architecture.md || echo "Warning: docs/architecture.md missing"
-          test -f docs/tutorial.md || echo "Warning: docs/tutorial.md missing"
-          test -f docs/api-reference.md || echo "Warning: docs/api-reference.md missing"
+          test -f docs/quickstart.md || { echo "Error: docs/quickstart.md missing"; exit 1; }
+          test -f docs/architecture.md || { echo "Error: docs/architecture.md missing"; exit 1; }
+          test -f docs/tutorial.md || { echo "Error: docs/tutorial.md missing"; exit 1; }
+          test -f docs/api-reference.md || { echo "Error: docs/api-reference.md missing"; exit 1; }
+          echo "All required documentation files present"

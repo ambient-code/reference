@@ -7,6 +7,7 @@
 ## Context
 
 Describe the situation and forces at play:
+
 - What problem are we trying to solve?
 - What constraints exist?
 - What alternatives were considered?
@@ -14,6 +15,7 @@ Describe the situation and forces at play:
 ## Decision
 
 State the decision clearly:
+
 - What did we decide?
 - Why this approach?
 - What are the key factors?
@@ -23,16 +25,19 @@ State the decision clearly:
 Document the results:
 
 ### Positive
+
 - What benefits does this bring?
 - What problems does it solve?
 - What opportunities does it create?
 
 ### Negative
+
 - What drawbacks exist?
 - What complexities does it introduce?
 - What risks remain?
 
 ### Neutral
+
 - What else changes as a result?
 
 ## References

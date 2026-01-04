@@ -24,6 +24,7 @@
 This is a **GitHub template repository** demonstrating AI-assisted development best practices. It's a **documentation-only** reference using the "standalone patterns approach" - concepts are standalone and independently adoptable.
 
 **Key Principles**:
+
 - ✅ **Standalone patterns approach** - Patterns are standalone and independently adoptable
 - ✅ **Documentation-focused** - Pure reference material, no working application
 - ✅ **Succinct content** - No AI slop, get to the point
@@ -34,17 +35,20 @@ This is a **GitHub template repository** demonstrating AI-assisted development b
 ### What This Repository Contains
 
 **Documentation** (`docs/`):
+
 - Quickstart guides for AI-assisted development
 - Architecture pattern references
 - Tutorial outlines for implementing agentic workflows
 - API design patterns
 
 **Codebase Agent Configuration** (`.claude/`):
+
 - Agent definitions and capabilities
 - Context files for modular memory system
 - Example commands and skills
 
 **CI/CD** (`.github/workflows/`):
+
 - Documentation validation workflows
 - Markdown linting
 - Mermaid diagram validation
@@ -61,6 +65,7 @@ For a **working FastAPI application** demonstrating these patterns in practice, 
 ### Python Version Support
 
 For any code examples in documentation:
+
 - Python 3.11 (primary)
 - Python 3.12 (tested in CI matrix)
 
@@ -125,6 +130,7 @@ markdownlint docs/**/*.md README.md CLAUDE.md --fix
 ### Documentation Structure
 
 **Core docs** (`docs/`):
+
 1. `quickstart.md` - 5-minute introduction to AI-assisted development
 2. `architecture.md` - Common architecture patterns for agentic workflows
 3. `tutorial.md` - Step-by-step guide for implementing patterns
@@ -143,6 +149,7 @@ markdownlint docs/**/*.md README.md CLAUDE.md --fix
 **CI enforcement**: Blocks merge if diagrams invalid
 
 **Example validation script**:
+
 ```bash
 #!/bin/bash
 # Validate all Mermaid diagrams
@@ -154,6 +161,7 @@ find docs/ -name "*.mmd" -exec mmdc -i {} -o /dev/null \;
 **Location**: `docs/adr/`
 
 **Scaffolding only** - NO actual content:
+
 - `README.md` - Explains ADR purpose and format
 - `template.md` - Shows format (YYYYMMDD-title.md)
 
@@ -174,6 +182,7 @@ find docs/ -name "*.mmd" -exec mmdc -i {} -o /dev/null \;
 **Location**: `.claude/context/`
 
 **Modular context files**:
+
 - `architecture.md` - Architecture patterns and conventions
 - `security-standards.md` - Security best practices
 - `testing-patterns.md` - Testing strategies and patterns
@@ -183,6 +192,7 @@ find docs/ -name "*.mmd" -exec mmdc -i {} -o /dev/null \;
 ### Agent Capability Patterns
 
 **Common patterns to document**:
+
 1. **Issue-to-PR Automation** - Converting well-defined issues into PRs
 2. **Code Reviews** - Providing actionable feedback
 3. **Proactive Maintenance** - Dependency updates, linting, docs
@@ -191,6 +201,7 @@ find docs/ -name "*.mmd" -exec mmdc -i {} -o /dev/null \;
 ### Autonomy Levels (Example Pattern)
 
 Document autonomy levels teams might implement:
+
 - **Level 1 (Conservative)**: PR creation only - WAIT for human approval
 - **Level 2 (Moderate)**: Auto-merge for low-risk changes (docs, deps)
 - **Level 3 (Aggressive)**: Auto-deploy after tests pass
@@ -214,13 +225,15 @@ git checkout -b feature/descriptive-name
 ### Commit Workflow
 
 **Pre-commit checklist**:
+
 1. Lint markdown: `markdownlint docs/**/*.md --fix`
 2. Validate diagrams: `./scripts/validate-mermaid.sh`
 3. Check git status: `git status`
 4. Review changes: `git diff`
 
 **Commit message style**:
-```
+
+```text
 Add documentation for X pattern
 
 - Explain Y concept
@@ -232,12 +245,14 @@ Focus on "why" rather than "what".
 ### Pull Request Workflow
 
 **Before creating PR**:
+
 1. `git status` - check untracked files
 2. `git diff` - review all changes
 3. `git log` - review commit history
 4. Ensure CI passes (markdown linting, diagram validation)
 
 **PR requirements**:
+
 - [ ] Markdown linting passes
 - [ ] Mermaid diagrams validated
 - [ ] No broken links
@@ -246,6 +261,7 @@ Focus on "why" rather than "what".
 ### Git Safety
 
 **NEVER**:
+
 - Update git config without permission
 - Run destructive commands (hard reset, force push) without explicit request
 - Skip hooks (--no-verify)
@@ -276,6 +292,7 @@ Focus on "why" rather than "what".
 **File**: `.github/dependabot.yml`
 
 **Configuration**:
+
 - **Schedule**: Weekly
 - **Auto-label**: "dependencies"
 - **Package ecosystem**: pip (for doc tooling)
@@ -283,6 +300,7 @@ Focus on "why" rather than "what".
 ### Documentation Deployment (Optional)
 
 Teams can extend with:
+
 - GitHub Pages deployment
 - MkDocs builds
 - Static site generation
@@ -338,7 +356,7 @@ gh pr create --title "docs: Add X" --body "Documentation for X pattern"
 
 Common pattern for AI-assisted applications:
 
-```
+```text
 API Layer (Routes/Endpoints)
     ↓ Handles HTTP, validation, serialization
 Service Layer (Business logic)
@@ -352,6 +370,7 @@ Core Layer (Config, utilities)
 ### Component Responsibility Patterns
 
 **API Layer**:
+
 - Route handlers
 - Request/response validation
 - HTTP status codes
@@ -359,17 +378,20 @@ Core Layer (Config, utilities)
 - API documentation
 
 **Service Layer**:
+
 - Business logic
 - Data manipulation
 - Transaction coordination
 - No transport concerns
 
 **Model Layer**:
+
 - Data validation
 - Type annotations
 - Serialization rules
 
 **Core Layer**:
+
 - Configuration management
 - Security utilities
 - Logging configuration
@@ -382,6 +404,7 @@ Core Layer (Config, utilities)
 ### Input Validation Pattern
 
 **Validate at boundaries only**:
+
 - Validate all external input (user requests, API calls)
 - Trust internal code between layers
 - Use schema validation libraries
@@ -389,6 +412,7 @@ Core Layer (Config, utilities)
 ### Sanitization Pattern
 
 Common sanitization functions to implement:
+
 - `sanitize_string()` - Remove dangerous characters
 - `validate_slug()` - Ensure URL-safe identifiers
 - `sanitize_path()` - Prevent path traversal
@@ -405,6 +429,7 @@ Common sanitization functions to implement:
 ## Anti-Requirements
 
 **NEVER include**:
+
 - ❌ Red Hat branding or references
 - ❌ "Amber" terminology (use "Codebase Agent" or "CBA")
 - ❌ Sequenced/linear adoption path (standalone patterns approach only)
@@ -418,6 +443,6 @@ Common sanitization functions to implement:
 
 ---
 
-**End of Configuration**
+## End of Configuration
 
 This CLAUDE.md file is the source of truth for all AI-assisted development in this repository. Follow these standards strictly.

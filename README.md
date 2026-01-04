@@ -36,7 +36,7 @@ This repository provides documentation and patterns for:
 Pick what you need. Each pattern works independently:
 
 | Pattern | Description | How to Adopt |
-|---------|-------------|--------------|
+| ------- | ----------- | ------------ |
 | **Codebase Agent** | AI agent configuration patterns | Copy `.claude/` structure |
 | **Architecture** | Layered architecture patterns | Reference `docs/architecture.md` |
 | **Security** | Security best practices | Reference `.claude/context/security-standards.md` |
@@ -46,7 +46,7 @@ Pick what you need. Each pattern works independently:
 
 ## Repository Structure
 
-```
+```text
 ambient-code-reference/
 ├── .claude/               # Codebase Agent patterns
 │   ├── agents/           # CBA agent definition patterns
@@ -68,6 +68,7 @@ Want to see these patterns in a working FastAPI application?
 **→ [demo-fastapi](https://github.com/jeremyeder/demo-fastapi)** - Toy application demonstrating CBA patterns in practice
 
 The demo repository includes:
+
 - Working FastAPI service with CRUD endpoints
 - CBA agent configuration
 - Full test suite (unit, integration, E2E)

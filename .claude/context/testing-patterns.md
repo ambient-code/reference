@@ -2,7 +2,7 @@
 
 ## Test Structure
 
-```
+```text
 tests/
 ├── conftest.py          # Shared fixtures
 ├── unit/                # Service layer tests
@@ -11,7 +11,7 @@ tests/
 │   └── test_api.py
 └── e2e/                 # End-to-end tests
     └── test_cba_workflow.py
-```
+```text
 
 ## Unit Tests
 
@@ -34,7 +34,7 @@ def test_create_item():
     assert result.name == "Test"
     assert result.slug == "test"
     assert result.id == 1
-```
+```text
 
 ### Coverage
 
@@ -55,7 +55,7 @@ def test_create_duplicate_slug():
     # Attempting to create duplicate should raise ValueError
     with pytest.raises(ValueError, match="already exists"):
         service.create_item(data)
-```
+```text
 
 ## Integration Tests
 
@@ -79,7 +79,7 @@ def test_create_item_endpoint():
     assert response.status_code == 201
     data = response.json()
     assert data["name"] == "Test"
-```
+```text
 
 ### Coverage
 
@@ -100,7 +100,7 @@ def test_create_item_duplicate_returns_409():
     response = client.post("/api/v1/items", json={"name": "Test2", "slug": "test"})
     assert response.status_code == 409
     assert "already exists" in response.json()["detail"]
-```
+```text
 
 ## Fixtures
 
@@ -136,7 +136,7 @@ def created_items(client, sample_item):
         response = client.post("/api/v1/items", json=data.model_dump())
         items.append(response.json())
     return items
-```
+```text
 
 ### Fixture Scopes
 
@@ -170,7 +170,7 @@ def test_cba_issue_to_pr_workflow():
     """
     # This is an outline - requires GitHub API setup
     pass
-```
+```text
 
 ## Mocking
 
@@ -196,7 +196,7 @@ def test_item_timestamps():
         item = service.create_item(ItemCreate(name="Test", slug="test"))
 
         assert item.created_at == fixed_time
-```
+```text
 
 ## Coverage Configuration
 
@@ -211,7 +211,7 @@ addopts = """
     --cov-report=term-missing
     --cov-fail-under=80
 """
-```
+```text
 
 ### Coverage Goals
 
@@ -232,7 +232,7 @@ def test_list_items_pagination_returns_correct_subset()
 # Avoid
 def test_item()  # Too vague
 def test_1()     # Non-descriptive
-```
+```text
 
 ## Parametrize for Multiple Cases
 
@@ -247,7 +247,7 @@ def test_1()     # Non-descriptive
 def test_validate_slug_invalid_formats(slug, expected_error):
     with pytest.raises(ValueError, match=expected_error):
         validate_slug(slug)
-```
+```text
 
 ## Running Tests
 
@@ -269,11 +269,12 @@ pytest -v
 
 # Stop on first failure
 pytest -x
-```
+```text
 
 ## CI Integration
 
 Tests run in `.github/workflows/ci.yml`:
+
 - Python 3.11 + 3.12 matrix
 - All linters before tests
 - Coverage uploaded to Codecov

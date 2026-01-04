@@ -4,9 +4,9 @@ Complete API documentation for the Ambient Code Reference Repository.
 
 ## Base URL
 
-```
+```text
 http://localhost:8000
-```
+```text
 
 ## Authentication
 
@@ -21,33 +21,36 @@ Production: Add JWT or OAuth2 as needed.
 Health check endpoint.
 
 **Response** (200):
+
 ```json
 {
   "status": "healthy"
 }
-```
+```text
 
 ### GET /readiness
 
 Kubernetes readiness probe.
 
 **Response** (200):
+
 ```json
 {
   "status": "ready"
 }
-```
+```text
 
 ### GET /liveness
 
 Kubernetes liveness probe.
 
 **Response** (200):
+
 ```json
 {
   "status": "alive"
 }
-```
+```text
 
 ## Items Resource
 
@@ -56,20 +59,23 @@ Kubernetes liveness probe.
 Create a new item.
 
 **Request Body**:
+
 ```json
 {
   "name": "Sample Item",
   "slug": "sample-item",
   "description": "Optional description"
 }
-```
+```text
 
 **Field Constraints**:
+
 - `name`: 1-200 characters, sanitized
 - `slug`: 1-100 characters, lowercase letters/numbers/hyphens only
 - `description`: Optional, max 1000 characters
 
 **Response** (201 Created):
+
 ```json
 {
   "id": 1,
@@ -79,18 +85,20 @@ Create a new item.
   "created_at": "2025-12-17T12:00:00",
   "updated_at": "2025-12-17T12:00:00"
 }
-```
+```text
 
 **Error Responses**:
 
 409 Conflict (duplicate slug):
+
 ```json
 {
   "detail": "Item with slug 'sample-item' already exists"
 }
-```
+```text
 
 422 Validation Error:
+
 ```json
 {
   "detail": [
@@ -101,22 +109,25 @@ Create a new item.
     }
   ]
 }
-```
+```text
 
 ### GET /api/v1/items
 
 List all items with pagination.
 
 **Query Parameters**:
+
 - `skip`: Number of items to skip (default: 0)
 - `limit`: Maximum items to return (default: 100)
 
 **Example**:
-```
+
+```text
 GET /api/v1/items?skip=10&limit=20
-```
+```text
 
 **Response** (200):
+
 ```json
 [
   {
@@ -136,16 +147,18 @@ GET /api/v1/items?skip=10&limit=20
     "updated_at": "2025-12-17T12:01:00"
   }
 ]
-```
+```text
 
 ### GET /api/v1/items/{id}
 
 Get item by ID.
 
 **Path Parameters**:
+
 - `id`: Integer item ID
 
 **Response** (200):
+
 ```json
 {
   "id": 1,
@@ -155,30 +168,34 @@ Get item by ID.
   "created_at": "2025-12-17T12:00:00",
   "updated_at": "2025-12-17T12:00:00"
 }
-```
+```text
 
 **Error Responses**:
 
 404 Not Found:
+
 ```json
 {
   "detail": "Item not found"
 }
-```
+```text
 
 ### GET /api/v1/items/slug/{slug}
 
 Get item by slug.
 
 **Path Parameters**:
+
 - `slug`: URL-safe slug
 
 **Example**:
-```
+
+```text
 GET /api/v1/items/slug/sample-item
-```
+```text
 
 **Response** (200):
+
 ```json
 {
   "id": 1,
@@ -188,35 +205,39 @@ GET /api/v1/items/slug/sample-item
   "created_at": "2025-12-17T12:00:00",
   "updated_at": "2025-12-17T12:00:00"
 }
-```
+```text
 
 **Error Responses**:
 
 404 Not Found:
+
 ```json
 {
   "detail": "Item not found"
 }
-```
+```text
 
 ### PATCH /api/v1/items/{id}
 
 Update an existing item.
 
 **Path Parameters**:
+
 - `id`: Integer item ID
 
 **Request Body** (partial update):
+
 ```json
 {
   "name": "Updated Name",
   "description": "Updated description"
 }
-```
+```text
 
 **Note**: Only include fields you want to update. Slug cannot be updated.
 
 **Response** (200):
+
 ```json
 {
   "id": 1,
@@ -226,18 +247,20 @@ Update an existing item.
   "created_at": "2025-12-17T12:00:00",
   "updated_at": "2025-12-17T12:05:00"
 }
-```
+```text
 
 **Error Responses**:
 
 404 Not Found:
+
 ```json
 {
   "detail": "Item not found"
 }
-```
+```text
 
 422 Validation Error:
+
 ```json
 {
   "detail": [
@@ -248,13 +271,14 @@ Update an existing item.
     }
   ]
 }
-```
+```text
 
 ### DELETE /api/v1/items/{id}
 
 Delete an item.
 
 **Path Parameters**:
+
 - `id`: Integer item ID
 
 **Response** (204 No Content):
@@ -264,11 +288,12 @@ No response body.
 **Error Responses**:
 
 404 Not Found:
+
 ```json
 {
   "detail": "Item not found"
 }
-```
+```text
 
 ## Error Codes
 
@@ -300,9 +325,9 @@ Future versions will use `/api/v2`, etc.
 
 Interactive API documentation:
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-- **OpenAPI JSON**: http://localhost:8000/openapi.json
+- **Swagger UI**: <http://localhost:8000/docs>
+- **ReDoc**: <http://localhost:8000/redoc>
+- **OpenAPI JSON**: <http://localhost:8000/openapi.json>
 
 ## Example Workflows
 
@@ -319,7 +344,7 @@ curl http://localhost:8000/api/v1/items/1
 
 # Get by slug
 curl http://localhost:8000/api/v1/items/slug/test
-```
+```text
 
 ### List and Paginate
 
@@ -329,7 +354,7 @@ curl http://localhost:8000/api/v1/items?limit=10
 
 # Get next 10 items
 curl http://localhost:8000/api/v1/items?skip=10&limit=10
-```
+```text
 
 ### Update and Delete
 
@@ -341,7 +366,7 @@ curl -X PATCH http://localhost:8000/api/v1/items/1 \
 
 # Delete item
 curl -X DELETE http://localhost:8000/api/v1/items/1
-```
+```text
 
 ## Client Libraries
 
@@ -361,7 +386,7 @@ item = response.json()
 
 # List items
 items = client.get("/api/v1/items").json()
-```
+```text
 
 ### JavaScript (fetch)
 
@@ -377,7 +402,7 @@ const item = await response.json();
 // List items
 const items = await fetch('http://localhost:8000/api/v1/items')
   .then(r => r.json());
-```
+```text
 
 ## Testing
 
@@ -395,4 +420,4 @@ def test_create_item():
         json={"name": "Test", "slug": "test"}
     )
     assert response.status_code == 201
-```
+```text

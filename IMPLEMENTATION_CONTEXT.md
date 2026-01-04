@@ -17,15 +17,18 @@ This file provides the contextual information needed to execute the implementati
 ### Available Source Files
 
 **Codebase Agent Sources:**
+
 - [ ] `ambient-code/platform/agents/amber.md` - Location: **NEED INPUT** (See question form)
 - [ ] `ambient-code/agentready/.claude/agents/agentready-dev.md` - Location: **NEED INPUT** (See question form)
 - [ ] `ambient-code/platform/agents/terry-technical_writer.md` - Location: **NEED INPUT** (See question form)
 
 **Inventories:**
+
 - [X] `AMBIENT_TECHNIQUES_INVENTORY.md` - Location: `/Users/jeder/repos/reference/AMBIENT_TECHNIQUES_INVENTORY.md` (exists in repo)
 - [X] `FEATURES_INVENTORY.md` - Location: `/Users/jeder/repos/reference/FEATURES_INVENTORY.md` (exists in repo)
 
 **Example Repositories:**
+
 - [ ] Existing FastAPI service to reference: **NEED INPUT** (See question form - optional)
 - [ ] Existing agent configuration to reference: **NEED INPUT** (See question form - optional)
 
@@ -34,15 +37,18 @@ This file provides the contextual information needed to execute the implementati
 ## Strategic Context
 
 ### Primary Objective
+
 Create the **Ambient Code Reference Repository** - a GitHub template demonstrating
 AI-assisted development best practices for Python FastAPI services using the "standalone patterns approach"
 where teams can adopt features independently without requiring full implementation.
 This is pure "Ambient Code" documentation with NO Red Hat branding.
 
 ### Success Metrics
+
 - **NEED INPUT** - See question form
 
 ### Timeline & Priorities
+
 - **NEED INPUT** - See question form
 
 ---
@@ -50,11 +56,13 @@ This is pure "Ambient Code" documentation with NO Red Hat branding.
 ## Technical Environment
 
 ### Repository Details
+
 - **Location**: **NEED INPUT** - See question form
 - **Ownership**: Ambient Code organization (assumed)
 - **Visibility**: Public (template repository)
 
 ### Technology Stack Preferences
+
 - **Python Version**: 3.11 minimum, 3.12 supported (per Jeremy's N and N-1 policy)
 - **Container Runtime**: Podman (required) / Docker (acceptable fallback)
 - **CI/CD Platforms**:
@@ -63,6 +71,7 @@ This is pure "Ambient Code" documentation with NO Red Hat branding.
   - Other: None
 
 ### Existing Patterns to Follow
+
 - **Error Handling**: Follow FastAPI best practices (HTTPException, proper status codes)
 - **Logging Format**: JSON structured logging (Python logging with json formatter)
 - **Security Scanning**: Bandit + Safety (confirmed in prompt)
@@ -74,9 +83,11 @@ This is pure "Ambient Code" documentation with NO Red Hat branding.
 ### Documentation Examples
 
 **Good Documentation (What to Emulate):**
+
 - **NEED INPUT** - See question form (examples of good docs in your ecosystem)
 
 **AI Slop (What to Avoid):**
+
 - Characteristics: Verbose, repetitive, generic, non-specific, overly enthusiastic
 - Phrases like "let's dive in", "it's important to note", "simply", "just"
 - Unnecessary pleasantries and filler
@@ -85,6 +96,7 @@ This is pure "Ambient Code" documentation with NO Red Hat branding.
 ### Terry vs. Standard Writing
 
 **Terry Style Characteristics:**
+
 - Clear, accessible, jargon-free
 - Explains technical concepts in plain language
 - "What Just Happened?" sections after complex steps
@@ -93,6 +105,7 @@ This is pure "Ambient Code" documentation with NO Red Hat branding.
 - Uses analogies and examples
 
 **Standard Style Characteristics:**
+
 - Technical depth assumed
 - Concise, reference-oriented
 - Code-focused with minimal explanation
@@ -100,6 +113,7 @@ This is pure "Ambient Code" documentation with NO Red Hat branding.
 - Jeremy's style: "Succinct, quickstart-focused"
 
 **Example Comparison:**
+
 - **NEED INPUT** - See question form (existing Terry vs Standard documentation pair if available)
 
 ---
@@ -107,12 +121,15 @@ This is pure "Ambient Code" documentation with NO Red Hat branding.
 ## Agent Execution Preferences
 
 ### Autonomy Level
+
 - [X] **Semi-Autonomous** - Show plan for each major section, proceed after approval
   - Rationale: Jeremy prefers proactive agents but wants visibility into major changes
   - Per Jeremy's CLAUDE.md: "Think like a seasoned strategic consultant"
 
 ### Phase Approval Points
+
 Required approval before:
+
 - [X] Creating repository structure (Week 1)
 - [X] Implementing FastAPI application (Week 2)
 - [X] Writing CBA agent definition (Week 3)
@@ -122,6 +139,7 @@ Required approval before:
 - [X] Final validation and testing (Week 6)
 
 ### Error Handling Strategy
+
 - [X] **Fix automatically** - Attempt to resolve errors autonomously
   - Rationale: Jeremy's CLAUDE.md emphasizes "complete tasks fully", "unlimited context"
   - Exception: Stop for security issues or architectural decisions
@@ -131,17 +149,20 @@ Required approval before:
 ## Integration Points
 
 ### Existing CLAUDE.md Configurations
+
 - **Global CLAUDE.md**: `/Users/jeder/.claude/CLAUDE.md` (Jeremy's personal config)
 - **Project CLAUDE.md**: `/Users/jeder/CLAUDE.md` (Jeremy's project config)
 - **New Project CLAUDE.md**: Will be created by this implementation (~400 lines)
 - **Conflicts to Avoid**: None anticipated - this is a new standalone repository
 
 ### Observability & Monitoring
+
 - **Current Platform**: None
 - **Requirements**: **Research only** (per prompt - document in `docs/observability-research.md`)
 - **Explicitly state**: "This is RESEARCH ONLY, not implemented in the reference repository"
 
 ### Existing CI/CD Configurations
+
 - **GitHub Actions**: No org-level workflows to integrate (standalone template)
 - **GitLab CI**: No shared templates - discrete implementation (not mirror)
 - **Security Scanning**: Standard Bandit + Safety (no org-specific requirements)
@@ -151,6 +172,7 @@ Required approval before:
 ## Constraints & Anti-Requirements
 
 ### Must NOT Include
+
 - [X] Red Hat branding (confirmed in prompt)
 - [X] "Amber" terminology (use "Codebase Agent" / "CBA" only)
 - [X] Sequenced adoption path (standalone patterns approach only)
@@ -164,6 +186,7 @@ Required approval before:
 - [X] Security overrotation (light touch only)
 
 ### Budget Constraints
+
 - **Agent Execution**: No specific concerns - use appropriate models
 - **CI/CD Minutes**: Standard GitHub free tier limits (2000 min/month)
 - **Third-party Services**: Use free tiers (Codecov free tier, Safety free tier)
@@ -173,9 +196,11 @@ Required approval before:
 ## Validation Expectations
 
 ### Pre-Submission Checklist
+
 Before considering implementation complete, verify:
 
 **Technical:**
+
 - [ ] `./scripts/setup.sh` completes in < 10 minutes
 - [ ] `uvicorn app.main:app --reload` starts successfully
 - [ ] All CRUD endpoints work via curl/Postman
@@ -183,18 +208,21 @@ Before considering implementation complete, verify:
 - [ ] Container builds and runs successfully
 
 **Code Quality:**
+
 - [ ] All linters pass (black, isort, ruff)
 - [ ] All GitHub Actions workflows pass
 - [ ] Security scans complete successfully
 - [ ] Mermaid diagrams validate successfully
 
 **Documentation:**
+
 - [ ] All 8 documentation files exist (4 pairs)
 - [ ] Comparison webpage displays correctly
 - [ ] No AI slop detected (human review)
 - [ ] Terry versions clearly more accessible than standard
 
 **Standalone Patterns:**
+
 - [ ] Features are independent (can adopt individually)
 - [ ] No prescribed sequence of adoption
 - [ ] Clear "what's included" section in README
@@ -221,16 +249,19 @@ Before considering implementation complete, verify:
 *Agent should update this section during implementation with key decisions:*
 
 ### Decisions Made
+
 - [DATE] [DECISION]: [Rationale]
 
 ### Blockers Encountered
+
 - [DATE] [BLOCKER]: [Resolution or workaround]
 
 ### Deviations from Prompt
+
 - [DATE] [DEVIATION]: [Why necessary]
 
 ---
 
-**End of Implementation Context**
+## End of Implementation Context
 
 Fill in the sections above, then provide both `IMPLEMENTATION_PROMPT.md` and this context file to the implementing agent.

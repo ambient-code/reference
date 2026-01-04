@@ -4,7 +4,7 @@
 
 The application follows a strict layered architecture with clear separation of concerns:
 
-```
+```text
 ┌─────────────────────────────────┐
 │      API Layer (FastAPI)        │  HTTP routes, request/response models
 ├─────────────────────────────────┤
@@ -14,7 +14,7 @@ The application follows a strict layered architecture with clear separation of c
 ├─────────────────────────────────┤
 │   Core Layer (Utilities)        │  Config, security, logging
 └─────────────────────────────────┘
-```
+```text
 
 ## Layer Responsibilities
 
@@ -23,10 +23,12 @@ The application follows a strict layered architecture with clear separation of c
 **Purpose**: Handle HTTP concerns
 
 **Files**:
+
 - `health.py` - Health check endpoints
 - `v1/items.py` - Resource endpoints
 
 **Responsibilities**:
+
 - Route definitions
 - Request/response serialization
 - HTTP status codes
@@ -34,6 +36,7 @@ The application follows a strict layered architecture with clear separation of c
 - OpenAPI documentation
 
 **Never in API Layer**:
+
 - Business logic
 - Database/storage operations
 - Complex validation
@@ -43,15 +46,18 @@ The application follows a strict layered architecture with clear separation of c
 **Purpose**: Implement business logic
 
 **Files**:
+
 - `item_service.py` - Item business logic
 
 **Responsibilities**:
+
 - CRUD operations
 - Business rules
 - Data manipulation
 - Transaction coordination
 
 **Never in Service Layer**:
+
 - HTTP concerns (status codes, headers)
 - Request/response serialization
 
@@ -60,15 +66,18 @@ The application follows a strict layered architecture with clear separation of c
 **Purpose**: Data validation and representation
 
 **Files**:
+
 - `item.py` - Item models (ItemBase, ItemCreate, ItemUpdate, Item)
 
 **Responsibilities**:
+
 - Field validation (Pydantic validators)
 - Type annotations
 - Serialization rules
 - Sanitization (via validators)
 
 **Never in Model Layer**:
+
 - Business logic
 - HTTP concerns
 
@@ -77,11 +86,13 @@ The application follows a strict layered architecture with clear separation of c
 **Purpose**: Cross-cutting concerns
 
 **Files**:
+
 - `config.py` - Application settings
 - `security.py` - Sanitization, validation utilities
 - `logging.py` - Structured logging
 
 **Responsibilities**:
+
 - Configuration management
 - Security utilities
 - Logging setup
@@ -89,7 +100,7 @@ The application follows a strict layered architecture with clear separation of c
 
 ## Dependency Flow
 
-```
+```text
 API Layer
   ↓ (depends on)
 Service Layer
@@ -97,7 +108,7 @@ Service Layer
 Model Layer
   ↓ (depends on)
 Core Layer
-```
+```text
 
 **Rule**: Higher layers can depend on lower layers, but not vice versa.
 
@@ -124,7 +135,7 @@ def create_item(self, data: ItemCreate) -> Item:
     # Store
     self._items[item.id] = item
     return item
-```
+```text
 
 ## Common Patterns
 
@@ -138,7 +149,7 @@ item_service = ItemService()
 
 # app/api/v1/items.py
 from app.services.item_service import item_service
-```
+```text
 
 ### Pydantic Validators
 
@@ -149,7 +160,7 @@ Sanitization in model validators:
 @classmethod
 def sanitize_name(cls, v: str) -> str:
     return sanitize_string(v, max_length=200)
-```
+```text
 
 ### Error Handling
 
@@ -167,7 +178,7 @@ def create_item(data: ItemCreate) -> Item:
         return item_service.create_item(data)
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e))
-```
+```text
 
 ## Testing Architecture
 
