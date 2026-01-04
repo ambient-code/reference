@@ -6,17 +6,37 @@ The Ambient Code Reference Repository demonstrates a **layered architecture** wi
 
 ## Layered Architecture
 
-```text
-┌─────────────────────────────────────┐
-│       API Layer (FastAPI)           │  HTTP, routes, serialization
-├─────────────────────────────────────┤
-│     Service Layer (Logic)           │  Business rules, orchestration
-├─────────────────────────────────────┤
-│    Model Layer (Pydantic)           │  Validation, types
-├─────────────────────────────────────┤
-│   Core Layer (Utilities)            │  Config, security, logging
-└─────────────────────────────────────┘
-```text
+```mermaid
+flowchart TB
+    subgraph API["API Layer (FastAPI)"]
+        direction LR
+        Routes[Routes]
+        Handlers[Handlers]
+        Serialization[Serialization]
+    end
+    subgraph Service["Service Layer (Logic)"]
+        direction LR
+        Business[Business Rules]
+        Orchestration[Orchestration]
+    end
+    subgraph Model["Model Layer (Pydantic)"]
+        direction LR
+        Validation[Validation]
+        Types[Types]
+    end
+    subgraph Core["Core Layer (Utilities)"]
+        direction LR
+        Config[Config]
+        Security[Security]
+        Logging[Logging]
+    end
+
+    API --> Service
+    Service --> Model
+    Model --> Core
+    API --> Core
+    Service --> Core
+```
 
 ### API Layer
 
@@ -39,7 +59,7 @@ def create_item(data: ItemCreate) -> Item:
         return item_service.create_item(data)
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e))
-```text
+```
 
 ### Service Layer
 
@@ -73,7 +93,7 @@ def create_item(self, data: ItemCreate) -> Item:
     self._next_id += 1
 
     return item
-```text
+```
 
 ### Model Layer
 
@@ -97,7 +117,7 @@ class ItemCreate(ItemBase):
     @classmethod
     def sanitize_name(cls, v: str) -> str:
         return sanitize_string(v, max_length=200)
-```text
+```
 
 ### Core Layer
 
@@ -121,32 +141,32 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
-```text
+```
 
 ## Data Flow
 
 ### Creating an Item
 
-```text
-1. Client sends POST /api/v1/items
-       ↓
-2. API Layer (items.py)
-   - Pydantic validates request body
-   - create_item() called
-       ↓
-3. Service Layer (item_service.py)
-   - Check business rules (duplicate slug)
-   - Create Item model
-   - Store in memory
-       ↓
-4. Model Layer (item.py)
-   - Sanitize fields
-   - Validate types
-       ↓
-5. API Layer returns 201 Created
-   - Serialize Item to JSON
-   - Return to client
-```text
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API as API Layer
+    participant Svc as Service Layer
+    participant Model as Model Layer
+
+    Client->>+API: POST /api/v1/items
+    API->>API: Pydantic validates request
+    API->>+Svc: create_item(data)
+    Svc->>Svc: Check business rules
+    Svc->>+Model: Create Item model
+    Model->>Model: Sanitize fields
+    Model->>Model: Validate types
+    Model-->>-Svc: Item instance
+    Svc->>Svc: Store in memory
+    Svc-->>-API: Item object
+    API->>API: Serialize to JSON
+    API-->>-Client: 201 Created + Item
+```
 
 ## Design Patterns
 
@@ -164,7 +184,7 @@ item_service = ItemService()
 
 # app/api/v1/items.py
 from app.services.item_service import item_service
-```text
+```
 
 ### Dependency Injection (Implicit)
 
@@ -180,7 +200,7 @@ def create_item(
     service: ItemService = Depends(get_item_service)
 ):
     return service.create_item(data)
-```text
+```
 
 ### Validation Pipeline
 
@@ -197,7 +217,7 @@ class ItemCreate(ItemBase):
     @classmethod
     def validate_slug_field(cls, v: str) -> str:
         return validate_slug(v)
-```text
+```
 
 ## Security Architecture
 
@@ -232,21 +252,27 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-```text
+```
 
 ## Testing Architecture
 
 ### Test Pyramid
 
-```text
-       ┌──────────┐
-       │   E2E    │  Few, slow (workflow tests)
-       ├──────────┤
-       │Integration│  Some, medium (API tests)
-       ├──────────┤
-       │   Unit   │  Many, fast (service tests)
-       └──────────┘
-```text
+```mermaid
+flowchart TB
+    subgraph E2E["E2E Tests"]
+        E[Few, Slow - Workflow Tests]
+    end
+    subgraph Integration["Integration Tests"]
+        I[Some, Medium - API Tests]
+    end
+    subgraph Unit["Unit Tests"]
+        U[Many, Fast - Service Tests]
+    end
+
+    E2E --> Integration
+    Integration --> Unit
+```
 
 **Unit**: Test service layer in isolation
 **Integration**: Test API with TestClient
@@ -266,7 +292,7 @@ JSON format for log aggregation:
   "message": "Item created",
   "request_id": "abc123"
 }
-```text
+```
 
 ### Health Endpoints
 
@@ -321,7 +347,7 @@ async def add_request_id(request: Request, call_next):
     request.state.request_id = generate_id()
     response = await call_next(request)
     return response
-```text
+```
 
 ### Adding Database
 
@@ -330,7 +356,7 @@ async def add_request_id(request: Request, call_next):
 from sqlalchemy.ext.asyncio import create_async_engine
 
 engine = create_async_engine(settings.database_url)
-```text
+```
 
 ## Best Practices
 

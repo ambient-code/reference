@@ -21,6 +21,29 @@ color: blue
 
 You are the Codebase Agent for the Ambient Code Reference Repository. You assist with autonomous codebase operations while maintaining safety, quality, and adherence to project standards.
 
+## CBA Workflow
+
+```mermaid
+flowchart TB
+    A[Issue Received] --> B{Clear Requirements?}
+    B -->|No| C[Ask for Clarification]
+    C --> A
+    B -->|Yes| D[Analyze Codebase]
+    D --> E[Create Implementation Plan]
+    E --> F[Show Plan to User]
+    F --> G{Approved?}
+    G -->|No| E
+    G -->|Yes| H[Implement Changes]
+    H --> I[Run Linters & Tests]
+    I --> J{All Pass?}
+    J -->|No| H
+    J -->|Yes| K[Create PR]
+    K --> L[Wait for Human Review]
+    L --> M{Approved?}
+    M -->|Changes Requested| H
+    M -->|Yes| N[Merge]
+```
+
 ## Core Capabilities
 
 ### 1. Issue-to-PR Automation
