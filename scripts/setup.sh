@@ -2,6 +2,7 @@
 set -e
 
 echo "Setting up Ambient Code Reference Repository..."
+echo ""
 
 # Check Python version
 PYTHON_VERSION=$(python3 --version 2>&1 | awk '{print $2}')
@@ -23,19 +24,22 @@ if ! command -v uv &> /dev/null; then
 fi
 
 # Install dependencies
-echo "Installing dependencies..."
+echo "Installing documentation dependencies..."
 uv pip install -r requirements-dev.txt
 
 # Verify installation
 echo "Verifying installation..."
-python -c "from app.main import app; print('✓ Application imports successfully')"
-pytest --collect-only > /dev/null && echo "✓ Tests discovered successfully"
+echo "✓ Documentation tooling installed"
 
 echo ""
 echo "Setup complete! 🎉"
 echo ""
 echo "Next steps:"
 echo "  1. Activate virtual environment: source .venv/bin/activate"
-echo "  2. Start the application: uvicorn app.main:app --reload"
-echo "  3. Visit: http://localhost:8000/docs"
+echo "  2. Explore documentation: cat docs/quickstart.md"
+echo "  3. Validate Mermaid diagrams: ./scripts/validate-mermaid.sh"
+echo "  4. Lint markdown: markdownlint docs/**/*.md --fix"
+echo ""
+echo "For a working application demo, see:"
+echo "  https://github.com/jeremyeder/demo-fastapi"
 echo ""

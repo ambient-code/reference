@@ -35,7 +35,7 @@ This file provides the contextual information needed to execute the implementati
 
 ### Primary Objective
 Create the **Ambient Code Reference Repository** - a GitHub template demonstrating
-AI-assisted development best practices for Python FastAPI services using the "buffet approach"
+AI-assisted development best practices for Python FastAPI services using the "standalone patterns approach"
 where teams can adopt features independently without requiring full implementation.
 This is pure "Ambient Code" documentation with NO Red Hat branding.
 
@@ -153,7 +153,7 @@ Required approval before:
 ### Must NOT Include
 - [X] Red Hat branding (confirmed in prompt)
 - [X] "Amber" terminology (use "Codebase Agent" / "CBA" only)
-- [X] Sequenced adoption path (buffet approach only)
+- [X] Sequenced adoption path (standalone patterns approach only)
 - [X] VictoriaMetrics (per Jeremy's CLAUDE.md)
 - [X] Time estimates (per Jeremy's CLAUDE.md: "never include time estimates unless explicitly asked")
 - [X] AI slop phrases ("let's dive in", "simply", "just", etc.)
@@ -194,7 +194,7 @@ Before considering implementation complete, verify:
 - [ ] No AI slop detected (human review)
 - [ ] Terry versions clearly more accessible than standard
 
-**Buffet Approach:**
+**Standalone Patterns:**
 - [ ] Features are independent (can adopt individually)
 - [ ] No prescribed sequence of adoption
 - [ ] Clear "what's included" section in README

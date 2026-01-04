@@ -8,7 +8,7 @@
 
 ## Mission
 
-Create the **Ambient Code Reference Repository** - a GitHub template demonstrating AI-assisted development best practices using the "buffet approach" where teams can adopt features independently.
+Create the **Ambient Code Reference Repository** - a GitHub template demonstrating AI-assisted development best practices using the "standalone patterns approach" where teams can adopt features independently.
 
 **Critical**: No Red Hat branding. This is pure "Ambient Code" documentation.
 
@@ -20,7 +20,7 @@ Create the **Ambient Code Reference Repository** - a GitHub template demonstrati
 - **Name**: Ambient Code Reference Repository
 - **Type**: GitHub template repository ("Use this template" button)
 - **Audience**: Both AI agents and human developers
-- **Philosophy**: Buffet approach - features work standalone, not sequenced
+- **Philosophy**: Standalone patterns approach - features work standalone, not sequenced
 - **Platform**: GitHub only
 
 ### Technology Stack
@@ -356,7 +356,7 @@ Core Layer (Config, security, utilities)
    - CI integration required
 
 4. **`README.md`** (HIGH)
-   - Buffet approach landing page
+   - Standalone patterns approach landing page
    - Quickstart (< 5 minutes)
    - Links to documentation
 
@@ -381,7 +381,7 @@ Core Layer (Config, security, utilities)
 - [ ] pyproject.toml (UV-compatible)
 - [ ] requirements.txt + requirements-dev.txt
 - [ ] scripts/setup.sh (one-command setup)
-- [ ] README.md (buffet approach)
+- [ ] README.md (standalone patterns approach)
 - [ ] LICENSE (MIT)
 - [ ] .python-version (3.11)
 - [ ] app/core/ (config.py, security.py, logging.py)
@@ -430,7 +430,7 @@ Core Layer (Config, security, utilities)
 - [ ] .python-version (3.11)
 - [ ] pyproject.toml (UV-compatible)
 - [ ] requirements.txt + requirements-dev.txt
-- [ ] README.md with buffet approach
+- [ ] README.md with standalone patterns approach
 - [ ] CLAUDE.md with comprehensive standards
 - [ ] CONTRIBUTING.md
 
@@ -485,7 +485,7 @@ Core Layer (Config, security, utilities)
 
 - ❌ **Red Hat branding** or references (keep as "Ambient Code")
 - ❌ **"Amber" terminology** (use "Codebase Agent" or "CBA" only)
-- ❌ **Sequenced/linear adoption path** (buffet approach only)
+- ❌ **Sequenced/linear adoption path** (standalone patterns approach only)
 - ❌ **Deployment infrastructure** (development-focused)
 - ❌ **AI slop** in documentation (succinct, no fluff)
 - ❌ **Security overrotation** (light touch only)
@@ -520,7 +520,7 @@ Core Layer (Config, security, utilities)
 - [ ] Markdownlint passes
 - [ ] All docs are succinct (no AI slop)
 
-### Buffet Approach
+### Standalone Patterns
 - [ ] Features are independent (can adopt one without others)
 - [ ] Clear "what's included" section in README
 - [ ] No prescribed sequence of adoption
@@ -577,7 +577,7 @@ A successful implementation will:
 2. **Pass all linters** (black, isort, ruff)
 3. **Pass all tests** (80%+ coverage)
 4. **Validate all diagrams** (no Mermaid syntax errors)
-5. **Demonstrate buffet approach** (features work independently)
+5. **Demonstrate standalone patterns approach** (features work independently)
 6. **Work as GitHub template** ("Use this template" button functional)
 7. **Have succinct documentation** (no AI slop)
 

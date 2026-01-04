@@ -1,10 +1,20 @@
 # Quickstart Guide
 
-Get the Ambient Code Reference Repository running in 5 minutes.
+Get started with Ambient Code reference patterns in 5 minutes.
+
+## What This Repository Is
+
+This is a **documentation-only reference** for AI-assisted development patterns. It provides:
+
+- **Pattern documentation** - CBA, architecture, security, testing
+- **Example configurations** - `.claude/` agent setup examples
+- **Best practices** - Documentation templates and standards
+
+**Looking for a working application?** See [demo-fastapi](https://github.com/jeremyeder/demo-fastapi)
 
 ## Prerequisites
 
-- Python 3.11 or 3.12
+- Python 3.11 or 3.12 (for documentation tooling)
 - `uv` (recommended) or `pip`
 - Git
 
@@ -17,119 +27,141 @@ git clone https://github.com/jeremyeder/reference.git
 cd reference
 ```
 
-### 2. Run Setup Script
+### 2. Install Documentation Tooling (Optional)
 
 ```bash
+# Run setup script
 ./scripts/setup.sh
+
+# Or manually install
+uv pip install -r requirements-dev.txt
 ```
 
-This script:
-- Creates virtual environment
-- Installs dependencies
-- Verifies installation
+This installs markdown linting and Mermaid validation tools.
 
-### 3. Activate Virtual Environment
+## Explore the Patterns
+
+### Browse Documentation
 
 ```bash
-source .venv/bin/activate
+# Read pattern overviews
+cat docs/architecture.md
+cat docs/tutorial.md
+cat docs/api-reference.md
+
+# Explore CBA agent patterns
+cat .claude/agents/codebase-agent.md
+
+# Check context examples
+cat .claude/context/architecture.md
+cat .claude/context/security-standards.md
+cat .claude/context/testing-patterns.md
 ```
 
-### 4. Start the Application
+### Understand the Structure
 
 ```bash
-uvicorn app.main:app --reload
+# See repository layout
+tree -L 2 -I '.venv|.git'
+
+# List available patterns
+ls -la .claude/agents/
+ls -la .claude/context/
+ls -la docs/
 ```
 
-The application starts at `http://localhost:8000`.
+## Validate Documentation (If You Modify)
 
-## First API Call
-
-### Health Check
+### Lint Markdown
 
 ```bash
-curl http://localhost:8000/health
+markdownlint docs/**/*.md README.md CLAUDE.md --fix
 ```
 
-Response:
-```json
-{"status": "healthy"}
-```
-
-### Create an Item
+### Validate Mermaid Diagrams
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/items \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "My First Item",
-    "slug": "my-first-item",
-    "description": "A test item"
-  }'
+./scripts/validate-mermaid.sh
 ```
 
-Response:
-```json
-{
-  "id": 1,
-  "name": "My First Item",
-  "slug": "my-first-item",
-  "description": "A test item",
-  "created_at": "2025-12-17T12:00:00",
-  "updated_at": "2025-12-17T12:00:00"
-}
-```
+## Use the Patterns
 
-### List Items
+### Pick What You Need
+
+This repository uses **standalone patterns** - adopt concepts independently:
+
+1. **Codebase Agent Setup**
+   - Copy `.claude/` structure to your project
+   - Adapt agent definitions in `.claude/agents/`
+   - Customize context files in `.claude/context/`
+
+2. **Architecture Patterns**
+   - Reference layered architecture in `docs/architecture.md`
+   - Adapt for your tech stack (FastAPI, Express, Go, etc.)
+
+3. **Testing Patterns**
+   - Follow structures in `.claude/context/testing-patterns.md`
+   - Organize tests as unit/integration/e2e
+
+4. **CI/CD Patterns**
+   - Copy workflows from `.github/workflows/`
+   - Adapt for your documentation validation needs
+
+### Example: Add CBA to Your Project
 
 ```bash
-curl http://localhost:8000/api/v1/items
-```
+# In your project
+cp -r /path/to/reference/.claude .
+cd .claude/agents/
 
-## Interactive API Documentation
+# Edit codebase-agent.md for your needs
+vim codebase-agent.md
 
-Visit:
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-
-## Run Tests
-
-```bash
-pytest
-```
-
-## Run Linters
-
-```bash
-# Format code
-black app/ tests/
-
-# Sort imports
-isort app/ tests/
-
-# Lint
-ruff check app/ tests/
+# Customize context files
+cd ../context/
+vim architecture.md  # Your project's architecture
+vim security-standards.md  # Your security practices
 ```
 
 ## Next Steps
 
-- **[Architecture](architecture.md)** - Understand the layered architecture
-- **[Tutorial](tutorial.md)** - Build your first feature
-- **[API Reference](api-reference.md)** - Complete API documentation
+- **[Architecture](architecture.md)** - Understand pattern organization
+- **[Tutorial](tutorial.md)** - Apply patterns to your project
+- **[API Reference](api-reference.md)** - API design patterns
+
+## Working Application Demo
+
+Want to see these patterns in action?
+
+→ **[demo-fastapi](https://github.com/jeremyeder/demo-fastapi)** - Working FastAPI application demonstrating CBA patterns
+
+The demo includes:
+- Full CRUD API with FastAPI
+- CBA agent configured for the app
+- Complete test suite
+- Containerfile for deployment
 
 ## Troubleshooting
 
-**Virtual environment not activating?**
+**Markdown linting fails?**
 ```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
+# Install markdownlint
+npm install -g markdownlint-cli
+
+# Fix issues automatically
+markdownlint docs/**/*.md --fix
 ```
 
-**Dependency installation failing?**
+**Mermaid validation fails?**
 ```bash
-uv pip install -r requirements-dev.txt
+# Install mermaid-cli
+npm install -g @mermaid-js/mermaid-cli
+
+# Run validation
+./scripts/validate-mermaid.sh
 ```
 
-**Port 8000 already in use?**
-```bash
-uvicorn app.main:app --reload --port 8001
-```
+**Need help with patterns?**
+- Read detailed docs in `docs/`
+- Check examples in `.claude/`
+- See working implementation in [demo-fastapi](https://github.com/jeremyeder/demo-fastapi)

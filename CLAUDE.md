@@ -1,7 +1,7 @@
 # Ambient Code Reference Repository - Agent Configuration
 
-**Version**: 2.0.0
-**Last Updated**: 2025-12-17
+**Version**: 2.1.0
+**Last Updated**: 2026-01-04
 **Purpose**: Documentation-only reference for AI-assisted development patterns
 
 ---
@@ -21,10 +21,10 @@
 
 ### Repository Purpose
 
-This is a **GitHub template repository** demonstrating AI-assisted development best practices. It's a **documentation-only** reference using the "buffet approach" - concepts are standalone and independently adoptable.
+This is a **GitHub template repository** demonstrating AI-assisted development best practices. It's a **documentation-only** reference using the "standalone patterns approach" - concepts are standalone and independently adoptable.
 
 **Key Principles**:
-- ✅ **Buffet approach** - Patterns are standalone and independently adoptable
+- ✅ **Standalone patterns approach** - Patterns are standalone and independently adoptable
 - ✅ **Documentation-focused** - Pure reference material, no working application
 - ✅ **Succinct content** - No AI slop, get to the point
 - ✅ **Quality automation** - Documentation linting and validation
@@ -48,6 +48,11 @@ This is a **GitHub template repository** demonstrating AI-assisted development b
 - Documentation validation workflows
 - Markdown linting
 - Mermaid diagram validation
+
+### Working Application Demo
+
+For a **working FastAPI application** demonstrating these patterns in practice, see:
+**[demo-fastapi](https://github.com/jeremyeder/demo-fastapi)** - Toy application showing CBA patterns in action
 
 ---
 
@@ -402,7 +407,7 @@ Common sanitization functions to implement:
 **NEVER include**:
 - ❌ Red Hat branding or references
 - ❌ "Amber" terminology (use "Codebase Agent" or "CBA")
-- ❌ Sequenced/linear adoption path (buffet approach only)
+- ❌ Sequenced/linear adoption path (standalone patterns approach only)
 - ❌ Deployment infrastructure (focus on development)
 - ❌ AI slop in documentation
 - ❌ Security overrotation (light touch, practical)

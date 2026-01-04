@@ -1,6 +1,6 @@
 # Ambient Code Reference Repository
 
-A **documentation-only** GitHub template demonstrating AI-assisted development patterns with a **buffet approach** - adopt concepts independently, no prescribed sequence.
+A **documentation-only** GitHub template demonstrating AI-assisted development patterns with a **standalone patterns approach** - adopt concepts independently, no prescribed sequence.
 
 ## Quick Start
 
@@ -31,7 +31,7 @@ This repository provides documentation and patterns for:
 - ✅ **Documentation Templates** - Quickstart, architecture, tutorials, API reference
 - ✅ **Quality Automation** - Markdown linting, Mermaid diagram validation
 
-## Buffet Approach
+## Standalone Patterns
 
 Pick what you need. Each pattern works independently:
 
@@ -60,6 +60,18 @@ ambient-code-reference/
 ├── .github/workflows/   # CI/CD for documentation
 └── scripts/            # Validation and setup scripts
 ```
+
+## Working Application Demo
+
+Want to see these patterns in a working FastAPI application?
+
+**→ [demo-fastapi](https://github.com/jeremyeder/demo-fastapi)** - Toy application demonstrating CBA patterns in practice
+
+The demo repository includes:
+- Working FastAPI service with CRUD endpoints
+- CBA agent configuration
+- Full test suite (unit, integration, E2E)
+- Container support (Podman/Docker)
 
 ## Key Patterns
 

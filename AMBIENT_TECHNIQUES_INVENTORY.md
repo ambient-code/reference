@@ -9,7 +9,7 @@ This document catalogs all techniques, patterns, and automation discovered acros
 
 ## Table of Contents
 
-1. [Issue-to-PR Automation (Amber)](#issue-to-pr-automation-amber)
+1. [Issue-to-PR Automation (CBA)](#issue-to-pr-automation-cba)
 2. [GitHub Actions Workflows](#github-actions-workflows)
 3. [Agent Orchestration Patterns](#agent-orchestration-patterns)
 4. [Workflow Templates](#workflow-templates)
@@ -20,11 +20,11 @@ This document catalogs all techniques, patterns, and automation discovered acros
 
 ---
 
-## Issue-to-PR Automation (Amber)
+## Issue-to-PR Automation (CBA)
 
 ### Overview
 
-**Amber** is a background agent that automatically converts GitHub issues into pull requests. This is the **core productivity multiplier** - team members can trigger automated fixes without direct access to Claude Code.
+**CBA** is a background agent that automatically converts GitHub issues into pull requests. This is the **core productivity multiplier** - team members can trigger automated fixes without direct access to Claude Code.
 
 ### How It Works
 
@@ -32,7 +32,7 @@ This document catalogs all techniques, patterns, and automation discovered acros
 graph LR
     A[Create Issue] --> B[Add Label]
     B --> C[GHA Triggers]
-    C --> D[Amber Executes]
+    C --> D[CBA Executes]
     D --> E[Create PR]
     E --> F[Review & Merge]
 ```
@@ -40,21 +40,21 @@ graph LR
 ### Trigger Mechanisms
 
 1. **Labels** (Primary):
-   - `amber:auto-fix` - Low-risk formatting/linting fixes
-   - `amber:refactor` - Medium-risk refactoring
-   - `amber:test-coverage` - Add missing tests
+   - `cba:auto-fix` - Low-risk formatting/linting fixes
+   - `cba:refactor` - Medium-risk refactoring
+   - `cba:test-coverage` - Add missing tests
 
 2. **Comments** (Alternative):
-   - `/amber execute` - Execute proposal in issue
-   - `@amber` - Mention Amber to trigger
+   - `/cba execute` - Execute proposal in issue
+   - `@cba` - Mention CBA to trigger
 
 ### Workflow Implementation
 
-**File**: `.github/workflows/amber-issue-handler.yml`
+**File**: `.github/workflows/cba-issue-handler.yml`
 
 **Key Features**:
 - ✅ Prevents duplicate PRs (checks for existing PRs)
-- ✅ Creates sanitized branch names: `amber/issue-{number}-{sanitized-title}`
+- ✅ Creates sanitized branch names: `cba/issue-{number}-{sanitized-title}`
 - ✅ Handles race conditions (PR closed during execution)
 - ✅ Security: Validates branch names, prevents injection
 - ✅ Retry logic with exponential backoff for API calls
@@ -68,7 +68,7 @@ graph LR
 
 ### Issue Format Requirements
 
-For Amber to work effectively, structure issues like this:
+For CBA to work effectively, structure issues like this:
 
 ```markdown
 ## Problem
@@ -79,7 +79,7 @@ File: `path/to/file.go`
 File: `path/to/another.py`
 
 ## Instructions
-[Step-by-step instructions for Amber]
+[Step-by-step instructions for CBA]
 
 ## Success Criteria
 - [ ] All linters pass
@@ -88,13 +88,13 @@ File: `path/to/another.py`
 ```
 
 **Key Fields**:
-- `File:` or `Path:` - Amber extracts file paths automatically
+- `File:` or `Path:` - CBA extracts file paths automatically
 - `Instructions:` or `Task:` - Main instructions section
 - Success criteria checklist
 
 ### Risk-Based Automation Policies
 
-**Configuration**: `.claude/amber-config.yml`
+**Configuration**: `.claude/cba-config.yml`
 
 | Risk Level | Actions | Auto-Merge | Examples |
 |------------|---------|------------|----------|
@@ -102,7 +102,7 @@ File: `path/to/another.py`
 | **Medium** | Create PR with proposal | No | Refactoring, test additions |
 | **High** | Report only, no PR | N/A | Breaking changes, security issues |
 
-### Amber Categories
+### CBA Categories
 
 **Auto-Fix (Low Risk)**:
 - Code formatting (gofmt, black, prettier)
@@ -145,17 +145,17 @@ safety:
 
 ### Core Workflows
 
-#### 1. Amber Issue Handler (`amber-issue-handler.yml`)
+#### 1. CBA Issue Handler (`cba-issue-handler.yml`)
 
-**Purpose**: Convert issues to PRs via Amber agent
+**Purpose**: Convert issues to PRs via CBA agent
 
 **Triggers**:
-- Issue labeled: `amber:auto-fix`, `amber:refactor`, `amber:test-coverage`
-- Issue comment: `/amber execute` or `@amber`
+- Issue labeled: `cba:auto-fix`, `cba:refactor`, `cba:test-coverage`
+- Issue comment: `/cba execute` or `@cba`
 
 **Steps**:
 1. Extract issue details (files, instructions)
-2. Create Amber agent prompt
+2. Create CBA agent prompt
 3. Check for existing PR (prevent duplicates)
 4. Create/checkout feature branch
 5. Execute Claude Code CLI
@@ -241,16 +241,16 @@ safety:
 - Requires manual review for major updates
 - Only for Dependabot PRs
 
-#### 6. Amber Dependency Sync (`amber-dependency-sync.yml`)
+#### 6. CBA Dependency Sync (`cba-dependency-sync.yml`)
 
-**Purpose**: Daily sync of dependency versions to Amber knowledge base
+**Purpose**: Daily sync of dependency versions to CBA knowledge base
 
 **Behavior**:
 - Runs daily at scheduled time
-- Updates Amber's understanding of current dependencies
-- Helps Amber make better decisions about updates
+- Updates CBA's understanding of current dependencies
+- Helps CBA make better decisions about updates
 
-#### 7. Amber Auto Review (`amber-auto-review.yml`)
+#### 7. CBA Auto Review (`cba-auto-review.yml`)
 
 **Purpose**: Automatic code reviews on PRs (complement to manual @claude reviews)
 
@@ -282,7 +282,7 @@ safety:
 
 ## Agent Orchestration Patterns
 
-### Amber - Workflow Orchestrator
+### CBA - Workflow Orchestrator
 
 **Role**: Single point of contact, intelligent agent coordinator
 
@@ -292,7 +292,7 @@ safety:
 - Adaptive complexity handling
 - Complete ecosystem access
 
-**Specialists Amber May Engage**:
+**Specialists CBA May Engage**:
 - **Stella (Staff Engineer)** - Complex debugging, architecture
 - **Neil (Test Engineer)** - Testing strategies, automation
 - **Taylor (Team Member)** - Straightforward implementations
@@ -341,9 +341,9 @@ Located in `.claude/agents/` or `workflows/agent-bullpen/`:
 "Invoke Stella to analyze this architectural issue"
 ```
 
-**Implicit (Amber Orchestration)**:
+**Implicit (CBA Orchestration)**:
 ```
-"Fix this bug" → Amber automatically engages Neil for testing, Stella for complex parts
+"Fix this bug" → CBA automatically engages Neil for testing, Stella for complex parts
 ```
 
 **Multi-Agent Collaboration**:
@@ -494,19 +494,19 @@ pre-commit install
 **Behavior**:
 - Runs on all PRs
 - Blocks merge if failures
-- Auto-fix suggestions via Amber
+- Auto-fix suggestions via CBA
 
 ### Test Coverage
 
 **Requirements**:
 - Minimum thresholds per component
 - Coverage reports in CI
-- Amber can add missing tests (`amber:test-coverage`)
+- CBA can add missing tests (`cba:test-coverage`)
 
 ### Code Review Automation
 
 **Two-Tier System**:
-1. **Amber Auto Review** - Automatic on all PRs
+1. **CBA Auto Review** - Automatic on all PRs
 2. **Claude Manual Review** - On-demand via `@claude`
 
 **Review Focus Areas**:
@@ -656,7 +656,7 @@ if err != nil || !res.Status.Allowed {
 **Benefits**:
 - Security patches applied automatically
 - No manual dependency updates
-- Amber stays current with versions
+- CBA stays current with versions
 - Reduced technical debt
 
 ---
@@ -672,15 +672,15 @@ For `github.com/ambient-code/reference`:
 - [ ] Create basic README.md
 - [ ] Add CLAUDE.md with memory system structure
 
-### Phase 2: Amber Automation
+### Phase 2: CBA Automation
 
-- [ ] Create `.github/workflows/amber-issue-handler.yml`
-- [ ] Create `.claude/amber-config.yml`
+- [ ] Create `.github/workflows/cba-issue-handler.yml`
+- [ ] Create `.claude/cba-config.yml`
 - [ ] Create issue templates:
-  - [ ] `.github/ISSUE_TEMPLATE/amber-auto-fix.yml`
-  - [ ] `.github/ISSUE_TEMPLATE/amber-refactor.yml`
-  - [ ] `.github/ISSUE_TEMPLATE/amber-test-coverage.yml`
-- [ ] Test Amber workflow with sample issue
+  - [ ] `.github/ISSUE_TEMPLATE/cba-auto-fix.yml`
+  - [ ] `.github/ISSUE_TEMPLATE/cba-refactor.yml`
+  - [ ] `.github/ISSUE_TEMPLATE/cba-test-coverage.yml`
+- [ ] Test CBA workflow with sample issue
 
 ### Phase 3: Code Quality Automation
 
@@ -692,7 +692,7 @@ For `github.com/ambient-code/reference`:
 ### Phase 4: Code Review Automation
 
 - [ ] Create `.github/workflows/claude-code-review.yml`
-- [ ] Create `.github/workflows/amber-auto-review.yml`
+- [ ] Create `.github/workflows/cba-auto-review.yml`
 - [ ] Test review workflows
 
 ### Phase 5: Documentation
@@ -718,9 +718,9 @@ For `github.com/ambient-code/reference`:
 
 ## Key Takeaways
 
-1. **Issue-to-PR is the killer feature** - Amber automation provides 10x productivity gains
+1. **Issue-to-PR is the killer feature** - CBA automation provides 10x productivity gains
 2. **Security is built-in** - All workflows follow security best practices
-3. **Agent orchestration scales** - Amber automatically brings in the right expertise
+3. **Agent orchestration scales** - CBA automatically brings in the right expertise
 4. **Context matters** - Structured context files beat monolithic CLAUDE.md
 5. **Automation everywhere** - From linting to reviews to dependency updates
 6. **Workflows standardize** - Templates ensure consistency and quality
@@ -733,7 +733,7 @@ For `github.com/ambient-code/reference`:
 1. **Review this inventory** - Understand all techniques
 2. **Prioritize features** - Which ones provide most value?
 3. **Plan implementation** - Use checklist above
-4. **Start with Amber** - Issue-to-PR automation is highest ROI
+4. **Start with CBA** - Issue-to-PR automation is highest ROI
 5. **Iterate** - Add more automation as needed
 
 ---
