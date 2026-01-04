@@ -33,7 +33,7 @@ flowchart TD
 ### Key Characteristics
 
 | Aspect | Description |
-|--------|-------------|
+| ------ | ----------- |
 | **Parallel execution** | All agents run simultaneously |
 | **Specialized focus** | Each agent reviews one dimension |
 | **Auto-fix loop** | Critical issues fixed before presentation |
@@ -117,7 +117,7 @@ Review the following code changes for [FOCUS AREA] issues.
 ## Finding Categories
 
 | Category | Action | Threshold |
-|----------|--------|-----------|
+| -------- | ------ | --------- |
 | **CRITICAL** | Auto-fix before presenting | Block presentation |
 | **WARNING** | Include in review notes | User decides |
 | **INFO** | Optional mention | Low priority |
@@ -150,7 +150,7 @@ Examples requiring human judgment:
 ### Key Metrics
 
 | Metric | Before | Target | How to Measure |
-|--------|--------|--------|----------------|
+| ------ | ------ | ------ | -------------- |
 | Critical issues in presented code | 2-3 | 0 | Agent review findings |
 | Rework cycles per feature | 3-5 | 1 | Iteration count |
 | Time spent on code review | Hours | Minutes | Review duration |
@@ -196,7 +196,7 @@ flowchart LR
 ## Benefits
 
 | Benefit | Description |
-|---------|-------------|
+| ------- | ----------- |
 | **Parallel speed** | 3 reviews in time of 1 |
 | **Specialized depth** | Each agent focuses on one area |
 | **Consistent standards** | Same review criteria every time |

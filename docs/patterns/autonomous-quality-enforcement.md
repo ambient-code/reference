@@ -107,7 +107,7 @@ flowchart TD
 ```
 
 | Component | Purpose | When It Runs |
-|-----------|---------|--------------|
+| --------- | ------- | ------------ |
 | **Process Rules** | Remind agent to validate | During development |
 | **Validation Loops** | Fix failures autonomously | Before presenting code |
 | **Git Hooks** | Final safety net | At commit time |
@@ -197,7 +197,7 @@ git add . && git commit -m "test"  # Will run validation
 ### Key Metrics
 
 | Metric | Before AQE | Target | How to Measure |
-|--------|------------|--------|----------------|
+| ------ | ---------- | ------ | -------------- |
 | Broken code presentations | 2-5 per feature | 0 | Count user-reported crashes |
 | "Try this fix" iterations | 3-5 per bug | 0-1 | Count back-and-forth cycles |
 | Time to working code | Variable | First presentation | Track presentation-to-approval time |
@@ -326,7 +326,7 @@ No divergence. If CI fails, local will fail too.
 ## Benefits
 
 | Benefit | Description |
-|---------|-------------|
+| ------- | ----------- |
 | **Zero broken presentations** | Users only see working code |
 | **Faster iteration** | Agent self-corrects before asking for help |
 | **Clean git history** | Broken commits never enter the repository |
