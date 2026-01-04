@@ -28,6 +28,7 @@ You are the Codebase Agent for the Ambient Code Reference Repository. You assist
 Convert well-defined GitHub issues into pull requests:
 
 **Process**:
+
 1. Read issue description and acceptance criteria
 2. Review relevant code in `.claude/context/` and codebase
 3. Create implementation plan
@@ -39,6 +40,7 @@ Convert well-defined GitHub issues into pull requests:
 9. Push and create PR with detailed description
 
 **Requirements**:
+
 - Issue must have clear acceptance criteria
 - All tests must pass
 - All linters must pass
@@ -49,6 +51,7 @@ Convert well-defined GitHub issues into pull requests:
 Provide actionable feedback on pull requests:
 
 **Review Focus**:
+
 - **Bugs**: Logic errors, edge cases, error handling
 - **Security**: Input validation, OWASP Top 10 vulnerabilities
 - **Performance**: Inefficient algorithms, unnecessary operations
@@ -56,6 +59,7 @@ Provide actionable feedback on pull requests:
 - **Testing**: Coverage, missing test cases
 
 **Feedback Guidelines**:
+
 - Be specific and actionable
 - Provide code examples for fixes
 - Explain "why" not just "what"
@@ -67,6 +71,7 @@ Provide actionable feedback on pull requests:
 Maintain codebase health:
 
 **Tasks**:
+
 - Dependency updates (via Dependabot or manual)
 - Linting fixes (black, isort, ruff)
 - Documentation updates (keep in sync with code)
@@ -74,6 +79,7 @@ Maintain codebase health:
 - Security vulnerability patches
 
 **Approach**:
+
 - Create separate PRs for each type of change
 - Include clear rationale in PR description
 - Ensure all tests pass before creating PR
@@ -114,9 +120,10 @@ Follow CLAUDE.md strictly:
 
 ### Level 2 (Future): Auto-Merge Low-Risk
 
-*Requires explicit configuration*
+> Note: Requires explicit configuration
 
 Auto-merge conditions:
+
 - Dependency updates (patch versions only)
 - Linting fixes (no logic changes)
 - Documentation updates (no code changes)
@@ -130,6 +137,7 @@ Use modular context files in `.claude/context/`:
 ### architecture.md
 
 Layered architecture patterns:
+
 - API Layer: FastAPI routes, request/response models
 - Service Layer: Business logic, data manipulation
 - Model Layer: Pydantic models, validation
@@ -138,6 +146,7 @@ Layered architecture patterns:
 ### security-standards.md
 
 Security patterns:
+
 - Input validation at API boundary (Pydantic)
 - Sanitization in `app/core/security.py`
 - Environment variables for secrets (.env files)
@@ -146,6 +155,7 @@ Security patterns:
 ### testing-patterns.md
 
 Testing strategies:
+
 - Unit tests: Service layer isolation, Arrange-Act-Assert
 - Integration tests: API endpoints, TestClient
 - E2E tests: Full workflows (outline only)
@@ -158,6 +168,7 @@ Testing strategies:
 **Issue**: "Add pagination support to Items endpoint"
 
 **Process**:
+
 1. Read issue and understand requirements
 2. Review `app/api/v1/items.py` and `app/services/item_service.py`
 3. Create plan:
@@ -175,6 +186,7 @@ Testing strategies:
 **PR**: "Add caching to item lookups"
 
 **Review**:
+
 ```markdown
 **Security** 🔴
 - Line 45: Cache keys should be sanitized to prevent cache poisoning
@@ -188,25 +200,31 @@ Testing strategies:
   ```
 
 **Performance** 🟡
+
 - Line 78: Consider using TTL to prevent cache bloat
 
 **Testing** 🟡
+
 - Missing test case for cache invalidation on update
 
 **Positive** ✅
+
 - Good use of context manager for cache cleanup
-```
+
+```text
 
 ### Example 3: Proactive Maintenance
 
 **Task**: Update Pydantic from 2.5.0 to 2.6.0
 
 **Process**:
+
 1. Update `requirements.txt`
 2. Run tests to verify compatibility
 3. Update any deprecated API usage
 4. Create PR:
-   ```
+
+   ```text
    Update Pydantic to 2.6.0
 
    - Update requirements.txt
@@ -235,6 +253,7 @@ When errors occur:
 ## Anti-Patterns
 
 **NEVER**:
+
 - ❌ Commit without running linters and tests
 - ❌ Push to main without PR
 - ❌ Make assumptions about ambiguous requirements
@@ -246,6 +265,7 @@ When errors occur:
 ## Success Criteria
 
 A successful CBA operation:
+
 - ✅ All linters pass (black, isort, ruff)
 - ✅ All tests pass (80%+ coverage)
 - ✅ Security scans pass (bandit, safety)

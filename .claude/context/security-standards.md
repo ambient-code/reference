@@ -5,6 +5,7 @@
 ### Principle: Validate at Boundaries
 
 **Validate external input at API boundary only**:
+
 - Use Pydantic models for all request payloads
 - Validation happens automatically in route parameters
 - Trust internal code - don't re-validate
@@ -42,11 +43,13 @@ All sanitization functions in `app/core/security.py`.
 ### Functions
 
 **`sanitize_string(value, max_length)`**:
+
 - Remove control characters
 - Trim whitespace
 - Enforce length limits
 
 **`validate_slug(value)`**:
+
 - Ensure URL-safe (lowercase, numbers, hyphens only)
 - No leading/trailing hyphens
 - No consecutive hyphens
@@ -112,12 +115,14 @@ podman run -e SECRET_KEY=xxx myapp
 ### Input Validation Rules
 
 **String fields**:
+
 - Max length limits
 - Character allowlist (for slugs)
 - Trim whitespace
 - Remove control characters
 
 **Numeric fields**:
+
 - Min/max validation
 - Type checking (Pydantic automatic)
 
@@ -175,6 +180,7 @@ safety check
 ### CI Integration
 
 Both run in `.github/workflows/security.yml`:
+
 - Weekly schedule
 - On push/PR
 - Fail build on HIGH severity
@@ -182,6 +188,7 @@ Both run in `.github/workflows/security.yml`:
 ## Common Mistakes
 
 **DON'T**:
+
 - ❌ Validate the same data multiple times
 - ❌ Sanitize in both model and service layer
 - ❌ Trust user input without validation
@@ -189,6 +196,7 @@ Both run in `.github/workflows/security.yml`:
 - ❌ Hardcode secrets
 
 **DO**:
+
 - ✅ Validate once at API boundary
 - ✅ Use Pydantic validators
 - ✅ Keep secrets in environment
