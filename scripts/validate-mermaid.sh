@@ -24,6 +24,15 @@ else
     MMDC_AVAILABLE=true
 fi
 
+MMDC_ARGS=""
+if [[ -n "$PUPPETEER_CONFIG" ]] && [[ -f "$PUPPETEER_CONFIG" ]]; then
+    MMDC_ARGS="-p $PUPPETEER_CONFIG"
+    echo "Using Puppeteer config: $PUPPETEER_CONFIG"
+elif [[ -f "$SCRIPT_DIR/puppeteer-config.json" ]]; then
+    MMDC_ARGS="-p $SCRIPT_DIR/puppeteer-config.json"
+    echo "Using Puppeteer config: $SCRIPT_DIR/puppeteer-config.json"
+fi
+
 ERRORS=0
 TOTAL=0
 
@@ -55,7 +64,7 @@ validate_markdown_file() {
                 echo "$mermaid_content" > "$temp_file"
                 
                 if [[ "$MMDC_AVAILABLE" == true ]]; then
-                    if mmdc -i "$temp_file" -o "$TEMP_DIR/output.svg" 2>"$TEMP_DIR/error.log"; then
+                    if mmdc $MMDC_ARGS -i "$temp_file" -o "$TEMP_DIR/output.svg" 2>"$TEMP_DIR/error.log"; then
                         echo -e "${GREEN}✓${NC} $file:$block_start_line (block $block_num)"
                     else
                         echo -e "${RED}✗${NC} $file:$block_start_line (block $block_num)"
@@ -91,7 +100,7 @@ else
     for file in $MMD_FILES; do
         TOTAL=$((TOTAL + 1))
         if [[ "$MMDC_AVAILABLE" == true ]]; then
-            if mmdc -i "$file" -o "$TEMP_DIR/output.svg" 2>"$TEMP_DIR/error.log"; then
+            if mmdc $MMDC_ARGS -i "$file" -o "$TEMP_DIR/output.svg" 2>"$TEMP_DIR/error.log"; then
                 echo -e "${GREEN}✓${NC} $file"
             else
                 echo -e "${RED}✗${NC} $file"
