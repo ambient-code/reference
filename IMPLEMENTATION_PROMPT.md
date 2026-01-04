@@ -17,6 +17,7 @@ Create the **Ambient Code Reference Repository** - a GitHub template demonstrati
 ## Core Requirements
 
 ### Repository Identity
+
 - **Name**: Ambient Code Reference Repository
 - **Type**: GitHub template repository ("Use this template" button)
 - **Audience**: Both AI agents and human developers
@@ -24,6 +25,7 @@ Create the **Ambient Code Reference Repository** - a GitHub template demonstrati
 - **Platform**: GitHub only
 
 ### Technology Stack
+
 - **Application**: FastAPI microservice (Python 3.11+)
 - **Agent**: "Codebase Agent" (CBA) - **NOT "Amber"**
 - **Testing**: pytest with 80%+ coverage goal
@@ -32,6 +34,7 @@ Create the **Ambient Code Reference Repository** - a GitHub template demonstrati
 - **Container**: Podman-compatible Containerfile
 
 ### Documentation Strategy
+
 - **Style**: Quickstart-focused, succinct, NO AI slop
 - **Format**: GitHub-flavored markdown
 - **Mermaid diagrams**: Rigorously validated (user notes diagrams always have errors)
@@ -41,7 +44,7 @@ Create the **Ambient Code Reference Repository** - a GitHub template demonstrati
 
 ## Repository Structure (Complete)
 
-```
+```text
 ambient-code-reference/
 ├── .github/
 │   ├── workflows/
@@ -128,7 +131,7 @@ ambient-code-reference/
 ├── CONTRIBUTING.md
 ├── LICENSE                          # MIT
 └── Containerfile                    # Podman/Docker image
-```
+```text
 
 ---
 
@@ -137,25 +140,31 @@ ambient-code-reference/
 **CRITICAL**: Use "Codebase Agent" or "CBA" terminology - **NEVER "Amber"**
 
 The Codebase Agent combines features from:
+
 - `ambient-code/platform/agents/amber.md`
 - `ambient-code/agentready/.claude/agents/agentready-dev.md`
 
 ### Core Capabilities
+
 1. **Issue-to-PR Automation** - Convert well-defined issues into pull requests
 2. **Code Reviews** - Provide actionable feedback on PRs
 3. **Proactive Maintenance** - Dependency updates, linting fixes, documentation improvements
 
 ### Operating Principles
+
 - **Safety First**: Show plan before major changes, explain reasoning, provide rollback instructions
 - **High Signal, Low Noise**: Only comment when adding unique value
 - **Project Standards**: Follow CLAUDE.md (black, isort, ruff, pytest, 80%+ coverage)
 
 ### Autonomy Level
+
 - **Level 1 (Default)**: PR creation only - WAIT for human approval
 - **Level 2 (Future)**: Auto-merge for low-risk changes (requires explicit configuration)
 
 ### Memory System
+
 Modular context files in `.claude/context/`:
+
 - `architecture.md` - Layered architecture patterns
 - `security-standards.md` - Input validation, secrets management, OWASP prevention
 - `testing-patterns.md` - Arrange-Act-Assert, fixtures, mocking patterns
@@ -165,7 +174,8 @@ Modular context files in `.claude/context/`:
 ## FastAPI Application Architecture
 
 ### Layered Architecture
-```
+
+```text
 API Layer (FastAPI routes)
     ↓
 Service Layer (Business logic)
@@ -173,19 +183,23 @@ Service Layer (Business logic)
 Model Layer (Pydantic validation)
     ↓
 Core Layer (Config, security, utilities)
-```
+```text
 
 ### Example Resource: Items
+
 **Models**: `app/models/item.py`
+
 - ItemBase, ItemCreate, ItemUpdate, Item
 - Pydantic validators for sanitization and slug validation
 
 **Service**: `app/services/item_service.py`
+
 - In-memory storage (simple)
 - CRUD operations with business logic
 - Singleton pattern
 
 **API**: `app/api/v1/items.py`
+
 - POST /api/v1/items (create)
 - GET /api/v1/items (list with pagination)
 - GET /api/v1/items/{id} (get by ID)
@@ -194,11 +208,13 @@ Core Layer (Config, security, utilities)
 - DELETE /api/v1/items/{id} (delete)
 
 ### Health Endpoints: `app/api/health.py`
+
 - GET /health (health check)
 - GET /readiness (Kubernetes readiness)
 - GET /liveness (Kubernetes liveness)
 
 ### Security Patterns (Light Touch)
+
 - **Input Validation**: Pydantic models at API boundary
 - **Sanitization**: `app/core/security.py` - sanitize_string(), validate_slug()
 - **Secrets**: Environment variables only (.env files in .gitignore)
@@ -231,6 +247,7 @@ Core Layer (Config, security, utilities)
    - Error codes and handling
 
 ### Writing Style
+
 - **Succinct**: No AI slop, get to the point
 - **Practical**: Focus on how to use, not theory
 - **Code-heavy**: Show examples, not just descriptions
@@ -241,18 +258,21 @@ Core Layer (Config, security, utilities)
 ## Testing Strategy
 
 ### Unit Tests: `tests/unit/test_item_service.py`
+
 - Test service layer in isolation
 - Arrange-Act-Assert pattern
 - Fixtures for test data
 - Edge cases (duplicates, missing items, pagination)
 
 ### Integration Tests: `tests/integration/test_api.py`
+
 - Test API endpoints with TestClient
 - Full request/response cycle
 - Error cases (404, 409, 422)
 - Input validation tests
 
 ### E2E Tests: `tests/e2e/test_cba_workflow.py`
+
 - **OUTLINE ONLY** (requires GitHub API credentials)
 - Documents CBA workflow:
   1. Create GitHub issue
@@ -263,6 +283,7 @@ Core Layer (Config, security, utilities)
   6. Clean up
 
 ### Coverage Goal
+
 - **Minimum**: 80% overall
 - **Critical paths**: 100% (auth, business logic)
 - **Configuration**: Excluded
@@ -274,27 +295,32 @@ Core Layer (Config, security, utilities)
 ### GitHub Actions Workflows
 
 **`.github/workflows/ci.yml`**:
+
 - Lint: black --check, isort --check, ruff check
 - Test: pytest with coverage (Python 3.11 + 3.12 matrix)
 - Build: podman build + health check test
 - Upload coverage to Codecov
 
 **`.github/workflows/security.yml`**:
+
 - Bandit: Python static analysis
 - Safety: Dependency vulnerability scanning
 - Weekly schedule + on push/PR
 
 **`.github/workflows/docs-validation.yml`**:
+
 - Mermaid validation (all diagrams)
 - Markdownlint
 - Triggers on docs/** changes
 
 **`.github/workflows/cba-e2e.yml`**:
+
 - E2E tests for CBA workflow
 - Manual workflow_dispatch only
 - Requires GITHUB_TOKEN
 
 **`.github/dependabot.yml`**:
+
 - Weekly Python dependency updates
 - Auto-label "dependencies" + "security"
 
@@ -305,6 +331,7 @@ Core Layer (Config, security, utilities)
 **File**: `docs/observability-research.md`
 
 **Content**:
+
 1. **Anthropic API Capabilities**: Message response structure, tool use tracking
 2. **Collection Strategies**: API response logging, Anthropic Console, third-party platforms
 3. **CBA-Specific Considerations**: Tool sequences, decisions, errors, performance
@@ -321,17 +348,20 @@ Core Layer (Config, security, utilities)
 **User Note**: "Mermaid diagrams always have errors"
 
 ### Validation Script: `scripts/validate-mermaid.sh`
+
 - Finds all .mmd files and embedded mermaid in markdown
 - Validates with `mmdc` (mermaid-cli)
 - Generates error log
 - Exits 1 if any diagrams invalid
 
 ### CI Integration
+
 - Runs in `.github/workflows/docs-validation.yml`
 - Blocks merge if diagrams invalid
 - Uploads error log as artifact on failure
 
 ### Pre-commit Hook (Optional)
+
 - Can be enabled for local validation
 - Prevents committing broken diagrams
 
@@ -376,6 +406,7 @@ Core Layer (Config, security, utilities)
 ## 4-Week Implementation Sequence
 
 ### Week 1: Foundation & Application
+
 - [ ] Git initialization (main branch, .gitignore)
 - [ ] CLAUDE.md (~400 lines)
 - [ ] pyproject.toml (UV-compatible)
@@ -393,6 +424,7 @@ Core Layer (Config, security, utilities)
 - [ ] Containerfile (Podman-compatible)
 
 ### Week 2: Codebase Agent + Tests
+
 - [ ] .claude/agents/codebase-agent.md
 - [ ] .claude/context/ (architecture.md, security-standards.md, testing-patterns.md)
 - [ ] tests/unit/test_item_service.py
@@ -401,6 +433,7 @@ Core Layer (Config, security, utilities)
 - [ ] pytest configuration
 
 ### Week 3: Documentation
+
 - [ ] docs/quickstart.md
 - [ ] docs/architecture.md
 - [ ] docs/tutorial.md
@@ -409,6 +442,7 @@ Core Layer (Config, security, utilities)
 - [ ] Mermaid diagrams (architecture.mmd, cba-workflow.mmd)
 
 ### Week 4: CI/CD & Polish
+
 - [ ] .github/workflows/ci.yml
 - [ ] .github/workflows/security.yml
 - [ ] .github/workflows/docs-validation.yml
@@ -425,6 +459,7 @@ Core Layer (Config, security, utilities)
 ## Acceptance Criteria (Must Have)
 
 ### Repository & Configuration
+
 - [ ] MIT License
 - [ ] .gitignore (Python, Node, OS-specific, Claude Code)
 - [ ] .python-version (3.11)
@@ -435,6 +470,7 @@ Core Layer (Config, security, utilities)
 - [ ] CONTRIBUTING.md
 
 ### Codebase Agent (CBA)
+
 - [ ] `.claude/agents/codebase-agent.md` (NOT "Amber")
 - [ ] Modular context files (architecture, security, testing)
 - [ ] Memory system documented
@@ -442,6 +478,7 @@ Core Layer (Config, security, utilities)
 - [ ] Code review patterns documented
 
 ### FastAPI Application
+
 - [ ] Working microservice (app/main.py)
 - [ ] Layered architecture (API, Service, Model, Core)
 - [ ] Health endpoints (/health, /readiness, /liveness)
@@ -452,6 +489,7 @@ Core Layer (Config, security, utilities)
 - [ ] Containerfile (Podman-compatible)
 
 ### Testing
+
 - [ ] Unit tests (tests/unit/)
 - [ ] Integration tests (tests/integration/)
 - [ ] E2E test structure (outline)
@@ -459,12 +497,14 @@ Core Layer (Config, security, utilities)
 - [ ] pytest configuration
 
 ### Documentation
+
 - [ ] docs/quickstart.md
 - [ ] docs/architecture.md
 - [ ] docs/tutorial.md
 - [ ] docs/api-reference.md
 
 ### CI/CD & Quality
+
 - [ ] .github/workflows/ci.yml (lint, test, build)
 - [ ] .github/workflows/security.yml (bandit, safety)
 - [ ] .github/workflows/docs-validation.yml (Mermaid + markdown)
@@ -473,6 +513,7 @@ Core Layer (Config, security, utilities)
 - [ ] All Mermaid diagrams syntax-validated
 
 ### Other Requirements
+
 - [ ] scripts/setup.sh (one-command setup)
 - [ ] docs/adr/ scaffolding (template only, NO content)
 - [ ] docs/observability-research.md (research ONLY)
@@ -501,6 +542,7 @@ Core Layer (Config, security, utilities)
 ## Validation Checklist
 
 ### Technical Success
+
 - [ ] `./scripts/setup.sh` completes successfully
 - [ ] `uvicorn app.main:app --reload` starts without errors
 - [ ] `curl http://localhost:8000/health` returns healthy status
@@ -509,6 +551,7 @@ Core Layer (Config, security, utilities)
 - [ ] Container builds and runs successfully
 
 ### Code Quality
+
 - [ ] `black --check app/ tests/` passes
 - [ ] `isort --check-only app/ tests/` passes
 - [ ] `ruff check app/ tests/` passes
@@ -516,11 +559,13 @@ Core Layer (Config, security, utilities)
 - [ ] Security scans complete (bandit, safety)
 
 ### Documentation
+
 - [ ] Mermaid validation passes (all diagrams)
 - [ ] Markdownlint passes
 - [ ] All docs are succinct (no AI slop)
 
 ### Standalone Patterns
+
 - [ ] Features are independent (can adopt one without others)
 - [ ] Clear "what's included" section in README
 - [ ] No prescribed sequence of adoption
@@ -530,10 +575,12 @@ Core Layer (Config, security, utilities)
 ## Reference Materials
 
 ### Codebase Agent Sources
+
 - `ambient-code/platform/agents/amber.md`
 - `ambient-code/agentready/.claude/agents/agentready-dev.md`
 
 ### Existing Inventories
+
 - `AMBIENT_TECHNIQUES_INVENTORY.md` (already exists in repo)
 - `FEATURES_INVENTORY.md` (already exists in repo)
 
@@ -566,13 +613,14 @@ safety check
 
 # Record tutorial
 ./scripts/record-demo.sh setup
-```
+```text
 
 ---
 
 ## Success Criteria Summary
 
 A successful implementation will:
+
 1. **Run locally** in < 10 minutes from clone to running app
 2. **Pass all linters** (black, isort, ruff)
 3. **Pass all tests** (80%+ coverage)
@@ -583,6 +631,6 @@ A successful implementation will:
 
 ---
 
-**End of Implementation Prompt**
+## End of Implementation Prompt
 
 Use this document as a standalone reference to implement the Ambient Code Reference Repository from scratch. All requirements, structure, and validation criteria are included above.

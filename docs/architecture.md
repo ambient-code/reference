@@ -6,7 +6,7 @@ The Ambient Code Reference Repository demonstrates a **layered architecture** wi
 
 ## Layered Architecture
 
-```
+```text
 ┌─────────────────────────────────────┐
 │       API Layer (FastAPI)           │  HTTP, routes, serialization
 ├─────────────────────────────────────┤
@@ -16,13 +16,14 @@ The Ambient Code Reference Repository demonstrates a **layered architecture** wi
 ├─────────────────────────────────────┤
 │   Core Layer (Utilities)            │  Config, security, logging
 └─────────────────────────────────────┘
-```
+```text
 
 ### API Layer
 
 **Location**: `app/api/`
 
 **Responsibilities**:
+
 - FastAPI route handlers
 - Request/response models
 - HTTP status codes
@@ -30,6 +31,7 @@ The Ambient Code Reference Repository demonstrates a **layered architecture** wi
 - OpenAPI documentation
 
 **Example** (`app/api/v1/items.py`):
+
 ```python
 @router.post("/", response_model=Item, status_code=201)
 def create_item(data: ItemCreate) -> Item:
@@ -37,19 +39,21 @@ def create_item(data: ItemCreate) -> Item:
         return item_service.create_item(data)
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e))
-```
+```text
 
 ### Service Layer
 
 **Location**: `app/services/`
 
 **Responsibilities**:
+
 - Business logic
 - CRUD operations
 - Data manipulation
 - No HTTP concerns
 
 **Example** (`app/services/item_service.py`):
+
 ```python
 def create_item(self, data: ItemCreate) -> Item:
     if data.slug in self._slug_index:
@@ -69,19 +73,21 @@ def create_item(self, data: ItemCreate) -> Item:
     self._next_id += 1
 
     return item
-```
+```text
 
 ### Model Layer
 
 **Location**: `app/models/`
 
 **Responsibilities**:
+
 - Pydantic models
 - Field validation
 - Type annotations
 - Sanitization
 
 **Example** (`app/models/item.py`):
+
 ```python
 class ItemCreate(ItemBase):
     name: str = Field(..., min_length=1, max_length=200)
@@ -91,19 +97,21 @@ class ItemCreate(ItemBase):
     @classmethod
     def sanitize_name(cls, v: str) -> str:
         return sanitize_string(v, max_length=200)
-```
+```text
 
 ### Core Layer
 
 **Location**: `app/core/`
 
 **Responsibilities**:
+
 - Configuration (Pydantic Settings)
 - Security utilities
 - Logging setup
 - Shared utilities
 
 **Example** (`app/core/config.py`):
+
 ```python
 class Settings(BaseSettings):
     app_name: str = "Ambient Code Reference"
@@ -113,13 +121,13 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
-```
+```text
 
 ## Data Flow
 
 ### Creating an Item
 
-```
+```text
 1. Client sends POST /api/v1/items
        ↓
 2. API Layer (items.py)
@@ -138,7 +146,7 @@ settings = Settings()
 5. API Layer returns 201 Created
    - Serialize Item to JSON
    - Return to client
-```
+```text
 
 ## Design Patterns
 
@@ -156,7 +164,7 @@ item_service = ItemService()
 
 # app/api/v1/items.py
 from app.services.item_service import item_service
-```
+```text
 
 ### Dependency Injection (Implicit)
 
@@ -172,7 +180,7 @@ def create_item(
     service: ItemService = Depends(get_item_service)
 ):
     return service.create_item(data)
-```
+```text
 
 ### Validation Pipeline
 
@@ -189,13 +197,14 @@ class ItemCreate(ItemBase):
     @classmethod
     def validate_slug_field(cls, v: str) -> str:
         return validate_slug(v)
-```
+```text
 
 ## Security Architecture
 
 ### Input Validation
 
 **Validate once at API boundary**:
+
 - Pydantic models validate all request payloads
 - Sanitization in model validators
 - Trust internal code
@@ -205,12 +214,14 @@ class ItemCreate(ItemBase):
 **Location**: `app/core/security.py`
 
 **Functions**:
+
 - `sanitize_string()` - Remove control characters, trim whitespace
 - `validate_slug()` - Ensure URL-safe slugs
 
 ### Secrets Management
 
 **Environment variables only**:
+
 ```python
 # .env (not committed)
 SECRET_KEY=xxx
@@ -221,13 +232,13 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-```
+```text
 
 ## Testing Architecture
 
 ### Test Pyramid
 
-```
+```text
        ┌──────────┐
        │   E2E    │  Few, slow (workflow tests)
        ├──────────┤
@@ -235,7 +246,7 @@ class Settings(BaseSettings):
        ├──────────┤
        │   Unit   │  Many, fast (service tests)
        └──────────┘
-```
+```text
 
 **Unit**: Test service layer in isolation
 **Integration**: Test API with TestClient
@@ -255,7 +266,7 @@ JSON format for log aggregation:
   "message": "Item created",
   "request_id": "abc123"
 }
-```
+```text
 
 ### Health Endpoints
 
@@ -274,15 +285,18 @@ JSON format for log aggregation:
 ### Production Patterns
 
 **Database**:
+
 - Add SQLAlchemy models
 - Repository pattern in service layer
 - Migrations with Alembic
 
 **Caching**:
+
 - Redis for frequently accessed items
 - Cache invalidation on updates
 
 **Async**:
+
 - Use `async def` for I/O-bound operations
 - AsyncIO for concurrent requests
 
@@ -307,7 +321,7 @@ async def add_request_id(request: Request, call_next):
     request.state.request_id = generate_id()
     response = await call_next(request)
     return response
-```
+```text
 
 ### Adding Database
 
@@ -316,17 +330,19 @@ async def add_request_id(request: Request, call_next):
 from sqlalchemy.ext.asyncio import create_async_engine
 
 engine = create_async_engine(settings.database_url)
-```
+```text
 
 ## Best Practices
 
 ✅ **DO**:
+
 - Keep layers independent
 - Validate at boundaries
 - Use Pydantic for all data
 - Write tests for each layer
 
 ❌ **DON'T**:
+
 - Put business logic in API layer
 - Put HTTP logic in service layer
 - Bypass validation

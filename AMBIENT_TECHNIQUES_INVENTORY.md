@@ -35,7 +35,7 @@ graph LR
     C --> D[CBA Executes]
     D --> E[Create PR]
     E --> F[Review & Merge]
-```
+```text
 
 ### Trigger Mechanisms
 
@@ -53,6 +53,7 @@ graph LR
 **File**: `.github/workflows/cba-issue-handler.yml`
 
 **Key Features**:
+
 - ✅ Prevents duplicate PRs (checks for existing PRs)
 - ✅ Creates sanitized branch names: `cba/issue-{number}-{sanitized-title}`
 - ✅ Handles race conditions (PR closed during execution)
@@ -61,6 +62,7 @@ graph LR
 - ✅ Comprehensive error handling and notifications
 
 **Security Practices**:
+
 - All user input passed via environment variables (no command injection)
 - Branch name validation with regex: `^[a-zA-Z0-9/_.-]+$`
 - Issue number validation (numeric only)
@@ -85,9 +87,10 @@ File: `path/to/another.py`
 - [ ] All linters pass
 - [ ] All tests pass
 - [ ] Follows CLAUDE.md standards
-```
+```text
 
 **Key Fields**:
+
 - `File:` or `Path:` - CBA extracts file paths automatically
 - `Instructions:` or `Task:` - Main instructions section
 - Success criteria checklist
@@ -105,18 +108,21 @@ File: `path/to/another.py`
 ### CBA Categories
 
 **Auto-Fix (Low Risk)**:
+
 - Code formatting (gofmt, black, prettier)
 - Linting violations
 - Unused import removal
 - Documentation formatting
 
 **Refactoring (Medium Risk)**:
+
 - Breaking large files into modules
 - Extracting repeated patterns
 - Replacing `context.TODO()` with proper context
 - Improving error handling
 
 **Test Coverage (Medium Risk)**:
+
 - Adding missing unit tests
 - Contract tests for API endpoints
 - Edge case coverage
@@ -131,7 +137,7 @@ safety:
   require_review_for_auto_merge: true
   never_push_to_main: true
   always_create_branch: true
-```
+```text
 
 ### Monitoring & Reporting
 
@@ -150,10 +156,12 @@ safety:
 **Purpose**: Convert issues to PRs via CBA agent
 
 **Triggers**:
+
 - Issue labeled: `cba:auto-fix`, `cba:refactor`, `cba:test-coverage`
 - Issue comment: `/cba execute` or `@cba`
 
 **Steps**:
+
 1. Extract issue details (files, instructions)
 2. Create CBA agent prompt
 3. Check for existing PR (prevent duplicates)
@@ -164,6 +172,7 @@ safety:
 8. Report results
 
 **Key Implementation Details**:
+
 - Uses `envsubst` for safe variable substitution
 - Validates all inputs (issue numbers, branch names)
 - Handles race conditions (PR closed during execution)
@@ -175,10 +184,12 @@ safety:
 **Purpose**: Automated code reviews on pull requests
 
 **Triggers**:
+
 - `@claude` mention in PR comments
 - Pull request review comments
 
 **Features**:
+
 - Minimizes old review comments automatically
 - Supports fork PRs
 - Comprehensive review covering:
@@ -190,6 +201,7 @@ safety:
   - Documentation
 
 **Review Format**:
+
 ```markdown
 # Claude Code Review
 
@@ -204,19 +216,21 @@ safety:
 
 ## Positive Highlights
 ## Recommendations
-```
+```text
 
 #### 3. Components Build & Deploy (`components-build-deploy.yml`)
 
 **Purpose**: Build and deploy platform components
 
 **Features**:
+
 - Change detection (only builds modified components)
 - Multi-platform builds (linux/amd64, linux/arm64)
 - Conditional registry push (main branch only)
 - Component-specific tests
 
 **Change Detection**:
+
 - Frontend: `components/frontend/**`
 - Backend: `components/backend/**`
 - Operator: `components/operator/**`
@@ -227,6 +241,7 @@ safety:
 **Purpose**: End-to-end testing in Kind cluster
 
 **Features**:
+
 - Full stack deployment
 - Cypress UI testing
 - Authentication testing
@@ -237,6 +252,7 @@ safety:
 **Purpose**: Automatically merge safe dependency updates
 
 **Behavior**:
+
 - Auto-merges patch/minor updates after CI passes
 - Requires manual review for major updates
 - Only for Dependabot PRs
@@ -246,6 +262,7 @@ safety:
 **Purpose**: Daily sync of dependency versions to CBA knowledge base
 
 **Behavior**:
+
 - Runs daily at scheduled time
 - Updates CBA's understanding of current dependencies
 - Helps CBA make better decisions about updates
@@ -255,6 +272,7 @@ safety:
 **Purpose**: Automatic code reviews on PRs (complement to manual @claude reviews)
 
 **Behavior**:
+
 - Runs on all PRs automatically
 - Provides initial review before human review
 - Uses same review format as manual reviews
@@ -262,18 +280,21 @@ safety:
 ### Workflow Best Practices
 
 **Security**:
+
 - ✅ Use environment variables for user input
 - ✅ Validate all inputs (regex, type checking)
 - ✅ Minimal permissions per workflow
 - ✅ Never interpolate user input in `run:` commands
 
 **Reliability**:
+
 - ✅ Retry logic with exponential backoff
 - ✅ Handle race conditions gracefully
 - ✅ Comprehensive error reporting
 - ✅ Timeout limits (prevent runaway jobs)
 
 **Monitoring**:
+
 - ✅ Link to workflow runs in comments
 - ✅ Log all decisions for audit trail
 - ✅ Report failures to issues
@@ -287,12 +308,14 @@ safety:
 **Role**: Single point of contact, intelligent agent coordinator
 
 **Capabilities**:
+
 - Automatically invokes appropriate specialists
 - Proactive engagement (brings in experts without explicit requests)
 - Adaptive complexity handling
 - Complete ecosystem access
 
 **Specialists CBA May Engage**:
+
 - **Stella (Staff Engineer)** - Complex debugging, architecture
 - **Neil (Test Engineer)** - Testing strategies, automation
 - **Taylor (Team Member)** - Straightforward implementations
@@ -306,29 +329,35 @@ safety:
 Located in `.claude/agents/` or `workflows/agent-bullpen/`:
 
 **Architecture & Engineering**:
+
 - `archie-architect.md` - System architecture
 - `stella-staff_engineer.md` - Complex technical problems
 - `taylor-team_member.md` - Implementation support
 
 **Product & Management**:
+
 - `parker-product_manager.md` - Product requirements
 - `olivia-product_owner.md` - Feature ownership
 - `jack-delivery_owner.md` - Delivery management
 
 **Testing & Quality**:
+
 - `neil-test_engineer.md` - Test strategies
 - `phoenix-pxe_specialist.md` - PXE/Infrastructure testing
 
 **UX & Design**:
+
 - `aria-ux_architect.md` - UX architecture
 - `steve-ux_designer.md` - UI design
 - `ryan-ux_researcher.md` - User research
 
 **Content & Documentation**:
+
 - `terry-technical_writer.md` - Technical writing
 - `tessa-writing_manager.md` - Content strategy
 
 **Management**:
+
 - `dan-senior_director.md` - Strategic direction
 - `emma-engineering_manager.md` - Engineering management
 - `lee-team_lead.md` - Team leadership
@@ -337,19 +366,22 @@ Located in `.claude/agents/` or `workflows/agent-bullpen/`:
 ### Agent Invocation Patterns
 
 **Explicit Invocation**:
-```
+
+```text
 "Invoke Stella to analyze this architectural issue"
-```
+```text
 
 **Implicit (CBA Orchestration)**:
-```
+
+```text
 "Fix this bug" → CBA automatically engages Neil for testing, Stella for complex parts
-```
+```text
 
 **Multi-Agent Collaboration**:
-```
+
+```text
 Feature development → Parker (requirements) → Archie (architecture) → Taylor (implementation) → Neil (testing)
-```
+```text
 
 ---
 
@@ -360,6 +392,7 @@ Feature development → Parker (requirements) → Archie (architecture) → Tayl
 **Purpose**: Specification-first feature development
 
 **Phases**:
+
 1. `/specify` - Create detailed feature specifications
 2. `/plan` - Generate technical implementation plans
 3. `/tasks` - Break down into actionable tasks
@@ -367,7 +400,8 @@ Feature development → Parker (requirements) → Archie (architecture) → Tayl
 5. `/analyze` - Review and analyze outcomes
 
 **Structure**:
-```
+
+```text
 workflows/spec-kit/
 ├── .specify/               # Workflow configuration
 │   ├── scripts/           # Automation scripts
@@ -376,13 +410,14 @@ workflows/spec-kit/
 └── .claude/              # Claude AI configuration
     ├── agents/           # Agent personas
     └── commands/         # Slash commands
-```
+```text
 
 ### Bug Fix Workflow
 
 **Purpose**: Systematic bug resolution
 
 **Phases**:
+
 1. `/reproduce` - Systematically reproduce bug
 2. `/diagnose` - Root cause analysis
 3. `/fix` - Implement fix
@@ -390,6 +425,7 @@ workflows/spec-kit/
 5. `/document` - Create complete documentation
 
 **Artifacts Generated**:
+
 - `artifacts/bugfix/reports/reproduction.md`
 - `artifacts/bugfix/analysis/root-cause.md`
 - `artifacts/bugfix/fixes/implementation-notes.md`
@@ -397,6 +433,7 @@ workflows/spec-kit/
 - `artifacts/bugfix/docs/` (issue-update, release-notes, changelog, etc.)
 
 **Agent Recommendations**:
+
 - Complex bugs → Stella (Staff Engineer)
 - Testing → Neil (Test Engineer)
 - Straightforward → Taylor (Team Member)
@@ -406,6 +443,7 @@ workflows/spec-kit/
 **Purpose**: Base structure for custom workflows
 
 **Components**:
+
 - Field reference documentation
 - Template structure
 - Example commands
@@ -419,7 +457,8 @@ workflows/spec-kit/
 **Concept**: Structured context files instead of monolithic CLAUDE.md
 
 **Structure**:
-```
+
+```text
 .claude/
 ├── context/              # Task-specific context
 │   ├── backend-development.md
@@ -430,13 +469,14 @@ workflows/spec-kit/
 │   ├── k8s-client-usage.md
 │   └── react-query-usage.md
 └── repomix-guide.md     # Architecture view usage
-```
+```text
 
 **Usage Pattern**:
-```
+
+```text
 "Claude, load the architecture view and backend-development context,
 then help me add a new endpoint"
-```
+```text
 
 ### Architecture Decision Records (ADRs)
 
@@ -445,6 +485,7 @@ then help me add a new endpoint"
 **Purpose**: Document WHY decisions were made
 
 **Format**:
+
 - `0001-kubernetes-native-architecture.md`
 - `0002-user-token-authentication.md`
 - `0003-multi-repo-support.md`
@@ -457,12 +498,14 @@ then help me add a new endpoint"
 **File**: `repomix-analysis/03-architecture-only.xml`
 
 **Benefits**:
+
 - Grade 8.8/10 architecture view
 - 187K tokens of context
 - Single view approach (vs. 7 views)
 - Consistent context across all tasks
 
 **Usage**:
+
 - Load architecture view for all architectural questions
 - Reference in context files
 - Guide in `.claude/repomix-guide.md`
@@ -476,22 +519,26 @@ then help me add a new endpoint"
 **Configuration**: `.pre-commit-config.yaml`
 
 **Language-Specific**:
+
 - **Python**: black, isort, ruff
 - **JavaScript**: prettier, eslint
 - **Go**: gofmt, golangci-lint
 
 **Installation**:
+
 ```bash
 pre-commit install
-```
+```text
 
 ### Automated Linting
 
 **Workflows**:
+
 - `go-lint.yml` - Go formatting, vetting, linting
 - `frontend-lint.yml` - ESLint, TypeScript checking
 
 **Behavior**:
+
 - Runs on all PRs
 - Blocks merge if failures
 - Auto-fix suggestions via CBA
@@ -499,6 +546,7 @@ pre-commit install
 ### Test Coverage
 
 **Requirements**:
+
 - Minimum thresholds per component
 - Coverage reports in CI
 - CBA can add missing tests (`cba:test-coverage`)
@@ -506,10 +554,12 @@ pre-commit install
 ### Code Review Automation
 
 **Two-Tier System**:
+
 1. **CBA Auto Review** - Automatic on all PRs
 2. **Claude Manual Review** - On-demand via `@claude`
 
 **Review Focus Areas**:
+
 - Code quality & best practices
 - Security vulnerabilities
 - Performance bottlenecks
@@ -531,7 +581,7 @@ log.Printf("Processing request with token (len=%d)", len(token))
 
 // ❌ Bad
 log.Printf("Token: %s", token)
-```
+```text
 
 ### Input Validation
 
@@ -546,7 +596,7 @@ fi
 
 # ❌ Bad - Use directly
 echo "$ISSUE_NUMBER"
-```
+```text
 
 ### Branch Name Sanitization
 
@@ -566,7 +616,7 @@ if ! [[ "$BRANCH_NAME" =~ ^[a-zA-Z0-9/_.-]+$ ]]; then
   echo "Error: Invalid branch name"
   exit 1
 fi
-```
+```text
 
 ### RBAC Enforcement
 
@@ -589,7 +639,7 @@ if err != nil || !res.Status.Allowed {
   c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
   return
 }
-```
+```text
 
 ---
 
@@ -600,12 +650,14 @@ if err != nil || !res.Status.Allowed {
 **Impact**: 10x productivity for routine tasks
 
 **Use Cases**:
+
 - Formatting fixes → Instant PR
 - Linting violations → Automated fix
 - Test coverage gaps → Auto-generated tests
 - Documentation updates → Quick PRs
 
-**Time Savings**: 
+**Time Savings**:
+
 - Before: 15-30 min per task (create branch, fix, test, PR)
 - After: 2-5 min (create issue, review PR)
 
@@ -614,6 +666,7 @@ if err != nil || !res.Status.Allowed {
 **Impact**: Catch issues before human review
 
 **Benefits**:
+
 - Consistent review standards
 - 24/7 availability
 - Catches security issues early
@@ -624,6 +677,7 @@ if err != nil || !res.Status.Allowed {
 **Impact**: Right expertise at the right time
 
 **Benefits**:
+
 - No need to manually select agents
 - Automatic escalation for complex issues
 - Multi-agent collaboration
@@ -634,6 +688,7 @@ if err != nil || !res.Status.Allowed {
 **Impact**: Standardized processes
 
 **Benefits**:
+
 - Consistent output quality
 - Faster onboarding
 - Reusable patterns
@@ -644,6 +699,7 @@ if err != nil || !res.Status.Allowed {
 **Impact**: Faster context loading
 
 **Benefits**:
+
 - Load only relevant context
 - Faster response times
 - Better accuracy
@@ -654,6 +710,7 @@ if err != nil || !res.Status.Allowed {
 **Impact**: Always up-to-date dependencies
 
 **Benefits**:
+
 - Security patches applied automatically
 - No manual dependency updates
 - CBA stays current with versions
@@ -739,4 +796,3 @@ For `github.com/ambient-code/reference`:
 ---
 
 **Repository Goal**: Demonstrate how these techniques enable teams to achieve maximum productivity with AI agents, solving real problems like issue-to-PR automation and agent performance optimization.
-

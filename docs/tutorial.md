@@ -5,6 +5,7 @@ Learn how to add a new resource to the Ambient Code Reference Repository by buil
 ## Goal
 
 Add a Tags resource that allows:
+
 - Creating tags with name and color
 - Listing tags
 - Tagging items
@@ -38,6 +39,7 @@ class Tag(TagBase):
 ```
 
 **What we did**:
+
 - Created Pydantic models for validation
 - Added sanitization to name field
 - Used regex to validate hex color codes
@@ -69,6 +71,7 @@ tag_service = TagService()
 ```
 
 **What we did**:
+
 - Created service with business logic
 - Used singleton pattern
 - In-memory storage (like items)
@@ -97,6 +100,7 @@ def list_tags() -> list[Tag]:
 ```
 
 **What we did**:
+
 - Created FastAPI router
 - Defined POST and GET endpoints
 - Connected to service layer
@@ -113,6 +117,7 @@ app.include_router(tags.router, prefix=settings.api_v1_prefix)
 ```
 
 **What we did**:
+
 - Imported tags router
 - Registered with FastAPI app
 - Used API v1 prefix
@@ -220,21 +225,25 @@ curl http://localhost:8000/api/v1/tags
 ## What You Learned
 
 ✅ **Layered Architecture**:
+
 - Models for validation
 - Services for logic
 - API for HTTP
 
 ✅ **Pydantic Validation**:
+
 - Field constraints
 - Regex patterns
 - Custom validators
 
 ✅ **Testing Strategy**:
+
 - Unit tests for services
 - Integration tests for API
 - 80%+ coverage
 
 ✅ **Code Quality**:
+
 - black formatting
 - isort import sorting
 - ruff linting
@@ -265,6 +274,7 @@ Try these enhancements:
 ## Common Issues
 
 **Import errors?**
+
 ```python
 # Make sure __init__.py exists in all directories
 app/api/v1/__init__.py
@@ -272,6 +282,7 @@ app/models/__init__.py
 ```
 
 **Tests failing?**
+
 ```bash
 # Check service initialization
 # Each test should create fresh service instance
@@ -279,6 +290,7 @@ service = TagService()
 ```
 
 **Linter errors?**
+
 ```bash
 # Run formatters first
 black app/ tests/
