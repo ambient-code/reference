@@ -30,6 +30,8 @@ jobs:
           else
             echo "No Mermaid diagrams to validate"
           fi
+        env:
+          PUPPETEER_CONFIG: ${{ github.workspace }}/scripts/puppeteer-config.json
 
   lint-markdown:
     runs-on: ubuntu-latest

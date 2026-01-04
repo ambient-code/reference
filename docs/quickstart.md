@@ -12,6 +12,23 @@ This is a **documentation-only reference** for AI-assisted development patterns.
 
 **Looking for a working application?** See [demo-fastapi](https://github.com/jeremyeder/demo-fastapi)
 
+### Getting Started Flow
+
+```mermaid
+flowchart LR
+    A[Clone Repo] --> B[Explore Docs]
+    B --> C{What do you need?}
+    C -->|CBA Setup| D[Copy .claude/]
+    C -->|Architecture| E[Read docs/architecture.md]
+    C -->|Testing| F[Read testing-patterns.md]
+    C -->|CI/CD| G[Copy .github/workflows/]
+    D --> H[Customize for your project]
+    E --> H
+    F --> H
+    G --> H
+    H --> I[Ship It]
+```
+
 ## Prerequisites
 
 - Python 3.11 or 3.12 (for documentation tooling)
