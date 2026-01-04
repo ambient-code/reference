@@ -147,6 +147,8 @@ safety:
 
 ---
 
+<a id="github-actions-workflows"></a>
+
 ## GitHub Actions Workflows
 
 ### Core Workflows
@@ -301,6 +303,8 @@ safety:
 
 ---
 
+<a id="agent-orchestration-patterns"></a>
+
 ## Agent Orchestration Patterns
 
 ### CBA - Workflow Orchestrator
@@ -385,6 +389,8 @@ Feature development → Parker (requirements) → Archie (architecture) → Tayl
 
 ---
 
+<a id="workflow-templates"></a>
+
 ## Workflow Templates
 
 ### Spec Kit Workflow
@@ -450,6 +456,8 @@ workflows/spec-kit/
 
 ---
 
+<a id="claudemd-patterns"></a>
+
 ## CLAUDE.md Patterns
 
 ### Memory System - Loadable Context
@@ -512,6 +520,8 @@ then help me add a new endpoint"
 
 ---
 
+<a id="code-quality-automation"></a>
+
 ## Code Quality Automation
 
 ### Pre-Commit Hooks
@@ -568,6 +578,8 @@ pre-commit install
 - Documentation
 
 ---
+
+<a id="security-patterns"></a>
 
 ## Security Patterns
 
@@ -642,6 +654,8 @@ if err != nil || !res.Status.Allowed {
 ```text
 
 ---
+
+<a id="productivity-multipliers"></a>
 
 ## Productivity Multipliers
 
