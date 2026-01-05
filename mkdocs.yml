@@ -90,7 +90,6 @@ nav:
       - ADR Template: adr/template.md
   - Tutorial: tutorial.md
   - Resources:
-      - Coloring Book: resources/coloring-book.md
       - Presentation: resources/presentation.md
       - Demo Application: resources/demo-app.md
 

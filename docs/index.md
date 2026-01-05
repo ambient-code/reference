@@ -129,7 +129,6 @@ Enabling patterns that make AI more effective.
 
 | Resource | Format | Purpose |
 |----------|--------|---------|
-| [Coloring Book](resources/coloring-book.md) | PDF/Interactive | Visual guide to concepts (follow-on to SRE Coloring Book) |
 | [Presentation](resources/presentation.md) | Markdown | NotebookLM podcast generation, 9 features explained |
 | [Demo Application](resources/demo-app.md) | GitHub Repo | Working FastAPI example |
 
