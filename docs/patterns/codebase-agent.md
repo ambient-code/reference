@@ -73,4 +73,4 @@
 ## Related Patterns
 
 - [Self-Review Reflection](self-review-reflection.md) - Add quality gates to CBA output
-- [Memory System](../getting-started/first-cba.md#memory-system) - Persistent context across sessions
+- [Memory System](../getting-started/first-cba.md) - Persistent context across sessions

@@ -25,15 +25,15 @@ This repository provides battle-tested patterns for adopting AI-assisted develop
 
 | Pattern | Category | Effort | Impact |
 |---------|----------|--------|--------|
-| [Codebase Agent (CBA)](#cba) | Agent Behavior | Medium | High |
-| [Memory System](#memory) | Agent Behavior | Low | Medium |
-| [Self-Review Reflection](#self-review) | Agent Behavior | Low | High |
-| [Issue-to-PR Automation](#issue-to-pr) | GHA Automation | High | Very High |
-| [PR Auto-Review](#pr-review) | GHA Automation | Medium | High |
-| [Dependabot Auto-Merge](#dependabot) | GHA Automation | Low | Medium |
-| [Stale Issue Management](#stale) | GHA Automation | Low | Medium |
-| [Layered Architecture](#architecture) | Foundation | Low | Medium |
-| [Security Patterns](#security) | Foundation | Low | Medium |
+| [Codebase Agent (CBA)](patterns/codebase-agent.md) | Agent Behavior | Medium | High |
+| [Memory System](getting-started/first-cba.md) | Agent Behavior | Low | Medium |
+| [Self-Review Reflection](patterns/self-review-reflection.md) | Agent Behavior | Low | High |
+| [Issue-to-PR Automation](patterns/issue-to-pr.md) | GHA Automation | High | Very High |
+| [PR Auto-Review](patterns/pr-auto-review.md) | GHA Automation | Medium | High |
+| [Dependabot Auto-Merge](patterns/dependabot-auto-merge.md) | GHA Automation | Low | Medium |
+| [Stale Issue Management](patterns/stale-issues.md) | GHA Automation | Low | Medium |
+| [Layered Architecture](patterns/layered-architecture.md) | Foundation | Low | Medium |
+| [Security Patterns](patterns/security-patterns.md) | Foundation | Low | Medium |
 
 ### Quick Start Paths
 
@@ -43,7 +43,7 @@ This repository provides battle-tested patterns for adopting AI-assisted develop
 
 === "AI keeps forgetting my conventions"
 
-    Start with [Memory System](getting-started/first-cba.md#memory-system) - modular context files that persist across sessions.
+    Start with [Memory System](getting-started/first-cba.md) - modular context files that persist across sessions.
 
 === "Routine fixes take too long"
 

@@ -74,16 +74,16 @@ Reviews security posture:
 
 ## Implementation
 
-### Reference Orchestrator Script
+### Reference Implementation
 
-See [`scripts/autonomous-review/review-reference.sh`](../../scripts/autonomous-review/review-reference.sh) for a reference implementation showing:
+A reference orchestrator implementation would include:
 
 - Parallel agent dispatch
 - Finding collection and aggregation
 - Critical issue auto-fix loop
 - Report generation
 
-**Note**: The script demonstrates the pattern. Adapt the agent invocation syntax to your specific tooling (Claude Code Task tool, OpenAI Assistants API, etc.).
+**Note**: Adapt the agent invocation syntax to your specific tooling (Claude Code Task tool, OpenAI Assistants API, etc.). See the demo-fastapi repository for working examples.
 
 ### Agent Prompt Template
 
