@@ -202,6 +202,8 @@ For a 2-minute fix, the overhead is 10+ minutes.
 - **Consistent quality**: Every auto-fix follows the same process
 - **Audit trail**: Every change is tracked via GitHub
 
+**Note**: Issue-to-PR is one of four GHA automation patterns. See Feature 9 for the complete set including PR Auto-Review, Dependabot Auto-Merge, and Stale Issue Management.
+
 ---
 
 ## Feature 4: Layered Architecture Patterns
@@ -392,6 +394,177 @@ Documentation is code. Bad docs:
 
 ---
 
+## Feature 8: Self-Review Reflection
+
+### Self-Review Overview
+
+A pattern where AI agents review their own work before presenting it to humans.
+
+### The Sloppy First Draft Problem
+
+Without self-review, AI assistants often present work with obvious issues:
+
+- Missing edge cases
+- Security gaps (no input validation)
+- Incomplete error handling
+- Assumptions that should be stated
+
+Users waste time catching problems the agent should have caught itself.
+
+### How Self-Review Works
+
+Before presenting any significant work, the agent:
+
+1. Re-reads output as if it were a code reviewer
+2. Checks against specific criteria (security, edge cases, completeness)
+3. Fixes any issues found
+4. Only then presents the polished result to the user
+
+### The Reflection Loop
+
+Agent Does Work → Self-Review Check → Issues Found?
+→ Yes: Fix Issues, Re-check
+→ No: Present to User
+
+### What Gets Checked
+
+**For code-related work**:
+
+- Edge cases handled?
+- Input validation present?
+- Error handling complete?
+- Security issues (OWASP Top 10)?
+- Tests cover the changes?
+
+**For analysis/planning work**:
+
+- Reasoning complete?
+- Assumptions stated?
+- Alternatives considered?
+- Risks identified?
+
+### Implementation Example
+
+Add this to any agent prompt:
+
+```markdown
+## Self-Review Protocol
+
+Before presenting your work:
+
+1. Re-read your output as if you're a code reviewer
+2. Check for:
+   - Missing edge cases
+   - Security issues (injection, validation, secrets)
+   - Incomplete reasoning
+   - Assumptions that should be stated
+3. Fix any issues found
+4. Only then present to user
+
+If you found and fixed issues, briefly note: "Self-review: Fixed [issue]"
+```
+
+### When to Use Self-Review
+
+| Situation | Self-Review? | Why |
+|-----------|--------------|-----|
+| Code generation | ✅ Yes | Catches bugs before user sees them |
+| Issue analysis | ✅ Yes | Ensures thorough reasoning |
+| PR creation | ✅ Yes | Polishes before human review |
+| Simple lookups | ❌ No | Overhead not worth it |
+| Exploratory chat | ❌ No | Low stakes, fast iteration preferred |
+
+**Rule of thumb**: Self-review when the output will be acted upon or when mistakes are costly.
+
+### Self-Review Benefits for Principal Engineers
+
+- **Higher quality first attempts**: Users rarely say "you missed X"
+- **Reduced iteration cycles**: First submission is usually accepted
+- **Visible quality process**: Agent notes what it caught
+- **Scalable quality**: Works the same whether junior or senior uses it
+
+---
+
+## Feature 9: Proactive GHA Workflows
+
+### GHA Automation Overview
+
+GitHub Actions workflows that proactively handle routine development tasks without human intervention.
+
+### The Manual Toil Problem
+
+Development teams spend significant time on repetitive tasks:
+
+- Reviewing every PR manually (even trivial ones)
+- Converting issues to PRs by hand
+- Remembering to merge dependency updates
+- Cleaning up stale issues
+
+These tasks are necessary but don't require human judgment for every instance.
+
+### Four Automation Patterns
+
+#### Issue-to-PR Automation
+
+When a well-defined issue is created:
+
+- AI analyzes if requirements are clear
+- If actionable, creates a draft PR automatically
+- Links PR back to the issue
+- Human reviews the draft, not the initial work
+
+#### PR Auto-Review
+
+When any PR is opened or updated:
+
+- AI reviews the code automatically
+- Posts structured feedback (🔴 CRITICAL, 🟡 WARNING, ✅ GOOD)
+- Human reviewers see AI analysis before their own review
+- Catches obvious issues before human time is spent
+
+#### Dependabot Auto-Merge
+
+When Dependabot creates a PR:
+
+- Workflow checks if it's a patch version update
+- If all CI passes, auto-merges with squash
+- Human reviews only minor/major version bumps
+- Keeps dependencies current without manual effort
+
+#### Stale Issue Management
+
+On a weekly schedule:
+
+- Finds issues inactive for 30+ days
+- Adds "stale" label with warning comment
+- Closes after 7 more days of inactivity
+- Exempt labels prevent closure (pinned, security, bug)
+
+### Safety Conditions
+
+Each pattern has explicit safety gates:
+
+| Pattern | Safety Gate |
+|---------|-------------|
+| Issue-to-PR | Draft PR only, requires human merge |
+| PR Auto-Review | Comment only, no blocking |
+| Dependabot Auto-Merge | Patch versions only, CI must pass |
+| Stale Issues | Exempt labels, 7-day warning period |
+
+### GHA Workflow Benefits for Principal Engineers
+
+- **Reduced toil**: Routine work happens automatically
+- **Consistent process**: Every PR gets the same review treatment
+- **Faster updates**: Dependencies stay current without overhead
+- **Clean backlog**: Stale issues don't accumulate indefinitely
+- **Human focus**: Engineers spend time on judgment-required work
+
+### Quick Start
+
+See `docs/patterns/gha-automation-patterns.md` for copy-paste workflow YAML files.
+
+---
+
 ## How to Adopt (Buffet Style)
 
 ### Pick What You Need
@@ -405,6 +578,8 @@ Documentation is code. Bad docs:
 | Security | Low | Medium | You handle user input |
 | Testing | Medium | High | You want AI to write tests |
 | CI/CD | Low | Medium | You have documentation |
+| Self-Review | Low | High | AI outputs need polish before delivery |
+| GHA Workflows | Medium | High | You want proactive automation |
 
 ### Adoption Path Examples
 
@@ -489,7 +664,9 @@ The Ambient Code Reference Repository provides:
 4. **Architecture Patterns**: Clear structure AI can reason about
 5. **Security Patterns**: Practical protection without over-engineering
 6. **Testing Patterns**: Pyramid approach with clear responsibilities
-7. **CI/CD**: Automated quality enforcement
+7. **CI/CD**: Automated quality enforcement for documentation
+8. **Self-Review Reflection**: Agent quality gate before delivery
+9. **Proactive GHA Workflows**: Automated PR review, dependency merging, issue cleanup
 
 **Start small, adopt incrementally, measure results.**
 
