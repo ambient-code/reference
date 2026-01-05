@@ -151,7 +151,7 @@ The autonomous fix loop is the core mechanism. When validation fails, the agent:
 4. Re-runs validation
 5. Repeats until success or max iterations reached
 
-See [`scripts/validation/autonomous-fix-loop-template.sh`](../../scripts/validation/autonomous-fix-loop-template.sh) for a reference implementation.
+See the demo-fastapi repository for a reference implementation of the autonomous fix loop.
 
 ---
 
