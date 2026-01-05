@@ -38,6 +38,8 @@ Pick what you need. Each pattern works independently:
 | Pattern | Description | How to Adopt |
 | ------- | ----------- | ------------ |
 | **Codebase Agent** | AI agent configuration patterns | Copy `.claude/` structure |
+| **Self-Review Reflection** | Agent reviews own work before delivery | Reference `docs/patterns/self-review-reflection.md` |
+| **GHA Automation** | Issue-to-PR, PR review, auto-merge, stale issues | Reference `docs/patterns/gha-automation-patterns.md` |
 | **Architecture** | Layered architecture patterns | Reference `docs/architecture.md` |
 | **Security** | Security best practices | Reference `.claude/context/security-standards.md` |
 | **Testing** | Test organization patterns | Reference `.claude/context/testing-patterns.md` |
@@ -76,16 +78,31 @@ The demo repository includes:
 
 ## Key Patterns
 
+### Agent Behavior Patterns
+
+How AI agents work during development:
+
+- **[Self-Review Reflection](docs/patterns/self-review-reflection.md)** - Agent reviews own work before presenting to humans
+- **[Autonomous Quality Enforcement](docs/patterns/autonomous-quality-enforcement.md)** - Validate code before presenting
+- **[Multi-Agent Code Review](docs/patterns/multi-agent-code-review.md)** - Parallel specialized reviews
+
+### GHA Automation Patterns
+
+Proactive CI/CD workflows in [`docs/patterns/gha-automation-patterns.md`](docs/patterns/gha-automation-patterns.md):
+
+- **Issue-to-PR Automation** - Convert issues to draft PRs automatically
+- **PR Auto-Review** - AI code review on every PR
+- **Dependabot Auto-Merge** - Safe auto-merge for patch updates
+- **Stale Issue Management** - Cleanup inactive issues
+
 ### Codebase Agent (CBA)
 
-AI agent configuration patterns for:
+AI agent configuration patterns in [`.claude/agents/codebase-agent.md`](.claude/agents/codebase-agent.md):
 
 - **Issue-to-PR Automation** - Converting well-defined issues into pull requests
 - **Code Reviews** - Providing actionable feedback
 - **Proactive Maintenance** - Dependency updates, linting, documentation
 - **Memory System** - Modular context files for consistency
-
-See [`.claude/agents/codebase-agent.md`](.claude/agents/codebase-agent.md) for patterns.
 
 ### Architecture Patterns
 
@@ -115,6 +132,7 @@ GitHub Actions patterns for:
 ## Documentation
 
 - **[Quickstart](docs/quickstart.md)** - 5-minute introduction to AI-assisted development
+- **[Patterns Index](docs/patterns/README.md)** - All workflow patterns in one place
 - **[Architecture](docs/architecture.md)** - Common architecture patterns
 - **[Tutorial](docs/tutorial.md)** - Step-by-step implementation guide
 - **[API Reference](docs/api-reference.md)** - API design patterns
