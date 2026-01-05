@@ -207,5 +207,5 @@ flowchart LR
 
 ## Related Patterns
 
+- [Self-Review Reflection](self-review-reflection.md) - Agent self-reviews before presenting work
 - [Autonomous Quality Enforcement](autonomous-quality-enforcement.md) - Validation loops and git hooks
-- [Process Rules](autonomous-quality-enforcement.md#process-rules) - Agent behavior configuration

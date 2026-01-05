@@ -337,5 +337,5 @@ No divergence. If CI fails, local will fail too.
 
 ## Related Patterns
 
+- [Self-Review Reflection](self-review-reflection.md) - Agent self-reviews before presenting work
 - [Multi-Agent Code Review](multi-agent-code-review.md) - Parallel agent review before presentation
-- [Process Rules](#process-rules) - Agent behavior configuration
