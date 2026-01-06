@@ -1,12 +1,12 @@
-# Ambient Code Reference Repository
+# AI-assisted Development Reference Repository
 
-## A Practical Guide for Principal Engineers Evaluating AI-Assisted Development
+## A Practical Guide for Engineers Evaluating AI-Assisted Development
 
 ---
 
 ## The Problem We're Solving
 
-Principal engineers face a difficult question: "My team wants to use Claude/AI coding assistants. How do we do this without creating chaos?"
+Engineers face a difficult question: "My team wants to use Claude/AI coding assistants. How do we do this without creating chaos?"
 
 Current approaches often fail:
 
@@ -14,23 +14,7 @@ Current approaches often fail:
 - **Heavy-handed policies**: Ban it or over-regulate, lose competitive advantage
 - **Vendor lock-in fears**: What if we invest in patterns that don't transfer?
 
-This reference repository provides battle-tested patterns you can adopt incrementally.
-
----
-
-## What This Repository Is
-
-A **documentation-only GitHub template** demonstrating AI-assisted development patterns.
-
-**Key Design Principle**: Standalone patterns approach - adopt what you need, skip what you don't. No prescribed sequence.
-
-**This is NOT**:
-
-- A working application (see demo-fastapi for that)
-- A vendor-specific solution
-- An all-or-nothing framework
-
-**This IS**:
+This reference repository provides useful patterns you can review / adopt incrementally:
 
 - Patterns extracted from production use
 - Copy-paste ready configurations
@@ -43,11 +27,15 @@ A **documentation-only GitHub template** demonstrating AI-assisted development p
 ### What Is It?
 
 A pre-configured AI agent definition that knows how to work with your codebase safely and consistently.
+The idea behind a CBA is to use an agent to eventually proxy 100% of the interaction with a codebase through this agent.
+
+**cba = codebase system prompt**
 
 ### The Problem It Solves
 
 Without guidance, AI assistants:
 
+- Don't behave like a co-worker
 - Make inconsistent style choices
 - Don't know your testing conventions
 - Miss security requirements
@@ -64,14 +52,14 @@ The agent definition lives in `.claude/agents/codebase-agent.md` and includes:
 
 ### CBA Workflow Example
 
-When CBA receives an issue to fix:
+When CBA receives an issue to fix (e.g. a github comment "@cba fix this":
 
 1. Read issue description and acceptance criteria
 2. Review relevant code in context files
 3. Create implementation plan
 4. Show plan to user for approval
 5. Implement changes following project standards
-6. Run linters (black, isort, ruff)
+6. Run any other pre-flight checks, such as linters
 7. Run tests (pytest)
 8. Create commit with clear message
 9. Push and create PR with detailed description
@@ -83,7 +71,7 @@ When CBA receives an issue to fix:
 
 Most teams start at Level 1 and graduate to Level 2 after building trust.
 
-### Why This Matters for Principal Engineers
+### Why This Matters
 
 - **Consistency**: Every AI-assisted change follows the same process
 - **Auditability**: Clear trail of what the agent did and why
@@ -114,15 +102,22 @@ Context is organized into focused modules in `.claude/context/`:
 **security-standards.md** - Input validation, sanitization, secrets management
 **testing-patterns.md** - Unit, integration, E2E test structures and conventions
 
+Codebase owners generate these files programmatically. Things like ADRs or hand-tuned context could be used here.
+What's important is that your team has collected and agrees upon the context since the idea is it will be shared.
+
 ### Loading Context On-Demand
 
-Instead of loading everything, you load what's relevant:
+Instead of loading everything, you load what's relevant. 
 
 "Load the security-standards context and help me review this authentication PR"
 
 "Load the architecture context and help me add a new endpoint"
 
-### Memory System Benefits for Principal Engineers
+For relation between elements, load these files into e.g. the local Anthropic Memory MCP server
+
+"load .claude/context into my local mcp server and add this instruction to claude.md"
+
+### Memory System Benefits
 
 - **Token efficiency**: Only load relevant context
 - **Maintainability**: Update one context file, all sessions benefit
@@ -136,8 +131,9 @@ Instead of loading everything, you load what's relevant:
 ### Issue-to-PR Overview
 
 A pattern where well-defined GitHub issues can be automatically converted into pull requests by the CBA.
+Example: https://github.com/ambient-code/agentready/pull/242
 
-### The Routine Fix Overhead Problem
+### Routine Fix Overhead
 
 Routine fixes (linting, formatting, simple bugs) take disproportionate time:
 
@@ -168,9 +164,9 @@ For a 2-minute fix, the overhead is 10+ minutes.
    - Tests pass
    ```
 
-2. Add label: `cba:auto-fix`
+2. Add label: `cba:auto-fix` or tag @cba on a comment (not the initial comment - github app restriction)
 
-3. CBA picks up the issue, creates a PR
+3. CBA picks up the issue, self-review and reflection occurs, then creates a PR
 
 4. Human reviews and merges
 
@@ -195,11 +191,11 @@ For a 2-minute fix, the overhead is 10+ minutes.
 - Security-sensitive code
 - Architecture changes
 
-### Issue-to-PR Benefits for Principal Engineers
+### Issue-to-PR Benefits
 
-- **10x productivity** for routine tasks
+- **Automation** for routine tasks helps engineers scale
 - **Democratized automation**: Team members without Claude access can trigger fixes
-- **Consistent quality**: Every auto-fix follows the same process
+- **Consistent quality**: Every auto-fix follows the same process with self-review and reflection.
 - **Audit trail**: Every change is tracked via GitHub
 
 **Note**: Issue-to-PR is one of four GHA automation patterns. See Feature 9 for the complete set including PR Auto-Review, Dependabot Auto-Merge, and Stale Issue Management.
@@ -212,6 +208,8 @@ For a 2-minute fix, the overhead is 10+ minutes.
 
 Reference implementations for organizing code in a way that AI assistants can reason about effectively.
 
+See [AgentReady](https://github.com/ambient-code/agentready) for tooling to check and validate your codebase's readiness for agentic development.
+
 ### The Spaghetti Code Problem
 
 AI assistants struggle with:
@@ -220,7 +218,7 @@ AI assistants struggle with:
 - Mixed concerns (business logic in HTTP handlers)
 - Implicit dependencies (global state everywhere)
 
-### The Four-Layer Pattern
+### The Four-Layer Pattern - used in the [FastAPI]([https://github.com/jeremyeder/fastapi-demo](https://github.com/jeremyeder/demo-fastapi) example
 
 **API Layer** (app/api/)
 
@@ -252,7 +250,7 @@ AI assistants struggle with:
 Higher layers depend on lower layers, never the reverse:
 API -> Service -> Model -> Core
 
-### Architecture Benefits for Principal Engineers
+### Architecture Benefits
 
 - **Predictable AI outputs**: When structure is clear, AI makes better decisions
 - **Easier testing**: Each layer is testable in isolation
@@ -261,7 +259,7 @@ API -> Service -> Model -> Core
 
 ---
 
-## Feature 5: Security Patterns (Light Touch)
+## Feature 5: Security Patterns (Light Touch - not comprehensive)
 
 ### Security Patterns Overview
 
@@ -302,7 +300,7 @@ Most security bugs come from:
 - No complex encryption for non-sensitive data
 - No authentication framework in the reference (separate concern)
 
-### Security Benefits for Principal Engineers
+### Security Benefits
 
 - **Practical security**: Focus on actual attack vectors
 - **Maintainable**: Simple patterns are followed consistently
@@ -344,7 +342,7 @@ A test pyramid approach with clear responsibilities for each level.
 - Focus on critical paths
 - Don't chase 100% (diminishing returns)
 
-### Testing Benefits for Principal Engineers
+### Testing Benefits
 
 - **Fast feedback**: Unit tests run in seconds
 - **Confidence**: Integration tests catch API contract issues
@@ -357,7 +355,7 @@ A test pyramid approach with clear responsibilities for each level.
 
 ### Documentation CI Overview
 
-GitHub Actions workflows that validate documentation quality automatically.
+GitHub Actions workflows that validate documentation quality automatically. Not an AI specific capability - but it leverages AI now.
 
 ### Why Documentation CI?
 
@@ -386,7 +384,7 @@ Documentation is code. Bad docs:
 - No broken internal links
 - No dead external references
 
-### Documentation CI Benefits for Principal Engineers
+### Documentation CI Benefits
 
 - **Docs stay current**: CI catches drift
 - **Quality floor**: No more "works on my machine" diagrams
@@ -474,9 +472,9 @@ If you found and fixed issues, briefly note: "Self-review: Fixed [issue]"
 | Simple lookups | ❌ No | Overhead not worth it |
 | Exploratory chat | ❌ No | Low stakes, fast iteration preferred |
 
-**Rule of thumb**: Self-review when the output will be acted upon or when mistakes are costly.
+**Note**: Self-review has a monetary cost associated with it. Use your judgement. This is a common pattern though.
 
-### Self-Review Benefits for Principal Engineers
+### Self-Review Benefits
 
 - **Higher quality first attempts**: Users rarely say "you missed X"
 - **Reduced iteration cycles**: First submission is usually accepted
@@ -551,7 +549,7 @@ Each pattern has explicit safety gates:
 | Dependabot Auto-Merge | Patch versions only, CI must pass |
 | Stale Issues | Exempt labels, 7-day warning period |
 
-### GHA Workflow Benefits for Principal Engineers
+### GHA Workflow Benefits
 
 - **Reduced toil**: Routine work happens automatically
 - **Consistent process**: Every PR gets the same review treatment
@@ -643,7 +641,7 @@ cat .claude/context/architecture.md
 cat docs/quickstart.md
 
 # Copy to your project
-cp -r .claude /path/to/your/project/
+#commented out on purpose cp -r .claude /path/to/your/project/
 cd /path/to/your/project/.claude/agents/
 # Edit codebase-agent.md for your stack
 ```
@@ -670,8 +668,6 @@ The Ambient Code Reference Repository provides:
 
 **Start small, adopt incrementally, measure results.**
 
-The goal isn't to replace engineers - it's to amplify them.
-
 ---
 
 ## Resources
@@ -679,11 +675,3 @@ The goal isn't to replace engineers - it's to amplify them.
 - Reference Repository: <https://github.com/jeremyeder/reference>
 - Working Demo: <https://github.com/jeremyeder/demo-fastapi>
 - Claude Documentation: <https://docs.anthropic.com/claude/docs>
-
----
-
-## About
-
-Created by Jeremy Eder, Distinguished Engineer at Red Hat AI Engineering.
-
-"Stable, Secure, Performant and Boring" - the goal is to make AI assistance invisible through excellence.
