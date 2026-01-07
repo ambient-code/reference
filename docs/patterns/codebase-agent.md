@@ -4,73 +4,83 @@
 
 ---
 
-## Overview
-
-!!! note "Section Summary"
-    What a CBA is: a markdown file that defines how AI works in your project. Problem it solves: inconsistent AI behavior across developers. Key benefit: every AI interaction follows the same process.
-
----
-
 ## Quick Start
 
-!!! note "Section Summary"
-    Copy-paste the CBA definition from `.claude/agents/codebase-agent.md`. Minimal customization: your linting commands, your test commands. Done in 15 minutes.
+Create `.claude/agents/codebase-agent.md`:
+
+```markdown
+---
+name: codebase-agent
+description: Autonomous codebase operations for [your-project]
+---
+
+# Codebase Agent
+
+## Quality Gates (run before presenting code)
+1. Lint: `npm run lint`
+2. Test: `npm test`
+3. Fix failures before showing code
+
+## Safety Rules
+- NEVER commit directly to main
+- ALWAYS create feature branches
+- ASK before breaking changes
+```
 
 ---
 
-## Agent Definition Structure
+## Agent Structure
 
-### Capability Boundaries
-
-!!! note "Section Summary"
-    What the agent can do autonomously vs what requires human approval. Examples: formatting changes (auto), architecture changes (human approval). How to define your own boundaries.
-
-### Workflow Definitions
-
-!!! note "Section Summary"
-    Step-by-step processes for common tasks: issue-to-PR, code review, refactoring. Template workflows provided. How to customize for your process.
-
-### Quality Gates
-
-!!! note "Section Summary"
-    Linting, testing, and review requirements. Which tools to run, in what order. What constitutes a passing gate. Error handling.
-
-### Safety Guardrails
-
-!!! note "Section Summary"
-    When to stop and ask for human input. Risk categories: low/medium/high. Examples of each. How to configure alert thresholds.
+| Section | Purpose | Example |
+|---------|---------|---------|
+| **Capability Boundaries** | What agent can do autonomously | Formatting: auto. Architecture: human approval |
+| **Workflow Definitions** | Step-by-step processes | Issue→PR, code review steps |
+| **Quality Gates** | Tools to run, in order | `black . && isort . && pytest` |
+| **Safety Guardrails** | When to stop and ask | >10 files changed, security code, DB schema |
 
 ---
 
 ## Autonomy Levels
 
-!!! note "Section Summary"
-    Level 1 (Conservative): PR creation only, wait for human approval. Level 2 (Moderate): Auto-merge for low-risk changes. Level 3 (Aggressive): Auto-deploy after tests pass. How to graduate between levels.
+| Level | Behavior | Use When |
+|-------|----------|----------|
+| **1: Conservative** | Create PRs only, wait for human approval | Starting out, high-risk projects |
+| **2: Moderate** | Auto-merge docs/deps/lint fixes after CI passes | Established trust, good test coverage |
+| **3: Aggressive** | Auto-deploy after tests pass | Mature codebase, comprehensive CI |
+
+Start at Level 1. Graduate as you build trust.
 
 ---
 
-## Memory System Integration
+## Memory System
 
-!!! note "Section Summary"
-    How CBA uses context files from `.claude/context/`. Loading context on-demand. When to reference which context file.
+Context files in `.claude/context/` provide persistent knowledge:
 
----
+```text
+.claude/
+├── agents/
+│   └── codebase-agent.md
+└── context/
+    ├── architecture.md      # Code structure patterns
+    ├── security-standards.md
+    └── testing-patterns.md
+```
 
-## Real-World Examples
-
-!!! note "Section Summary"
-    CBA configurations for different stacks: Python/FastAPI, TypeScript/Express, Go. What's different, what's the same.
+Reference in your agent: "Load `.claude/context/architecture.md` for code placement decisions."
 
 ---
 
 ## Troubleshooting
 
-!!! note "Section Summary"
-    Common issues: agent ignores boundaries, agent is too conservative, agent makes up conventions. Solutions for each.
+| Problem | Fix |
+|---------|-----|
+| Agent ignores boundaries | Make rules explicit: "NEVER delete files without asking" |
+| Agent too conservative | Define allowed autonomous actions explicitly |
+| Agent invents conventions | Provide code examples in context files |
 
 ---
 
 ## Related Patterns
 
-- [Self-Review Reflection](self-review-reflection.md) - Add quality gates to CBA output
-- [Memory System](../getting-started/first-cba.md) - Persistent context across sessions
+- [Self-Review Reflection](self-review-reflection.md)
+- [Autonomous Quality Enforcement](autonomous-quality-enforcement.md)

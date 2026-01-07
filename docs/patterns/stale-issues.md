@@ -4,17 +4,35 @@
 
 ---
 
-## Overview
-
-!!! note "Section Summary"
-    Issues inactive for 30+ days get labeled stale. After 7 more days of inactivity, they close automatically. Exempt labels protect important issues. Keeps backlog clean without manual triage.
-
----
-
 ## Quick Start
 
-!!! note "Section Summary"
-    Copy the workflow YAML. Configure exempt labels. Run manually to test. Watch stale issues get cleaned up.
+Create `.github/workflows/stale.yml`:
+
+```yaml
+name: Close Stale Issues
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: 'stale'
+          stale-issue-message: |
+            Inactive for 30 days. Will close in 7 days unless there's activity.
+          exempt-issue-labels: 'pinned,security,bug'
+```
 
 ---
 
@@ -22,44 +40,52 @@
 
 ```mermaid
 flowchart TD
-    A[Weekly Schedule] --> B[Find Inactive Issues]
-    B --> C[Add Stale Label]
-    C --> D[Wait 7 Days]
-    D --> E{Activity?}
-    E -->|Yes| F[Remove Stale Label]
-    E -->|No| G[Close Issue]
+    A[Scheduled Run] --> B{Inactive > 30 days?}
+    B -->|No| C[Skip]
+    B -->|Yes| D{Has exempt label?}
+    D -->|Yes| C
+    D -->|No| E[Add Stale Label]
+    E --> F[Wait 7 days]
+    F --> G{Activity?}
+    G -->|Yes| H[Remove Stale]
+    G -->|No| I[Close Issue]
 ```
 
 ---
 
 ## Configuration
 
-!!! note "Section Summary"
-    Inactivity threshold (default: 30 days). Warning period (default: 7 days). Stale label name. Warning message customization.
+| Option | Default | Description |
+|--------|---------|-------------|
+| `days-before-stale` | 60 | Days inactive before marking stale |
+| `days-before-close` | 7 | Days after stale before closing |
+| `stale-issue-label` | Stale | Label to apply |
+| `exempt-issue-labels` | - | Labels that prevent stale (comma-separated) |
+| `days-before-pr-stale` | 60 | Set to -1 to disable for PRs |
 
 ---
 
 ## Exempt Labels
 
-!!! note "Section Summary"
-    Which labels prevent closure: pinned, security, bug. How to add custom exempt labels. When to use exempt vs just commenting.
+| Label | Purpose |
+|-------|---------|
+| `pinned` | Long-term tracking |
+| `security` | Security issues |
+| `bug` | Confirmed bugs |
+| `help-wanted` | Seeking contributions |
 
 ---
 
-## Workflow YAML
+## Troubleshooting
 
-!!! note "Section Summary"
-    Complete workflow file using actions/stale. Schedule configuration. Issue and PR settings. Exempt labels.
-
----
-
-## Customization
-
-!!! note "Section Summary"
-    Different thresholds for issues vs PRs. Custom messages. Integration with project boards. Metrics tracking.
+| Problem | Fix |
+|---------|-----|
+| Not running | Check cron syntax, workflow on default branch |
+| Closing important issues | Add exempt labels |
+| Too aggressive | Increase `days-before-stale` |
 
 ---
 
 ## Related Patterns
 
-- [Dependabot Auto-Merge](dependabot-auto-merge.md) - Another proactive cleanup pattern
+- [Dependabot Auto-Merge](dependabot-auto-merge.md)

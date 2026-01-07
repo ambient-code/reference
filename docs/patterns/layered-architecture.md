@@ -1,69 +1,93 @@
 # Layered Architecture
 
-**Code structure AI can reason about effectively.**
-
----
-
-## Overview
-
-!!! note "Section Summary"
-    AI assistants struggle with spaghetti code. Clear layer boundaries help AI make better decisions. Four layers: API, Service, Model, Core. Dependency rule: higher depends on lower, never reverse.
-
----
-
-## Quick Start
-
-!!! note "Section Summary"
-    Example directory structure. What goes in each layer. How to reference in CBA context files.
+**Code structure AI can reason about.**
 
 ---
 
 ## The Four Layers
 
-### API Layer
+```text
+┌─────────────────────────────────┐
+│      API Layer (FastAPI)        │  Routes, HTTP status codes
+├─────────────────────────────────┤
+│     Service Layer (Logic)       │  Business rules
+├─────────────────────────────────┤
+│    Model Layer (Pydantic)       │  Validation, serialization
+├─────────────────────────────────┤
+│   Core Layer (Utilities)        │  Config, security
+└─────────────────────────────────┘
+```
 
-!!! note "Section Summary"
-    Route handlers, request/response models, HTTP status codes, OpenAPI documentation. No business logic here.
-
-### Service Layer
-
-!!! note "Section Summary"
-    Business logic, CRUD operations, orchestration. No HTTP concerns, no database queries directly.
-
-### Model Layer
-
-!!! note "Section Summary"
-    Pydantic models, field validation, sanitization, serialization. Data structures and their rules.
-
-### Core Layer
-
-!!! note "Section Summary"
-    Configuration, security utilities, logging, shared utilities. Cross-cutting concerns.
+**Dependency rule**: Higher layers import lower, never reverse.
 
 ---
 
-## Dependency Rule
+## Directory Structure
+
+```text
+app/
+├── api/v1/items.py      # Routes
+├── services/item_service.py  # Business logic
+├── models/item.py       # Pydantic models
+└── core/
+    ├── config.py        # Settings
+    └── security.py      # Utilities
+```
+
+---
+
+## Layer Responsibilities
+
+| Layer | Does | Doesn't |
+|-------|------|---------|
+| **API** | Routes, HTTP errors, OpenAPI docs | Business logic |
+| **Service** | Business rules, CRUD, orchestration | HTTP concerns |
+| **Model** | Validation, sanitization | Business logic |
+| **Core** | Config, security utils | Domain logic |
+
+---
+
+## Example
+
+```python
+# API Layer - handles HTTP
+@router.post("/items", status_code=201)
+def create_item(data: ItemCreate):
+    try:
+        return item_service.create_item(data)
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+# Service Layer - business logic
+class ItemService:
+    def create_item(self, data: ItemCreate) -> Item:
+        if self._slug_exists(data.slug):
+            raise ValueError("Duplicate slug")
+        return Item(id=self._next_id, **data.model_dump())
+
+# Model Layer - validation
+class ItemCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=200)
+    slug: str = Field(..., pattern=r"^[a-z0-9-]+$")
+```
+
+---
+
+## Dependency Diagram
 
 ```mermaid
 flowchart TD
     API[API Layer] --> Service[Service Layer]
     Service --> Model[Model Layer]
     Model --> Core[Core Layer]
+    API --> Model
+    API --> Core
+    Service --> Core
 ```
-
-!!! note "Section Summary"
-    Why the rule matters. How to enforce it. What to do when you need to break it.
-
----
-
-## AI Benefits
-
-!!! note "Section Summary"
-    Predictable AI outputs. Easier testing. Safer refactoring. How to describe layers in context files.
 
 ---
 
 ## Related Patterns
 
-- [Security Patterns](security-patterns.md) - Where validation happens in layers
+- [Security Patterns](security-patterns.md) - Where validation happens
 - [Testing Patterns](testing-patterns.md) - How to test each layer
