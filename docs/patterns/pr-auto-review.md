@@ -4,17 +4,46 @@
 
 ---
 
-## Overview
-
-!!! note "Section Summary"
-    When any PR is opened or updated, AI reviews the code and posts structured feedback. Catches obvious issues before human time is spent. Severity levels: CRITICAL, WARNING, GOOD.
-
----
-
 ## Quick Start
 
-!!! note "Section Summary"
-    Copy the workflow YAML. Configure secrets. Open a test PR. See the AI review comment appear.
+Create `.github/workflows/pr-review.yml`:
+
+```yaml
+name: PR Auto-Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review PR #${{ github.event.pull_request.number }}.
+
+            Focus on:
+            - Security (injection, validation, secrets)
+            - Bugs (edge cases, error handling)
+            - Code quality (clarity, maintainability)
+
+            Format findings as:
+            🔴 CRITICAL: [must fix]
+            🟡 WARNING: [should consider]
+            ✅ GOOD: [positive observation]
+
+            Be concise. Only flag high-confidence issues.
+```
 
 ---
 
@@ -22,35 +51,49 @@
 
 ```mermaid
 flowchart TD
-    A[PR Opened/Updated] --> B[AI Reviews Code]
-    B --> C[Self-Review Findings]
-    C --> D[Post Review Comment]
+    A[PR Opened/Updated] --> B{Draft?}
+    B -->|Yes| C[Skip Review]
+    B -->|No| D[Checkout Code]
+    D --> E[AI Analyzes Diff]
+    E --> F[Generate Findings]
+    F --> G[Post Review Comment]
 ```
 
 ---
 
-## Review Format
+## Review Severity
 
-!!! note "Section Summary"
-    Structured output format with emojis for quick scanning. CRITICAL (must fix), WARNING (should consider), GOOD (positive observations). Examples of each.
-
----
-
-## Workflow YAML
-
-!!! note "Section Summary"
-    Complete workflow file. Trigger on opened and synchronize. Review prompt with focus areas. Comment posting.
+| Level | Icon | Meaning |
+|-------|------|---------|
+| Critical | 🔴 | Security risk, crash, data loss - must fix |
+| Warning | 🟡 | Bug risk, maintainability - should address |
+| Info | ℹ️ | Suggestion - optional |
+| Good | ✅ | Positive observation |
 
 ---
 
-## Customization
+## Options
 
-!!! note "Section Summary"
-    Custom review criteria. Different prompts for different file types. Blocking vs commenting only. Integration with required reviews.
+| Option | Add to workflow |
+|--------|-----------------|
+| **Inline comments** | `track_progress: true` in action inputs |
+| **Skip Dependabot** | `if: github.actor != 'dependabot[bot]'` |
+| **Skip by label** | `if: !contains(github.event.pull_request.labels.*.name, 'skip-review')` |
+| **Block on critical** | Check output, `exit 1` if CRITICAL found |
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| Review not appearing | Check PR not draft, `pull-requests: write` permission set |
+| Too noisy | Add "only flag high-confidence issues" to prompt |
+| Misses issues | Increase `--max-turns`, add project-specific review criteria |
 
 ---
 
 ## Related Patterns
 
-- [Issue-to-PR](issue-to-pr.md) - Source of PRs to review
-- [Multi-Agent Code Review](multi-agent-code-review.md) - Multiple specialized reviewers
+- [Issue-to-PR](issue-to-pr.md)
+- [Multi-Agent Code Review](multi-agent-code-review.md)

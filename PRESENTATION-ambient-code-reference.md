@@ -29,7 +29,7 @@ This reference repository provides useful patterns you can review / adopt increm
 A pre-configured AI agent definition that knows how to work with your codebase safely and consistently.
 The idea behind a CBA is to use an agent to eventually proxy 100% of the interaction with a codebase through this agent.
 
-**cba = codebase system prompt**
+(cba = codebase system prompt)
 
 ### The Problem It Solves
 
@@ -107,7 +107,7 @@ What's important is that your team has collected and agrees upon the context sin
 
 ### Loading Context On-Demand
 
-Instead of loading everything, you load what's relevant. 
+Instead of loading everything, you load what's relevant.
 
 "Load the security-standards context and help me review this authentication PR"
 
@@ -131,7 +131,7 @@ For relation between elements, load these files into e.g. the local Anthropic Me
 ### Issue-to-PR Overview
 
 A pattern where well-defined GitHub issues can be automatically converted into pull requests by the CBA.
-Example: https://github.com/ambient-code/agentready/pull/242
+Example: <https://github.com/ambient-code/agentready/pull/242>
 
 ### Routine Fix Overhead
 

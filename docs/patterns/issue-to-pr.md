@@ -4,17 +4,47 @@
 
 ---
 
-## Overview
-
-!!! note "Section Summary"
-    When a well-defined issue is created, AI analyzes it and creates a draft PR. Reduces the 20-minute PR ceremony for 2-minute fixes. Human reviews the draft, not the initial work.
-
----
-
 ## Quick Start
 
-!!! note "Section Summary"
-    Copy the workflow YAML. Configure secrets (ANTHROPIC_API_KEY). Create a test issue. See the draft PR appear.
+Create `.github/workflows/issue-to-pr.yml`:
+
+```yaml
+name: Issue to Draft PR
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  create-pr:
+    if: contains(github.event.issue.labels.*.name, 'ready-for-pr')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Analyze issue #${{ github.event.issue.number }}.
+            Title: ${{ github.event.issue.title }}
+            Body: ${{ github.event.issue.body }}
+
+            If requirements are clear:
+            1. Create branch: feat/issue-${{ github.event.issue.number }}
+            2. Implement the fix
+            3. Run tests
+            4. Create a draft PR linking to the issue
+
+            If unclear: comment asking for clarification.
+```
+
+Add `ANTHROPIC_API_KEY` to repository secrets. Label an issue `ready-for-pr` to trigger.
 
 ---
 
@@ -25,50 +55,49 @@ flowchart TD
     A[Issue Opened] --> B{Well-defined?}
     B -->|No| C[Request Clarification]
     B -->|Yes| D[Analyze Issue]
-    D --> E[Self-Review Analysis]
-    E --> F[Create Branch]
-    F --> G[Create Draft PR]
-    G --> H[Link to Issue]
+    D --> E[Create Branch]
+    E --> F[Implement Changes]
+    F --> G[Run Tests]
+    G --> H{Tests Pass?}
+    H -->|No| I[Fix and Retry]
+    I --> G
+    H -->|Yes| J[Create Draft PR]
+    J --> K[Link to Issue]
 ```
 
 ---
 
 ## Risk Categories
 
-!!! note "Section Summary"
-    Low risk (auto-fix eligible): formatting, linting, unused imports. Medium risk (PR only): refactoring, test additions. High risk (report only): breaking changes, security. How to configure each.
-
----
-
-## Workflow YAML
-
-!!! note "Section Summary"
-    Complete workflow file with annotations. Trigger conditions. Permissions required. Environment variables.
+| Risk | Examples | Action |
+|------|----------|--------|
+| **Low** | Typo fixes, doc updates, lint errors | Auto-fix, create PR |
+| **Medium** | Bug fixes, small features | Draft PR, require review |
+| **High** | Breaking changes, security, new APIs | Analyze only, report findings |
 
 ---
 
 ## Safety Gates
 
-!!! note "Section Summary"
-    Draft PR only (requires human merge). AI analysis step with self-review. Clarification requests for unclear issues. How to add custom gates.
-
----
-
-## Customization
-
-!!! note "Section Summary"
-    Custom labels for different risk levels. Custom analysis prompts. Integration with project boards. Slack notifications.
+| Gate | Implementation |
+|------|----------------|
+| **Draft PR only** | `gh pr create --draft` |
+| **Clarification requests** | Comment on issue if requirements unclear |
+| **Size limits** | Skip if issue body >500 words |
 
 ---
 
 ## Troubleshooting
 
-!!! note "Section Summary"
-    Common issues: workflow doesn't trigger, AI creates wrong PR, permissions errors. Solutions for each.
+| Problem | Fix |
+|---------|-----|
+| Workflow doesn't trigger | Check label is exactly `ready-for-pr`, workflow on default branch |
+| AI creates wrong PR | Add more context in issue template, include acceptance criteria |
+| Permission errors | Ensure `contents: write`, `pull-requests: write`, `issues: write` |
 
 ---
 
 ## Related Patterns
 
-- [Self-Review Reflection](self-review-reflection.md) - AI reviews its own analysis
-- [PR Auto-Review](pr-auto-review.md) - AI reviews the resulting PR
+- [Self-Review Reflection](self-review-reflection.md)
+- [PR Auto-Review](pr-auto-review.md)
