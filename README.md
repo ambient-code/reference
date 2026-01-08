@@ -19,6 +19,22 @@ AI-assisted development patterns. Each pattern is standalone - adopt what you ne
 
 See [Quickstart](docs/quickstart.md) for pattern overview and adoption guidance.
 
+## Development Setup
+
+```bash
+git clone https://github.com/ambient-code/reference.git
+cd reference
+./scripts/setup.sh
+source .venv/bin/activate
+pre-commit install
+```
+
+**Prerequisites**: Python 3.11+, Node.js (for markdownlint and mermaid-cli)
+
+```bash
+npm install -g markdownlint-cli @mermaid-js/mermaid-cli
+```
+
 ## Repository Contents
 
 ```text

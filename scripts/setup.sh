@@ -27,18 +27,32 @@ fi
 echo "Installing documentation dependencies..."
 uv pip install -r requirements-dev.txt
 
-# Verify installation
-echo "Verifying installation..."
-echo "✓ Documentation tooling installed"
+# Install pre-commit hooks
+echo "Installing pre-commit hooks..."
+.venv/bin/pre-commit install
+
+# Check for npm tools
+echo ""
+echo "Checking npm tools..."
+if command -v markdownlint &> /dev/null; then
+    echo "✓ markdownlint installed"
+else
+    echo "⚠ markdownlint not found - install with: npm install -g markdownlint-cli"
+fi
+
+if command -v mmdc &> /dev/null; then
+    echo "✓ mermaid-cli installed"
+else
+    echo "⚠ mermaid-cli not found - install with: npm install -g @mermaid-js/mermaid-cli"
+fi
 
 echo ""
-echo "Setup complete! 🎉"
+echo "Setup complete!"
 echo ""
 echo "Next steps:"
 echo "  1. Activate virtual environment: source .venv/bin/activate"
-echo "  2. Explore documentation: cat docs/quickstart.md"
-echo "  3. Validate Mermaid diagrams: ./scripts/validate-mermaid.sh"
-echo "  4. Lint markdown: markdownlint docs/**/*.md --fix"
+echo "  2. Install npm tools (if missing): npm install -g markdownlint-cli @mermaid-js/mermaid-cli"
+echo "  3. Validate docs: pre-commit run --all-files"
 echo ""
 echo "For a working application demo, see:"
 echo "  https://github.com/ambient-code/demo-fastapi"
