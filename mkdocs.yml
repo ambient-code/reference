@@ -73,7 +73,9 @@ nav:
       - Foundation:
           - Security Patterns: patterns/security-patterns.md
           - Testing Patterns: patterns/testing-patterns.md
-  - ADR Template: adr/template.md
+  - ADR:
+      - About ADRs: adr/README.md
+      - Template: adr/template.md
 
 extra:
   social:
