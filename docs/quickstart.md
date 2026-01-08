@@ -107,4 +107,4 @@ Read these to understand the format. Create your own based on your project.
 ## Links
 
 - **Working Demo**: [demo-fastapi](https://github.com/ambient-code/demo-fastapi)
-- **Presentation**: [PRESENTATION-ambient-code-reference.md](../PRESENTATION-ambient-code-reference.md)
+- **Presentation**: [PRESENTATION-ambient-code-reference.md](https://github.com/ambient-code/reference/blob/main/PRESENTATION-ambient-code-reference.md)
