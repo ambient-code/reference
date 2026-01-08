@@ -96,5 +96,4 @@ class Settings(BaseSettings):
 
 ## Related Patterns
 
-- [Layered Architecture](layered-architecture.md) - Where validation happens
 - [PR Auto-Review](pr-auto-review.md) - Automated security checks
