@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   documentation-structure:
@@ -15,9 +16,8 @@ jobs:
 
       - name: Check documentation structure
         run: |
-          # Verify required documentation files exist
+          # Verify patterns documentation exists
+          test -d docs/patterns || { echo "Error: docs/patterns/ missing"; exit 1; }
           test -f docs/quickstart.md || { echo "Error: docs/quickstart.md missing"; exit 1; }
-          test -f docs/architecture.md || { echo "Error: docs/architecture.md missing"; exit 1; }
-          test -f docs/tutorial.md || { echo "Error: docs/tutorial.md missing"; exit 1; }
-          test -f docs/api-reference.md || { echo "Error: docs/api-reference.md missing"; exit 1; }
+          test -f docs/index.md || { echo "Error: docs/index.md missing"; exit 1; }
           echo "All required documentation files present"
