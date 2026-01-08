@@ -218,7 +218,7 @@ AI assistants struggle with:
 - Mixed concerns (business logic in HTTP handlers)
 - Implicit dependencies (global state everywhere)
 
-### The Four-Layer Pattern - used in the [FastAPI]([https://github.com/jeremyeder/fastapi-demo](https://github.com/jeremyeder/demo-fastapi) example
+### The Four-Layer Pattern - used in the [demo-fastapi](https://github.com/ambient-code/demo-fastapi) example
 
 **API Layer** (app/api/)
 
@@ -632,7 +632,7 @@ The code examples use Python, but the patterns transfer. Layered architecture, i
 
 ```bash
 # Clone the reference
-git clone https://github.com/jeremyeder/reference.git
+git clone https://github.com/ambient-code/reference.git
 cd reference
 
 # Explore the patterns
@@ -648,7 +648,7 @@ cd /path/to/your/project/.claude/agents/
 
 ### See It In Action
 
-Working FastAPI demo: <https://github.com/jeremyeder/demo-fastapi>
+Working FastAPI demo: <https://github.com/ambient-code/demo-fastapi>
 
 ---
 
@@ -672,6 +672,6 @@ The Ambient Code Reference Repository provides:
 
 ## Resources
 
-- Reference Repository: <https://github.com/jeremyeder/reference>
-- Working Demo: <https://github.com/jeremyeder/demo-fastapi>
+- Reference Repository: <https://github.com/ambient-code/reference>
+- Working Demo: <https://github.com/ambient-code/demo-fastapi>
 - Claude Documentation: <https://docs.anthropic.com/claude/docs>

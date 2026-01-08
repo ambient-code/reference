@@ -1,188 +1,110 @@
-# Quickstart Guide
+# Quickstart
 
-Get started with Ambient Code reference patterns in 5 minutes.
+Each pattern below is standalone. Pick one, follow its quickstart, done.
 
-## What This Repository Is
+---
 
-This is a **documentation-only reference** for AI-assisted development patterns. It provides:
+## Agent Behavior Patterns
 
-- **Pattern documentation** - CBA, architecture, security, testing
-- **Example configurations** - `.claude/` agent setup examples
-- **Best practices** - Documentation templates and standards
+How to configure AI agents for consistent, safe, high-quality assistance.
 
-**Looking for a working application?** See [demo-fastapi](https://github.com/jeremyeder/demo-fastapi)
+| Pattern | What It Does | Time |
+|---------|--------------|------|
+| [Codebase Agent (CBA)](patterns/codebase-agent.md) | Define AI behavior, capabilities, and guardrails | 30 min |
+| [Self-Review Reflection](patterns/self-review-reflection.md) | Agent reviews own work before presenting | 5 min |
+| [Autonomous Quality Enforcement](patterns/autonomous-quality-enforcement.md) | Agent runs linters/tests automatically | 15 min |
+| [Multi-Agent Code Review](patterns/multi-agent-code-review.md) | Multiple specialized agents review in parallel | 1 hour |
 
-### Getting Started Flow
+**Start here if:** AI gives inconsistent answers, misses obvious bugs, or ignores conventions.
+
+---
+
+## GHA Automation Patterns
+
+GitHub Actions workflows that handle routine work automatically.
+
+| Pattern | Trigger | Time |
+|---------|---------|------|
+| [Issue-to-PR Automation](patterns/issue-to-pr.md) | Issue labeled `cba` | 30 min |
+| [PR Auto-Review](patterns/pr-auto-review.md) | Pull request opened | 15 min |
+| [Dependabot Auto-Merge](patterns/dependabot-auto-merge.md) | Dependabot PR (patch versions) | 10 min |
+| [Stale Issue Management](patterns/stale-issues.md) | Weekly schedule | 10 min |
+
+**Start here if:** PRs take forever, dependency updates pile up, or stale issues accumulate.
+
+---
+
+## Foundation Patterns
+
+| Pattern | What It Does | Time |
+|---------|--------------|------|
+| [Security Patterns](patterns/security-patterns.md) | Input validation at boundaries, sanitization | 30 min |
+| [Testing Patterns](patterns/testing-patterns.md) | Unit, integration, E2E test pyramid | 1 hour |
+
+---
+
+## The CBA Demo
+
+The best way to understand CBA value is the **ADR before/after demo**.
+
+### Scenario: User requests a change that conflicts with an existing ADR
+
+**Without CBA (Vanilla AI):**
+
+- Implements immediately
+- Ignores project decisions
+- Creates technical debt
+- Future AI interactions still confused
+
+**With CBA:**
+
+1. Reads CLAUDE.md and ADRs
+2. Identifies conflict with existing decision
+3. Asks before proceeding
+4. Proposes ADR change for approval
+5. Updates all references (ADR index, CLAUDE.md)
+6. Only then implements
+7. Self-reviews before presenting
 
 ```mermaid
-flowchart LR
-    A[Clone Repo] --> B[Explore Docs]
-    B --> C{What do you need?}
-    C -->|CBA Setup| D[Copy .claude/]
-    C -->|Architecture| E[Read docs/architecture.md]
-    C -->|Testing| F[Read testing-patterns.md]
-    C -->|CI/CD| G[Copy .github/workflows/]
-    D --> H[Customize for your project]
-    E --> H
-    F --> H
-    G --> H
-    H --> I[Ship It]
+flowchart TD
+    A[User Request] --> B[CBA Loads Context]
+    B --> C[Read CLAUDE.md + ADRs]
+    C --> D{Conflicts with ADRs?}
+    D -->|Yes| E[Ask user, propose ADR change]
+    D -->|No| F[Implement]
+    E -->|Approved| G[Update ADRs]
+    G --> F
+    F --> H[Self-Review]
+    H --> I{Passes checklist?}
+    I -->|No| J[Fix issues]
+    J --> H
+    I -->|Yes| K[Create PR with findings]
 ```
 
-## Prerequisites
+See [demo-fastapi](https://github.com/ambient-code/demo-fastapi) for this pattern in action.
 
-- Python 3.11 or 3.12 (for documentation tooling)
-- `uv` (recommended) or `pip`
-- Git
+---
 
-## Setup
+## Reference Files
 
-### 1. Clone the Repository
+The `.claude/` directory contains example configurations:
 
-```bash
-git clone https://github.com/jeremyeder/reference.git
-cd reference
+```text
+.claude/
+├── agents/
+│   └── codebase-agent.md    # Example CBA definition
+└── context/
+    ├── architecture.md      # Example architecture context
+    ├── security-standards.md
+    └── testing-patterns.md
 ```
 
-### 2. Install Documentation Tooling (Optional)
+Read these to understand the format. Create your own based on your project.
 
-```bash
-# Run setup script
-./scripts/setup.sh
+---
 
-# Or manually install
-uv pip install -r requirements-dev.txt
-```
+## Links
 
-This installs markdown linting and Mermaid validation tools.
-
-## Explore the Patterns
-
-### Browse Documentation
-
-```bash
-# Read pattern overviews
-cat docs/architecture.md
-cat docs/tutorial.md
-cat docs/api-reference.md
-
-# Explore CBA agent patterns
-cat .claude/agents/codebase-agent.md
-
-# Check context examples
-cat .claude/context/architecture.md
-cat .claude/context/security-standards.md
-cat .claude/context/testing-patterns.md
-```
-
-### Understand the Structure
-
-```bash
-# See repository layout
-tree -L 2 -I '.venv|.git'
-
-# List available patterns
-ls -la .claude/agents/
-ls -la .claude/context/
-ls -la docs/
-```
-
-## Validate Documentation (If You Modify)
-
-### Lint Markdown
-
-```bash
-markdownlint docs/**/*.md README.md CLAUDE.md --fix
-```
-
-### Validate Mermaid Diagrams
-
-```bash
-./scripts/validate-mermaid.sh
-```
-
-## Use the Patterns
-
-### Pick What You Need
-
-This repository uses **standalone patterns** - adopt concepts independently:
-
-1. **Codebase Agent Setup**
-   - Copy `.claude/` structure to your project
-   - Adapt agent definitions in `.claude/agents/`
-   - Customize context files in `.claude/context/`
-
-2. **Architecture Patterns**
-   - Reference layered architecture in `docs/architecture.md`
-   - Adapt for your tech stack (FastAPI, Express, Go, etc.)
-
-3. **Testing Patterns**
-   - Follow structures in `.claude/context/testing-patterns.md`
-   - Organize tests as unit/integration/e2e
-
-4. **CI/CD Patterns**
-   - Copy workflows from `.github/workflows/`
-   - Adapt for your documentation validation needs
-
-### Example: Add CBA to Your Project
-
-```bash
-# In your project
-cp -r /path/to/reference/.claude .
-cd .claude/agents/
-
-# Edit codebase-agent.md for your needs
-vim codebase-agent.md
-
-# Customize context files
-cd ../context/
-vim architecture.md  # Your project's architecture
-vim security-standards.md  # Your security practices
-```
-
-## Next Steps
-
-- **[Architecture](architecture.md)** - Understand pattern organization
-- **[Tutorial](tutorial.md)** - Apply patterns to your project
-- **[API Reference](api-reference.md)** - API design patterns
-
-## Working Application Demo
-
-Want to see these patterns in action?
-
-→ **[demo-fastapi](https://github.com/jeremyeder/demo-fastapi)** - Working FastAPI application demonstrating CBA patterns
-
-The demo includes:
-
-- Full CRUD API with FastAPI
-- CBA agent configured for the app
-- Complete test suite
-- Containerfile for deployment
-
-## Troubleshooting
-
-**Markdown linting fails?**
-
-```bash
-# Install markdownlint
-npm install -g markdownlint-cli
-
-# Fix issues automatically
-markdownlint docs/**/*.md --fix
-```
-
-**Mermaid validation fails?**
-
-```bash
-# Install mermaid-cli
-npm install -g @mermaid-js/mermaid-cli
-
-# Run validation
-./scripts/validate-mermaid.sh
-```
-
-**Need help with patterns?**
-
-- Read detailed docs in `docs/`
-- Check examples in `.claude/`
-- See working implementation in [demo-fastapi](https://github.com/jeremyeder/demo-fastapi)
+- **Working Demo**: [demo-fastapi](https://github.com/ambient-code/demo-fastapi)
+- **Presentation**: [PRESENTATION-ambient-code-reference.md](../PRESENTATION-ambient-code-reference.md)

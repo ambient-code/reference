@@ -1,3 +1,0 @@
-# Ambient Code Reference Repository
-# Documentation-only repository - minimal dependencies for linting examples
-

@@ -130,5 +130,4 @@ def test_slug_validation(slug, valid):
 
 ## Related Patterns
 
-- [Layered Architecture](layered-architecture.md) - What each test level covers
 - [Autonomous Quality Enforcement](autonomous-quality-enforcement.md) - Running tests in CI

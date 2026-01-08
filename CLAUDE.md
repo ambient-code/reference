@@ -56,7 +56,7 @@ This is a **GitHub template repository** demonstrating AI-assisted development b
 ### Working Application Demo
 
 For a **working FastAPI application** demonstrating these patterns in practice, see:
-**[demo-fastapi](https://github.com/jeremyeder/demo-fastapi)** - Toy application showing CBA patterns in action
+**[demo-fastapi](https://github.com/ambient-code/demo-fastapi)** - Minimal application showing CBA patterns in action
 
 ---
 

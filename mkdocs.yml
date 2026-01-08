@@ -1,15 +1,12 @@
-# MkDocs configuration for Ambient Code Reference Repository
 site_name: Ambient Code Reference
 site_description: AI-assisted development patterns and best practices
 site_author: Jeremy Eder
-site_url: https://jeremyeder.github.io/reference/
+site_url: https://ambient-code.github.io/reference/
 
-# Repository
-repo_name: jeremyeder/reference
-repo_url: https://github.com/jeremyeder/reference
+repo_name: ambient-code/reference
+repo_url: https://github.com/ambient-code/reference
 edit_uri: edit/main/docs/
 
-# Theme
 theme:
   name: material
   palette:
@@ -36,7 +33,6 @@ theme:
     - content.code.copy
     - content.action.edit
 
-# Extensions
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -55,50 +51,34 @@ markdown_extensions:
   - toc:
       permalink: true
 
-# Plugins
 plugins:
   - search
   - mermaid2
 
-# Navigation
 nav:
   - Home: index.md
-  - Getting Started:
-      - Quickstart: quickstart.md
-      - Installation: getting-started/installation.md
-      - Your First CBA: getting-started/first-cba.md
+  - Quickstart: quickstart.md
   - Patterns:
-      - Overview: patterns/index.md
       - Agent Behavior:
           - Codebase Agent (CBA): patterns/codebase-agent.md
           - Self-Review Reflection: patterns/self-review-reflection.md
           - Autonomous Quality Enforcement: patterns/autonomous-quality-enforcement.md
           - Multi-Agent Code Review: patterns/multi-agent-code-review.md
       - GHA Automation:
-          - Overview: patterns/gha-automation-patterns.md
+          - GHA Patterns Overview: patterns/gha-automation-patterns.md
           - Issue-to-PR: patterns/issue-to-pr.md
           - PR Auto-Review: patterns/pr-auto-review.md
           - Dependabot Auto-Merge: patterns/dependabot-auto-merge.md
           - Stale Issue Management: patterns/stale-issues.md
-      - Architecture:
-          - Layered Architecture: patterns/layered-architecture.md
+      - Foundation:
           - Security Patterns: patterns/security-patterns.md
           - Testing Patterns: patterns/testing-patterns.md
-  - Reference:
-      - Architecture: architecture.md
-      - API Patterns: api-reference.md
-      - ADR Template: adr/template.md
-  - Tutorial: tutorial.md
-  - Resources:
-      - Presentation: resources/presentation.md
-      - Demo Application: resources/demo-app.md
+  - ADR Template: adr/template.md
 
-# Extra
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/jeremyeder
+      link: https://github.com/ambient-code
   generator: false
 
-# Copyright
 copyright: Copyright &copy; 2024-2026 Jeremy Eder
