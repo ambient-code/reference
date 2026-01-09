@@ -51,18 +51,13 @@ Add `ANTHROPIC_API_KEY` to repository secrets. Label an issue `ready-for-pr` to 
 ## How It Works
 
 ```mermaid
-flowchart TD
-    A[Issue Opened] --> B{Well-defined?}
-    B -->|No| C[Request Clarification]
-    B -->|Yes| D[Analyze Issue]
-    D --> E[Create Branch]
-    E --> F[Implement Changes]
-    F --> G[Run Tests]
-    G --> H{Tests Pass?}
-    H -->|No| I[Fix and Retry]
-    I --> G
-    H -->|Yes| J[Create Draft PR]
-    J --> K[Link to Issue]
+flowchart LR
+    A[Issue] --> B{Clear?}
+    B -->|No| C[Clarify]
+    B -->|Yes| D[Implement]
+    D --> E[Test]
+    E -->|Fail| D
+    E -->|Pass| F[Draft PR]
 ```
 
 ---

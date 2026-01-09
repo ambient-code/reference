@@ -50,13 +50,11 @@ jobs:
 ## How It Works
 
 ```mermaid
-flowchart TD
-    A[PR Opened/Updated] --> B{Draft?}
-    B -->|Yes| C[Skip Review]
-    B -->|No| D[Checkout Code]
-    D --> E[AI Analyzes Diff]
-    E --> F[Generate Findings]
-    F --> G[Post Review Comment]
+flowchart LR
+    A[PR] --> B{Draft?}
+    B -->|Yes| C[Skip]
+    B -->|No| D[AI Review]
+    D --> E[Post Comment]
 ```
 
 ---

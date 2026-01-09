@@ -67,19 +67,14 @@ The best way to understand CBA value is the **ADR before/after demo**.
 7. Self-reviews before presenting
 
 ```mermaid
-flowchart TD
-    A[User Request] --> B[CBA Loads Context]
-    B --> C[Read CLAUDE.md + ADRs]
-    C --> D{Conflicts with ADRs?}
-    D -->|Yes| E[Ask user, propose ADR change]
-    D -->|No| F[Implement]
-    E -->|Approved| G[Update ADRs]
-    G --> F
-    F --> H[Self-Review]
-    H --> I{Passes checklist?}
-    I -->|No| J[Fix issues]
-    J --> H
-    I -->|Yes| K[Create PR with findings]
+flowchart LR
+    A[Request] --> B[Load Context]
+    B --> C{Conflicts?}
+    C -->|Yes| D[Ask + Update ADR]
+    D --> E[Implement]
+    C -->|No| E
+    E --> F[Self-Review]
+    F --> G[PR]
 ```
 
 See [demo-fastapi](https://github.com/ambient-code/demo-fastapi) for this pattern in action.

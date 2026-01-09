@@ -39,16 +39,13 @@ jobs:
 ## How It Works
 
 ```mermaid
-flowchart TD
-    A[Scheduled Run] --> B{Inactive > 30 days?}
+flowchart LR
+    A[Weekly Scan] --> B{Inactive 30d?}
     B -->|No| C[Skip]
-    B -->|Yes| D{Has exempt label?}
-    D -->|Yes| C
-    D -->|No| E[Add Stale Label]
-    E --> F[Wait 7 days]
-    F --> G{Activity?}
-    G -->|Yes| H[Remove Stale]
-    G -->|No| I[Close Issue]
+    B -->|Yes| D[Label Stale]
+    D --> E{Activity in 7d?}
+    E -->|Yes| F[Remove Label]
+    E -->|No| G[Close]
 ```
 
 ---
