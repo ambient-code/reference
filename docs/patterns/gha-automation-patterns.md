@@ -15,14 +15,11 @@ Convert well-defined issues into draft pull requests automatically.
 ### How It Works
 
 ```mermaid
-flowchart TD
-    A[Issue Opened] --> B{Well-defined?}
-    B -->|No| C[Request Clarification]
-    B -->|Yes| D[Analyze Issue]
-    D --> E[Self-Review Analysis]
-    E --> F[Create Branch]
-    F --> G[Create Draft PR]
-    G --> H[Link to Issue]
+flowchart LR
+    A[Issue] --> B{Clear?}
+    B -->|No| C[Clarify]
+    B -->|Yes| D[Implement]
+    D --> E[Draft PR]
 ```
 
 ### Implementation
@@ -102,10 +99,9 @@ AI-powered code review on every pull request.
 ### Workflow
 
 ```mermaid
-flowchart TD
-    A[PR Opened/Updated] --> B[AI Reviews Code]
-    B --> C[Self-Review Findings]
-    C --> D[Post Review Comment]
+flowchart LR
+    A[PR] --> B[AI Review]
+    B --> C[Post Comment]
 ```
 
 ### Workflow YAML
@@ -157,12 +153,10 @@ Automatically merge low-risk dependency updates.
 ### Flow
 
 ```mermaid
-flowchart TD
-    A[Dependabot PR] --> B{Patch Version?}
-    B -->|No| C[Require Human Review]
-    B -->|Yes| D{CI Passes?}
-    D -->|No| C
-    D -->|Yes| E[Auto-Merge]
+flowchart LR
+    A[Dependabot PR] --> B{Patch + CI Pass?}
+    B -->|No| C[Human Review]
+    B -->|Yes| D[Auto-Merge]
 ```
 
 ### Auto-Merge YAML
@@ -221,13 +215,12 @@ Clean up inactive issues automatically.
 ### Process
 
 ```mermaid
-flowchart TD
-    A[Weekly Schedule] --> B[Find Inactive Issues]
-    B --> C[Add Stale Label]
-    C --> D[Wait 7 Days]
-    D --> E{Activity?}
-    E -->|Yes| F[Remove Stale Label]
-    E -->|No| G[Close Issue]
+flowchart LR
+    A[Weekly] --> B[Find Inactive]
+    B --> C[Label Stale]
+    C --> D{Activity?}
+    D -->|Yes| E[Remove Label]
+    D -->|No| F[Close]
 ```
 
 ### Stale YAML

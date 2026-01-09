@@ -45,15 +45,10 @@ Enable Dependabot in `.github/dependabot.yml`. Set up branch protection requirin
 ## How It Works
 
 ```mermaid
-flowchart TD
-    A[Dependabot PR] --> B{Author is dependabot?}
-    B -->|No| C[Normal Review]
-    B -->|Yes| D[Fetch Metadata]
-    D --> E{Patch Version?}
-    E -->|No| C
-    E -->|Yes| F{CI Passes?}
-    F -->|No| C
-    F -->|Yes| G[Auto-Merge]
+flowchart LR
+    A[Dependabot PR] --> B{Patch + CI Pass?}
+    B -->|No| C[Human Review]
+    B -->|Yes| D[Auto-Merge]
 ```
 
 ---

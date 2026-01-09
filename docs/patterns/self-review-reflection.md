@@ -36,12 +36,11 @@ If you found and fixed issues, briefly note: "Self-review: Fixed [issue]"
 ## How It Works
 
 ```mermaid
-flowchart TD
-    A[Agent Does Work] --> B[Self-Review Check]
-    B --> C{Issues Found?}
-    C -->|Yes| D[Fix Issues]
-    D --> B
-    C -->|No| E[Present to User]
+flowchart LR
+    A[Work] --> B[Review]
+    B -->|Issues| C[Fix]
+    C --> B
+    B -->|Clean| D[Present]
 ```
 
 ### The Reflection Loop

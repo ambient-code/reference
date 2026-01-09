@@ -11,23 +11,12 @@
 ## How It Works
 
 ```mermaid
-flowchart TD
-    A[Implementation Complete] --> B[Launch Parallel Reviews]
-    B --> C1[Architecture Advisor]
-    B --> C2[Simplification Advisor]
-    B --> C3[Security Advisor]
-    C1 --> D[Collect Findings]
-    C2 --> D
-    C3 --> D
-    D --> E{Critical Issues?}
-    E -->|Yes| F[Auto-Fix Criticals]
-    F --> G[Re-validate]
-    G --> E
-    E -->|No| H[Present Production-Ready Code]
-
-    style A fill:#e1f5fe
-    style H fill:#c8e6c9
-    style F fill:#fff3e0
+flowchart LR
+    A[Code] --> B[Parallel Review]
+    B --> C[Collect Findings]
+    C -->|Critical| D[Auto-Fix]
+    D --> B
+    C -->|Clean| E[Present]
 ```
 
 ### Key Characteristics
@@ -169,19 +158,11 @@ Multi-agent review integrates with [Autonomous Quality Enforcement](autonomous-q
 
 ```mermaid
 flowchart LR
-    A[Code Change] --> B[Validation Loop]
-    B --> C{Passes?}
-    C -->|Yes| D[Multi-Agent Review]
-    D --> E{Critical Issues?}
-    E -->|Yes| F[Auto-Fix]
-    F --> B
-    E -->|No| G[Present to User]
-    G --> H[Git Hook]
-    H --> I[Clean History]
-
-    style A fill:#e1f5fe
-    style G fill:#c8e6c9
-    style I fill:#c8e6c9
+    A[Code] --> B[Validate]
+    B --> C[Review]
+    C -->|Issues| D[Fix]
+    D --> B
+    C -->|Clean| E[Commit]
 ```
 
 **Sequence**:

@@ -85,25 +85,14 @@ git add . && git commit -m "test"
 AQE combines three mechanisms that reinforce each other:
 
 ```mermaid
-flowchart TD
-    A[Code Changes] --> B{Process Rule}
-    B -->|Reminds| C[Run Validation]
-    C --> D{Test Passes?}
-    D -->|No| E[Analyze Error]
-    E --> F[Fix Code]
-    F --> C
-    D -->|Yes| G[Present to User]
-    G --> H{Commit?}
-    H -->|Yes| I[Git Hook Validates]
-    I --> J{Passes?}
-    J -->|No| K[Block Commit]
-    K --> F
-    J -->|Yes| L[Clean Git History]
-
-    style A fill:#e1f5fe
-    style G fill:#c8e6c9
-    style L fill:#c8e6c9
-    style K fill:#ffcdd2
+flowchart LR
+    A[Code] --> B[Validate]
+    B -->|Fail| C[Fix & Retry]
+    C --> B
+    B -->|Pass| D[Commit]
+    D --> E[Git Hook]
+    E -->|Fail| C
+    E -->|Pass| F[Done]
 ```
 
 | Component | Purpose | When It Runs |
