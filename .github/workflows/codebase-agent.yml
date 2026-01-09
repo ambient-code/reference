@@ -1,0 +1,55 @@
+name: Codebase Agent
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, labeled]
+  pull_request:
+    types: [opened, labeled, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write  # Required for GCP Workload Identity (if using Vertex AI)
+
+jobs:
+  codebase-agent:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.comment.body, '@cba') ||
+      contains(github.event.issue.labels.*.name, 'cba-review') ||
+      contains(github.event.pull_request.labels.*.name, 'cba-review') ||
+      contains(github.event.issue.labels.*.name, 'cba-help') ||
+      contains(github.event.pull_request.labels.*.name, 'cba-help')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Uncomment for Vertex AI (removes API key dependency)
+      # - name: Authenticate to Google Cloud
+      #   uses: google-github-actions/auth@v2
+      #   with:
+      #     workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      #     service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install anthropic requests google-cloud-aiplatform
+
+      - name: Run Codebase Agent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Option 1: Anthropic API (default)
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Option 2: Vertex AI (optional - remove API key dependency)
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_REGION: ${{ vars.GCP_REGION }}
+        run: |
+          cd .github/scripts
+          python3 -m codebase_agent.main '${{ toJson(github) }}'
