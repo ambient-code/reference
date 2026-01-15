@@ -18,6 +18,6 @@ jobs:
         run: |
           # Verify patterns documentation exists
           test -d docs/patterns || { echo "Error: docs/patterns/ missing"; exit 1; }
-          test -f docs/quickstart.md || { echo "Error: docs/quickstart.md missing"; exit 1; }
-          test -f docs/index.md || { echo "Error: docs/index.md missing"; exit 1; }
+          test -f docs/README.md || { echo "Error: docs/README.md missing"; exit 1; }
+          test -d docs/adr || { echo "Error: docs/adr/ missing"; exit 1; }
           echo "All required documentation files present"
