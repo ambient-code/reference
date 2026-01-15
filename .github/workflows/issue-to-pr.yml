@@ -1,0 +1,96 @@
+name: Issue to PR
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  analyze-and-create-pr:
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'ready-for-pr'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Analyze issue clarity
+        id: analyze
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          # Check for acceptance criteria indicators
+          if echo "$ISSUE_BODY" | grep -qiE "(acceptance criteria|requirements|should|must|expected)"; then
+            echo "clear=true" >> $GITHUB_OUTPUT
+            echo "Issue has clear requirements"
+          else
+            echo "clear=false" >> $GITHUB_OUTPUT
+            echo "Issue may need clarification"
+          fi
+
+      - name: Request clarification for vague issues
+        if: steps.analyze.outputs.clear == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --body "This issue was labeled ready-for-pr but may need more detail.
+
+          Please provide:
+          - Clear acceptance criteria
+          - Expected behavior
+          - Any specific implementation requirements
+
+          Once updated, remove and re-add the ready-for-pr label."
+
+      - name: Create implementation branch
+        if: steps.analyze.outputs.clear == 'true'
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          BRANCH_NAME="issue-${ISSUE_NUMBER}-$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | head -c 40)"
+          git checkout -b "$BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Create draft PR
+        if: steps.analyze.outputs.clear == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Create a placeholder commit
+          cat > IMPLEMENTATION.md << EOF
+          # Implementation for Issue #${ISSUE_NUMBER}
+
+          Issue: ${ISSUE_TITLE}
+
+          ## Changes
+          - [ ] Implementation pending
+          EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add IMPLEMENTATION.md
+          git commit -m "feat: Start implementation for #${ISSUE_NUMBER}"
+          git push -u origin "$BRANCH_NAME"
+
+          gh pr create \
+            --draft \
+            --title "feat: ${ISSUE_TITLE}" \
+            --body "## Summary
+          Implements #${ISSUE_NUMBER}
+
+          ## Changes
+          - Implementation in progress
+
+          ## Test Plan
+          - [ ] Tests added
+          - [ ] Manual verification complete
+
+          ---
+          Created automatically from issue #${ISSUE_NUMBER}"

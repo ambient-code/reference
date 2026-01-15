@@ -255,6 +255,50 @@ Testing strategies:
    - All tests pass
    ```
 
+## Self-Review Protocol
+
+Before presenting work, perform a self-review by switching perspective to act as a reviewer:
+
+### Self-Review Checklist
+
+1. **Edge Cases Considered?**
+   - Null/empty inputs
+   - Boundary conditions
+   - Error states
+
+2. **Security Issues Addressed?**
+   - Input validation at boundaries
+   - Sanitization applied
+   - No hardcoded secrets
+
+3. **Error Handling Complete?**
+   - Exceptions caught appropriately
+   - User-friendly error messages
+   - Rollback on failure
+
+4. **Assumptions Clearly Stated?**
+   - Document non-obvious decisions
+   - Note limitations
+
+### Self-Review Process
+
+```text
+1. Complete implementation
+2. Switch perspective: "As a reviewer, what would I flag?"
+3. Check each item in checklist above
+4. Fix any issues found
+5. If significant fix made, note: "Self-review: Fixed [issue]"
+6. Maximum 2 self-review iterations to prevent infinite loops
+```
+
+### Example Self-Review Note
+
+```markdown
+Self-review: Fixed edge case for null input in validate_slug()
+- Original code would throw NullPointerException
+- Added early return for null/empty values
+```
+
 ## Error Handling
 
 When errors occur:

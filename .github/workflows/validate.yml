@@ -1,0 +1,54 @@
+name: Validate
+
+on:
+  push:
+    branches: [main, 'validation/*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  aqe-validation:
+    name: AQE Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js (for markdownlint)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+
+      - name: Run validation checks
+        run: |
+          chmod +x .github/scripts/check.sh
+          .github/scripts/check.sh
+
+      - name: Markdown linting
+        run: markdownlint docs/**/*.md README.md CLAUDE.md CONTRIBUTING.md
+
+  documentation-structure:
+    name: Documentation Structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check documentation structure
+        run: |
+          # Verify patterns documentation exists
+          test -d docs/patterns || { echo "Error: docs/patterns/ missing"; exit 1; }
+          test -f docs/README.md || { echo "Error: docs/README.md missing"; exit 1; }
+          test -d docs/adr || { echo "Error: docs/adr/ missing"; exit 1; }
+          echo "All required documentation files present"
+
+      - name: Check required files
+        run: |
+          test -f CLAUDE.md || { echo "Error: CLAUDE.md missing"; exit 1; }
+          test -f .claude/agents/codebase-agent.md || { echo "Error: codebase-agent.md missing"; exit 1; }
+          test -d .claude/context || { echo "Error: .claude/context/ missing"; exit 1; }
+          echo "All required configuration files present"
