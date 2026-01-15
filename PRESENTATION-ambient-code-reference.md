@@ -638,7 +638,7 @@ cd reference
 # Explore the patterns
 cat .claude/agents/codebase-agent.md
 cat .claude/context/architecture.md
-cat docs/quickstart.md
+cat docs/README.md
 
 # Copy to your project
 #commented out on purpose cp -r .claude /path/to/your/project/

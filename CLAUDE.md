@@ -36,10 +36,9 @@ This is a **GitHub template repository** demonstrating AI-assisted development b
 
 **Documentation** (`docs/`):
 
-- Quickstart guides for AI-assisted development
-- Architecture pattern references
-- Tutorial outlines for implementing agentic workflows
-- API design patterns
+- Quickstart guide (README.md) for AI-assisted development
+- Standalone pattern documentation (patterns/)
+- ADR scaffolding (adr/)
 
 **Codebase Agent Configuration** (`.claude/`):
 
@@ -49,9 +48,16 @@ This is a **GitHub template repository** demonstrating AI-assisted development b
 
 **CI/CD** (`.github/workflows/`):
 
-- Documentation validation workflows
-- Markdown linting
-- Mermaid diagram validation
+- Codebase Agent automation (codebase-agent.yml)
+- Documentation validation (docs-validation.yml)
+- Security scanning (security.yml)
+- Documentation deployment (deploy-docs.yml)
+
+**Automation Scripts** (`.github/scripts/codebase_agent/`):
+
+- Python module for CBA workflow execution
+- AI client with Vertex AI and Anthropic API support
+- GitHub event parsing and PR automation
 
 ### Working Application Demo
 
@@ -131,10 +137,9 @@ markdownlint docs/**/*.md README.md CLAUDE.md --fix
 
 **Core docs** (`docs/`):
 
-1. `quickstart.md` - 5-minute introduction to AI-assisted development
-2. `architecture.md` - Common architecture patterns for agentic workflows
-3. `tutorial.md` - Step-by-step guide for implementing patterns
-4. `api-reference.md` - API design patterns for AI-assisted apps
+1. `README.md` - 5-minute quickstart for AI-assisted development patterns
+2. `patterns/` - Individual pattern documentation (standalone, independently adoptable)
+3. `adr/` - Architecture Decision Records scaffolding (template only)
 
 ### Mermaid Diagrams (CRITICAL)
 
@@ -276,16 +281,30 @@ Focus on "why" rather than "what".
 
 **Workflows**:
 
-1. **`.github/workflows/docs-validation.yml`** (Documentation)
+1. **`.github/workflows/codebase-agent.yml`** (Codebase Agent)
+   - Issue-to-PR automation
+   - PR review automation
+   - Triggered by: @cba mentions, cba-review/cba-help labels
+   - Supports both Anthropic API and Vertex AI authentication
+
+2. **`.github/workflows/docs-validation.yml`** (Documentation)
    - Markdown linting (markdownlint)
    - Mermaid diagram validation
    - Link checking
    - Triggers: on docs/** changes, PRs
 
-2. **`.github/workflows/ci.yml`** (General CI)
+3. **`.github/workflows/ci.yml`** (General CI)
    - Code example linting (if any)
    - Documentation build test
    - Triggers: on push, PR
+
+4. **`.github/workflows/deploy-docs.yml`** (Documentation Deployment)
+   - Deploys documentation to GitHub Pages
+   - Triggers: on main branch push
+
+5. **`.github/workflows/security.yml`** (Security Scanning)
+   - Security vulnerability scanning
+   - Triggers: on push, PR, schedule
 
 ### Dependabot
 

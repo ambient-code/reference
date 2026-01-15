@@ -17,7 +17,7 @@ AI-assisted development patterns. Each pattern is standalone - adopt what you ne
 
 ## Getting Started
 
-See [Quickstart](docs/quickstart.md) for pattern overview and adoption guidance.
+See [Quickstart](docs/README.md) for pattern overview and adoption guidance.
 
 ## Development Setup
 
@@ -40,7 +40,7 @@ npm install -g markdownlint-cli @mermaid-js/mermaid-cli
 ```text
 reference/
 ├── docs/
-│   ├── quickstart.md          # Pattern overview and adoption path
+│   ├── README.md              # Quickstart guide
 │   └── patterns/              # Individual pattern docs
 ├── .claude/                   # Example CBA configuration
 ├── PRESENTATION-ambient-code-reference.md  # 9-feature overview
