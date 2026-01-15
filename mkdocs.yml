@@ -1,6 +1,6 @@
 site_name: Ambient Code Reference
 site_description: AI-assisted development patterns and best practices
-site_author: Jeremy Eder
+site_author: Red Hat
 site_url: https://ambient-code.github.io/reference/
 
 repo_name: ambient-code/reference
@@ -83,4 +83,4 @@ extra:
       link: https://github.com/ambient-code
   generator: false
 
-copyright: Copyright &copy; 2024-2026 Jeremy Eder
+copyright: Copyright &copy; 2026 Robot Overlords
