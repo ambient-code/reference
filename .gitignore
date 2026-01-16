@@ -75,3 +75,16 @@ yarn-error.log*
 *.bak
 *.backup
 COLORING-BOOK-SCRIPT.md
+
+# Repomap
+# Tree-sitter compiled grammars
+build/
+*.so
+*.dylib
+*.dll
+
+# Repomap cache files (future use)
+.repomap-cache/
+
+# Note: .repomap.txt is tracked in git as part of development workflow
+prompts/

@@ -6,6 +6,7 @@ AI-assisted development patterns. Each pattern is standalone - adopt what you ne
 
 | Problem | Pattern |
 |---------|---------|
+| AI context windows fill up fast | [Repomap](docs/patterns/repomap.md) |
 | AI gives inconsistent answers | [Codebase Agent](docs/patterns/codebase-agent.md) |
 | AI misses obvious bugs | [Self-Review Reflection](docs/patterns/self-review-reflection.md) |
 | PRs take forever to create | [Issue-to-PR Automation](docs/patterns/issue-to-pr.md) |
