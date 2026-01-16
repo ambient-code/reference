@@ -195,6 +195,20 @@ ruff check docs/examples/
 markdownlint docs/**/*.md README.md CLAUDE.md --fix
 ```
 
+### Autonomous Quality Enforcement (AQE) Process Rule
+
+**ALWAYS run validation before showing work**:
+
+```bash
+# Run validation checks
+.github/scripts/check.sh
+
+# Auto-fix common issues
+.github/scripts/auto-fix.sh
+```
+
+This ensures all quality gates pass before presenting work to the user.
+
 ---
 
 ## Documentation Guidelines

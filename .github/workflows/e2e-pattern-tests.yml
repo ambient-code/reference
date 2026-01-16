@@ -1,0 +1,185 @@
+name: E2E Pattern Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pattern-1-aqe:
+    name: Pattern 1 - AQE
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run AQE tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-1-aqe.sh
+          .github/scripts/e2e-tests/test-pattern-1-aqe.sh
+
+  pattern-2-cba:
+    name: Pattern 2 - CBA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run CBA tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-2-cba.sh
+          .github/scripts/e2e-tests/test-pattern-2-cba.sh
+
+  pattern-3-dependabot:
+    name: Pattern 3 - Dependabot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Dependabot tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-3-dependabot.sh
+          .github/scripts/e2e-tests/test-pattern-3-dependabot.sh
+
+  pattern-4-gha:
+    name: Pattern 4 - GHA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run GHA tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-4-gha.sh
+          .github/scripts/e2e-tests/test-pattern-4-gha.sh
+
+  pattern-5-issue-to-pr:
+    name: Pattern 5 - Issue-to-PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Issue-to-PR tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-5-issue-to-pr.sh
+          .github/scripts/e2e-tests/test-pattern-5-issue-to-pr.sh
+
+  pattern-6-multi-agent:
+    name: Pattern 6 - Multi-Agent
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Multi-Agent tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-6-multi-agent.sh
+          .github/scripts/e2e-tests/test-pattern-6-multi-agent.sh
+
+  pattern-7-pr-review:
+    name: Pattern 7 - PR Review
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run PR Review tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-7-pr-review.sh
+          .github/scripts/e2e-tests/test-pattern-7-pr-review.sh
+
+  pattern-8-security:
+    name: Pattern 8 - Security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install pytest
+      - name: Run Security tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-8-security.sh
+          .github/scripts/e2e-tests/test-pattern-8-security.sh
+
+  pattern-9-self-review:
+    name: Pattern 9 - Self-Review
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Self-Review tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-9-self-review.sh
+          .github/scripts/e2e-tests/test-pattern-9-self-review.sh
+
+  pattern-10-stale:
+    name: Pattern 10 - Stale
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Stale tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-10-stale.sh
+          .github/scripts/e2e-tests/test-pattern-10-stale.sh
+
+  pattern-11-testing:
+    name: Pattern 11 - Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install pytest
+      - name: Run Testing tests
+        run: |
+          chmod +x .github/scripts/e2e-tests/test-pattern-11-testing.sh
+          .github/scripts/e2e-tests/test-pattern-11-testing.sh
+
+  summary:
+    name: E2E Test Summary
+    runs-on: ubuntu-latest
+    needs:
+      - pattern-1-aqe
+      - pattern-2-cba
+      - pattern-3-dependabot
+      - pattern-4-gha
+      - pattern-5-issue-to-pr
+      - pattern-6-multi-agent
+      - pattern-7-pr-review
+      - pattern-8-security
+      - pattern-9-self-review
+      - pattern-10-stale
+      - pattern-11-testing
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          echo "=========================================="
+          echo "  E2E Pattern Test Results"
+          echo "=========================================="
+          echo ""
+          echo "Pattern 1 (AQE): ${{ needs.pattern-1-aqe.result }}"
+          echo "Pattern 2 (CBA): ${{ needs.pattern-2-cba.result }}"
+          echo "Pattern 3 (Dependabot): ${{ needs.pattern-3-dependabot.result }}"
+          echo "Pattern 4 (GHA): ${{ needs.pattern-4-gha.result }}"
+          echo "Pattern 5 (Issue-to-PR): ${{ needs.pattern-5-issue-to-pr.result }}"
+          echo "Pattern 6 (Multi-Agent): ${{ needs.pattern-6-multi-agent.result }}"
+          echo "Pattern 7 (PR Review): ${{ needs.pattern-7-pr-review.result }}"
+          echo "Pattern 8 (Security): ${{ needs.pattern-8-security.result }}"
+          echo "Pattern 9 (Self-Review): ${{ needs.pattern-9-self-review.result }}"
+          echo "Pattern 10 (Stale): ${{ needs.pattern-10-stale.result }}"
+          echo "Pattern 11 (Testing): ${{ needs.pattern-11-testing.result }}"
+          echo ""
+
+          # Check if any failed
+          if [[ "${{ needs.pattern-1-aqe.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-2-cba.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-3-dependabot.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-4-gha.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-5-issue-to-pr.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-6-multi-agent.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-7-pr-review.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-8-security.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-9-self-review.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-10-stale.result }}" == "failure" ]] || \
+             [[ "${{ needs.pattern-11-testing.result }}" == "failure" ]]; then
+            echo "❌ SOME PATTERN TESTS FAILED"
+            exit 1
+          else
+            echo "✅ ALL PATTERN TESTS PASSED"
+          fi

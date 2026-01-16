@@ -1,0 +1,113 @@
+name: PR Auto-Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  auto-review:
+    runs-on: ubuntu-latest
+    # Skip draft PRs and PRs with skip-review label
+    if: |
+      github.event.pull_request.draft == false &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-review')
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          CHANGED_FILES=$(gh pr view ${{ github.event.pull_request.number }} --json files -q '.files[].path' | tr '\n' ' ')
+          echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Security review
+        id: security
+        run: |
+          FINDINGS=""
+
+          # Check for hardcoded secrets patterns
+          if git diff origin/main...HEAD | grep -iE "(password|secret|api_key|token)\s*=\s*['\"][^'\"]+['\"]"; then
+            FINDINGS="${FINDINGS}🔴 **CRITICAL**: Potential hardcoded secrets detected\n"
+          fi
+
+          # Check for .env file additions
+          if echo "${{ steps.changed.outputs.files }}" | grep -qE "\.env$"; then
+            FINDINGS="${FINDINGS}🔴 **CRITICAL**: .env file should not be committed\n"
+          fi
+
+          # Check for TODO/FIXME in security-sensitive areas
+          if git diff origin/main...HEAD | grep -iE "(security|auth|password)" | grep -iE "(todo|fixme|hack)"; then
+            FINDINGS="${FINDINGS}🟡 **WARNING**: TODO/FIXME in security-sensitive code\n"
+          fi
+
+          if [ -n "$FINDINGS" ]; then
+            echo "has_findings=true" >> $GITHUB_OUTPUT
+            echo -e "findings=$FINDINGS" >> $GITHUB_OUTPUT
+          else
+            echo "has_findings=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Code quality review
+        id: quality
+        run: |
+          FINDINGS=""
+
+          # Check for large files
+          LARGE_FILES=$(git diff --stat origin/main...HEAD | grep -E "\+[0-9]{3,}" | head -5)
+          if [ -n "$LARGE_FILES" ]; then
+            FINDINGS="${FINDINGS}🟡 **WARNING**: Large changes detected - consider breaking into smaller PRs\n"
+          fi
+
+          # Check for missing tests in code changes
+          CODE_CHANGED=$(echo "${{ steps.changed.outputs.files }}" | grep -E "\.(py|js|ts)$" | grep -v test || true)
+          TEST_CHANGED=$(echo "${{ steps.changed.outputs.files }}" | grep -E "test" || true)
+          if [ -n "$CODE_CHANGED" ] && [ -z "$TEST_CHANGED" ]; then
+            FINDINGS="${FINDINGS}🟡 **WARNING**: Code changes without corresponding tests\n"
+          fi
+
+          if [ -n "$FINDINGS" ]; then
+            echo "has_findings=true" >> $GITHUB_OUTPUT
+            echo -e "findings=$FINDINGS" >> $GITHUB_OUTPUT
+          else
+            echo "has_findings=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post review comment
+        if: steps.security.outputs.has_findings == 'true' || steps.quality.outputs.has_findings == 'true'
+        run: |
+          COMMENT="## 🤖 Automated PR Review\n\n"
+
+          if [ "${{ steps.security.outputs.has_findings }}" == "true" ]; then
+            COMMENT="${COMMENT}### Security Findings\n${{ steps.security.outputs.findings }}\n"
+          fi
+
+          if [ "${{ steps.quality.outputs.has_findings }}" == "true" ]; then
+            COMMENT="${COMMENT}### Code Quality\n${{ steps.quality.outputs.findings }}\n"
+          fi
+
+          COMMENT="${COMMENT}\n---\n*This is an automated review. Please address any 🔴 CRITICAL issues before merging.*"
+
+          echo -e "$COMMENT" | gh pr comment ${{ github.event.pull_request.number }} --body-file -
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post success comment
+        if: steps.security.outputs.has_findings == 'false' && steps.quality.outputs.has_findings == 'false'
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "## 🤖 Automated PR Review
+
+          ✅ No security or code quality issues detected.
+
+          ---
+          *This is an automated review.*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
