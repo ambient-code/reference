@@ -8,19 +8,23 @@ Generate clean, token-optimized code structure maps using tree-sitter for AI-ass
 
 ## Quick Start
 
+This repository includes **complete automation** for repomap management. The repomap is automatically updated via pre-commit hooks and validated in CI.
+
 ```bash
-# Install dependencies
+# Install dependencies (includes tree-sitter packages)
 pip install -r requirements.txt
 
-# Generate map of current directory
-python repomap.py .
+# Install pre-commit hooks (includes repomap auto-update)
+pre-commit install
 
-# Save to file
-python repomap.py . > repomap.txt
+# Manual update (if needed)
+./scripts/update-repomap.sh
 
-# Map specific directory with verbose output
-python repomap.py /path/to/repo --verbose
+# Validate repomap is current
+./scripts/update-repomap.sh --check
 ```
+
+**That's it!** The repomap will auto-update when you commit code changes.
 
 ## Installation
 
@@ -192,7 +196,78 @@ generate_repomap:
       - repomap.txt
 ```
 
-### 3. Pre-commit Hook
+### 3. Automated Workflow (This Repository)
+
+This reference repository includes **complete repomap automation**:
+
+#### Pre-commit Hook
+
+The pre-commit hook automatically regenerates `.repomap.txt` when you commit changes to code files:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: repomap-update
+        name: Update repository map
+        entry: scripts/update-repomap.sh
+        language: system
+        pass_filenames: false
+        files: '\.(py|js|ts|tsx|go|sh|bash)$'
+```
+
+**Triggers on**: `.py`, `.js`, `.ts`, `.tsx`, `.go`, `.sh`, `.bash` file changes
+
+**What it does**: Runs `./scripts/update-repomap.sh` to regenerate `.repomap.txt` before commit
+
+#### CI Validation
+
+GitHub Actions workflow validates repomap is current on every push/PR:
+
+```yaml
+# .github/workflows/ci.yml
+repomap-validation:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install repomap dependencies
+      run: |
+        pip install tree-sitter tree-sitter-python tree-sitter-javascript \
+                    tree-sitter-typescript tree-sitter-go tree-sitter-bash
+    - name: Validate repomap is current
+      run: ./scripts/update-repomap.sh --check
+```
+
+**What it does**: Blocks merge if `.repomap.txt` is outdated
+
+#### Automation Script
+
+The `scripts/update-repomap.sh` script provides:
+
+```bash
+# Regenerate repomap
+./scripts/update-repomap.sh
+
+# Validate repomap is current (CI usage)
+./scripts/update-repomap.sh --check
+
+# Show help
+./scripts/update-repomap.sh --help
+```
+
+**Features**:
+- Clear error messages with dependency installation hints
+- Validates repomap currency for CI/CD
+- Used by pre-commit hook for auto-updates
+
+#### Manual Pre-commit Hook (Alternative)
+
+If you prefer a simpler manual hook in other repositories:
 
 ```bash
 # .git/hooks/pre-commit
@@ -320,6 +395,14 @@ See LICENSE file in repository root.
 
 **Quickstart**:
 
-1. Install: `pip install -r requirements.txt`
-2. Run: `python repomap.py .`
-3. Save: `python repomap.py . > repomap.txt`
+1. Install dependencies: `pip install -r requirements.txt`
+2. Install pre-commit hooks: `pre-commit install`
+3. The repomap auto-updates on commits!
+
+**Manual usage** (if needed):
+
+```bash
+./scripts/update-repomap.sh          # Regenerate
+./scripts/update-repomap.sh --check  # Validate
+python repomap.py .                  # Direct generation
+```

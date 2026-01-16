@@ -21,3 +21,24 @@ jobs:
           test -f docs/README.md || { echo "Error: docs/README.md missing"; exit 1; }
           test -d docs/adr || { echo "Error: docs/adr/ missing"; exit 1; }
           echo "All required documentation files present"
+
+  repomap-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install repomap dependencies
+        run: |
+          pip install tree-sitter tree-sitter-python tree-sitter-javascript \
+                      tree-sitter-typescript tree-sitter-go tree-sitter-bash
+
+      - name: Validate repomap is current
+        run: |
+          chmod +x scripts/update-repomap.sh
+          ./scripts/update-repomap.sh --check
