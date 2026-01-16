@@ -1,6 +1,14 @@
 repos:
   - repo: local
     hooks:
+      - id: repomap-update
+        name: Update repository map
+        entry: scripts/update-repomap.sh
+        language: system
+        pass_filenames: false
+        files: '\.(py|js|ts|tsx|go|sh|bash)$'
+        description: Regenerate .repomap.txt when code structure changes
+
       - id: mkdocs-build
         name: mkdocs build --strict
         entry: .venv/bin/mkdocs build --strict

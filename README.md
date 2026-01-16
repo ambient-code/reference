@@ -25,8 +25,12 @@ See [Quickstart](docs/README.md) for pattern overview and adoption guidance.
 ```bash
 git clone https://github.com/ambient-code/reference.git
 cd reference
-./scripts/setup.sh
-source .venv/bin/activate
+
+# Install dependencies
+uv pip install -r requirements.txt      # Repomap dependencies
+uv pip install -r requirements-dev.txt  # Doc tooling
+
+# Install pre-commit hooks (includes repomap auto-update)
 pre-commit install
 ```
 

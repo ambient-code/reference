@@ -135,11 +135,25 @@ cat .repomap.txt
 - Major refactoring is completed
 - Before creating PRs (ensure map is current)
 
+**Automated regeneration**:
+
+The repository includes automation for repomap management:
+
 ```bash
-# Regenerate after changes
+# Manual regeneration (recommended method)
+./scripts/update-repomap.sh
+
+# Check if repomap is current
+./scripts/update-repomap.sh --check
+
+# Legacy manual method (still works)
 python repomap.py . > .repomap.txt
 git add .repomap.txt  # Include in commits
 ```
+
+**Pre-commit hook**: The repomap is automatically regenerated when you commit changes to code files (`.py`, `.js`, `.ts`, `.tsx`, `.go`, `.sh`, `.bash`) via the pre-commit hook.
+
+**CI validation**: The CI workflow validates that the repomap is current on every push/PR.
 
 #### Integration with Development Workflow
 
@@ -383,6 +397,7 @@ Focus on "why" rather than "what".
 3. **`.github/workflows/ci.yml`** (General CI)
    - Code example linting (if any)
    - Documentation build test
+   - Repomap validation (ensures .repomap.txt is current)
    - Triggers: on push, PR
 
 4. **`.github/workflows/deploy-docs.yml`** (Documentation Deployment)
@@ -422,8 +437,14 @@ Teams can extend with:
 git clone https://github.com/yourusername/reference.git
 cd reference
 
+# Install repomap dependencies
+uv pip install -r requirements.txt
+
 # Install doc tooling
 uv pip install -r requirements-dev.txt
+
+# Install pre-commit hooks
+pre-commit install
 
 # Load repomap (session start)
 cat .repomap.txt
