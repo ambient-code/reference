@@ -35,8 +35,9 @@ jobs:
 
       - name: Install repomap dependencies
         run: |
-          pip install tree-sitter tree-sitter-python tree-sitter-javascript \
-                      tree-sitter-typescript tree-sitter-go tree-sitter-bash
+          pip install uv
+          uv pip install tree-sitter tree-sitter-python tree-sitter-javascript \
+                         tree-sitter-typescript tree-sitter-go tree-sitter-bash
 
       - name: Validate repomap is current
         run: |

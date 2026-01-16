@@ -27,8 +27,8 @@ git clone https://github.com/ambient-code/reference.git
 cd reference
 
 # Install dependencies
-pip install -r requirements.txt      # Repomap dependencies
-pip install -r requirements-dev.txt  # Doc tooling
+uv pip install -r requirements.txt      # Repomap dependencies
+uv pip install -r requirements-dev.txt  # Doc tooling
 
 # Install pre-commit hooks (includes repomap auto-update)
 pre-commit install

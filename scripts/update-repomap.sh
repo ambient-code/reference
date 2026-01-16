@@ -73,7 +73,7 @@ generate_repomap() {
         echo -e "${RED}✗ Failed to generate repository map${NC}" >&2
         echo -e "${YELLOW}$error_output${NC}" >&2
         if echo "$error_output" | grep -q "tree-sitter packages not installed"; then
-            echo -e "${YELLOW}Install dependencies: pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash${NC}" >&2
+            echo -e "${YELLOW}Install dependencies: uv pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash${NC}" >&2
         fi
         rm -f "${REPOMAP_FILE}.new"
         return 1
@@ -97,7 +97,7 @@ check_repomap_current() {
         echo -e "${RED}✗ Failed to generate repomap for comparison${NC}" >&2
         echo -e "${YELLOW}$error_output${NC}" >&2
         if echo "$error_output" | grep -q "tree-sitter packages not installed"; then
-            echo -e "${YELLOW}Install dependencies: pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash${NC}" >&2
+            echo -e "${YELLOW}Install dependencies: uv pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash${NC}" >&2
         fi
         rm -f "${REPOMAP_FILE}.check"
         return 1

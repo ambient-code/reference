@@ -12,7 +12,7 @@ This repository includes **complete automation** for repomap management. The rep
 
 ```bash
 # Install dependencies (includes tree-sitter packages)
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 
 # Install pre-commit hooks (includes repomap auto-update)
 pre-commit install
@@ -36,11 +36,11 @@ pre-commit install
 ### Install Dependencies
 
 ```bash
-# Using pip
-pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash
-
-# Using uv (recommended)
+# Recommended method
 uv pip install -r requirements.txt
+
+# Or install individually with uv
+uv pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash
 ```
 
 ## Usage
@@ -169,7 +169,9 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash
+        run: |
+          pip install uv
+          uv pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash
 
       - name: Generate repomap
         run: python repomap.py . > repomap.txt
@@ -189,7 +191,8 @@ generate_repomap:
   stage: build
   image: python:3.11
   script:
-    - pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash
+    - pip install uv
+    - uv pip install tree-sitter tree-sitter-python tree-sitter-javascript tree-sitter-typescript tree-sitter-go tree-sitter-bash
     - python repomap.py . > repomap.txt
   artifacts:
     paths:
@@ -237,8 +240,9 @@ repomap-validation:
         python-version: '3.11'
     - name: Install repomap dependencies
       run: |
-        pip install tree-sitter tree-sitter-python tree-sitter-javascript \
-                    tree-sitter-typescript tree-sitter-go tree-sitter-bash
+        pip install uv
+        uv pip install tree-sitter tree-sitter-python tree-sitter-javascript \
+                       tree-sitter-typescript tree-sitter-go tree-sitter-bash
     - name: Validate repomap is current
       run: ./scripts/update-repomap.sh --check
 ```
@@ -342,7 +346,7 @@ Potential improvements for future versions:
 **Solution**: Install dependencies
 
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 ### Parse Errors
@@ -395,7 +399,7 @@ See LICENSE file in repository root.
 
 **Quickstart**:
 
-1. Install dependencies: `pip install -r requirements.txt`
+1. Install dependencies: `uv pip install -r requirements.txt`
 2. Install pre-commit hooks: `pre-commit install`
 3. The repomap auto-updates on commits!
 
