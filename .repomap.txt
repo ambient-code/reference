@@ -1,0 +1,26 @@
+repomap.py
+  class CodeSymbol
+  class FileInfo
+  class RepomapGenerator
+    def __init__()
+    def _load_gitignore()
+    def _should_ignore()
+    def _is_binary()
+    def _get_file_extension()
+    def _discover_files()
+    def _parse_file()
+    def _format_output()
+    def generate()
+    def main()
+scripts/
+  record-demo.sh
+  setup.sh
+  validate-mermaid.sh
+    def validate_markdown_file()
+scripts/autonomous-review/
+  review-reference.sh
+scripts/validation/
+  autonomous-fix-loop-template.sh
+scripts/validation/tests/
+  run-all.sh
+  test-autonomous-fix-loop.sh

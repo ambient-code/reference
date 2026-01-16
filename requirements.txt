@@ -1,0 +1,10 @@
+# Repomap dependencies
+# Tree-sitter core library
+tree-sitter>=0.20.0
+
+# Tree-sitter language grammars
+tree-sitter-python>=0.20.0
+tree-sitter-javascript>=0.20.0
+tree-sitter-typescript>=0.20.0
+tree-sitter-go>=0.20.0
+tree-sitter-bash>=0.20.0

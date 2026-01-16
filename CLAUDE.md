@@ -1,7 +1,7 @@
 # Ambient Code Reference Repository - Agent Configuration
 
-**Version**: 2.1.0
-**Last Updated**: 2026-01-04
+**Version**: 2.2.0
+**Last Updated**: 2026-01-15
 **Purpose**: Documentation-only reference for AI-assisted development patterns
 
 ---
@@ -98,6 +98,79 @@ echo $VIRTUAL_ENV  # Should show project path
 # Install dependencies
 uv pip install -r requirements-dev.txt
 ```
+
+### Repomap - Context Window Optimization
+
+**MANDATORY: Load repomap at session start and use proactively throughout development.**
+
+#### Session Start Protocol
+
+**ALWAYS load .repomap.txt as the first action** when starting any development session:
+
+```bash
+# At session start - load existing repomap
+cat .repomap.txt
+```
+
+**Purpose**: Provides token-optimized codebase context for AI-assisted development, reducing context window usage while maintaining code understanding.
+
+**Note**: The .repomap.txt file is tracked in git and should already exist. Only regenerate it when structural changes occur.
+
+#### Proactive Usage Throughout Development
+
+**Use repomap context in these scenarios**:
+
+1. **Planning implementations** - Review repomap before designing features
+2. **Understanding dependencies** - Check which files/classes exist before creating new ones
+3. **Code reviews** - Reference structure when reviewing changes
+4. **Refactoring** - Understand impact scope across codebase
+5. **Documentation** - Ensure docs reflect actual code structure
+
+#### When to Regenerate
+
+**Regenerate repomap when**:
+
+- Files are added or removed
+- Classes or functions are added/removed
+- Major refactoring is completed
+- Before creating PRs (ensure map is current)
+
+```bash
+# Regenerate after changes
+python repomap.py . > .repomap.txt
+git add .repomap.txt  # Include in commits
+```
+
+#### Integration with Development Workflow
+
+**Include repomap in commit tracking**:
+
+```bash
+# Pre-commit: Update repomap
+python repomap.py . > .repomap.txt
+git add .repomap.txt
+
+# Commit message references structure changes
+git commit -m "Add UserService class
+
+Updated repomap to reflect new service layer structure"
+```
+
+**Use in AI prompts**:
+
+- Reference specific files/classes from repomap by name
+- Ask questions about structure (e.g., "Where should I add authentication logic?")
+- Validate assumptions (e.g., "Does a Config class already exist?")
+
+#### Repomap Best Practices
+
+- ✅ Load at session start (always)
+- ✅ Regenerate after structural changes
+- ✅ Reference in planning and design discussions
+- ✅ Include in commit workflow
+- ✅ Use to avoid duplicate implementations
+- ❌ Don't rely on stale repomaps
+- ❌ Don't skip regeneration before PRs
 
 ### Code Quality Tools
 
@@ -338,6 +411,9 @@ cd reference
 # Install doc tooling
 uv pip install -r requirements-dev.txt
 
+# Load repomap (session start)
+cat .repomap.txt
+
 # Lint documentation
 markdownlint docs/**/*.md --fix
 
@@ -351,18 +427,24 @@ markdownlint docs/**/*.md --fix
 # 1. Create feature branch
 git checkout -b docs/topic-name
 
-# 2. Edit documentation
+# 2. Review repomap
+cat .repomap.txt
+
+# 3. Edit documentation
 # ... make changes ...
 
-# 3. Validate
+# 4. Validate
 markdownlint docs/**/*.md --fix
 ./scripts/validate-mermaid.sh
 
-# 4. Commit
-git add docs/
+# 5. Regenerate repomap if structure changed
+python repomap.py . > .repomap.txt
+
+# 6. Commit
+git add docs/ .repomap.txt
 git commit -m "Add documentation for X"
 
-# 5. Push and create PR
+# 7. Push and create PR
 git push -u origin docs/topic-name
 gh pr create --title "docs: Add X" --body "Documentation for X pattern"
 ```
