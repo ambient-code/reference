@@ -44,17 +44,17 @@ jobs:
           FINDINGS=""
 
           # Check for hardcoded secrets patterns
-          if git diff origin/main...HEAD | grep -iE "(password|secret|api_key|token)\s*=\s*['\"][^'\"]+['\"]"; then
+          if SECRETS_FOUND=$(git diff origin/main...HEAD | grep -iE "(password|secret|api_key|token)\s*=\s*['\"][^'\"]+['\"]" || true) && [ -n "$SECRETS_FOUND" ]; then
             FINDINGS="${FINDINGS}🔴 **CRITICAL**: Potential hardcoded secrets detected\n"
           fi
 
           # Check for .env file additions
-          if echo "$CHANGED_FILES" | grep -qE "\.env$"; then
+          if echo "$CHANGED_FILES" | grep -qE "\.env$" || false; then
             FINDINGS="${FINDINGS}🔴 **CRITICAL**: .env file should not be committed\n"
           fi
 
           # Check for TODO/FIXME in security-sensitive areas
-          if git diff origin/main...HEAD | grep -iE "(security|auth|password)" | grep -iE "(todo|fixme|hack)"; then
+          if TODO_FOUND=$(git diff origin/main...HEAD | grep -iE "(security|auth|password)" | grep -iE "(todo|fixme|hack)" || true) && [ -n "$TODO_FOUND" ]; then
             FINDINGS="${FINDINGS}🟡 **WARNING**: TODO/FIXME in security-sensitive code\n"
           fi
 
@@ -74,7 +74,7 @@ jobs:
           FINDINGS=""
 
           # Check for large files
-          LARGE_FILES=$(git diff --stat origin/main...HEAD | grep -E "\+[0-9]{3,}" | head -5)
+          LARGE_FILES=$(git diff --stat origin/main...HEAD | grep -E "\+[0-9]{3,}" | head -5 || true)
           if [ -n "$LARGE_FILES" ]; then
             FINDINGS="${FINDINGS}🟡 **WARNING**: Large changes detected - consider breaking into smaller PRs\n"
           fi

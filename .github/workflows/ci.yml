@@ -43,9 +43,8 @@ jobs:
       - name: Install repomap dependencies
         run: |
           pip install uv
-          # uv pip install works in both system and venv contexts
-          # No need for python -m pip or explicit venv checks
-          uv pip install tree-sitter tree-sitter-python tree-sitter-javascript \
+          # Use --system flag since we're not in a virtual environment
+          uv pip install --system tree-sitter tree-sitter-python tree-sitter-javascript \
                          tree-sitter-typescript tree-sitter-go tree-sitter-bash
 
       - name: Validate repomap is current

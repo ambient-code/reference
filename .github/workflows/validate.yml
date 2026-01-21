@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          # No cache - installing global npm package, no lockfile present
 
       - name: Install markdownlint
         run: npm install -g markdownlint-cli
