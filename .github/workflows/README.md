@@ -405,7 +405,7 @@ codeql:
 
 #### Customization for YOUR Project
 
-**Step 1: Update Language Matrix**
+##### Step 1: Update Language Matrix
 
 Match the languages in YOUR codebase:
 
@@ -431,7 +431,7 @@ matrix:
 - `swift` - Swift code
 - `kotlin` - Kotlin code
 
-**Step 2: Set `continue-on-error` Appropriately**
+##### Step 2: Set `continue-on-error` Appropriately
 
 | Use Case | Setting | Rationale |
 |----------|---------|-----------|
@@ -440,12 +440,13 @@ matrix:
 | **Multi-language monorepo** | `continue-on-error: false` | All declared languages should have code |
 
 **Recommended for most projects**:
+
 ```yaml
 codeql:
   continue-on-error: false  # Strict - fail if any analysis fails
 ```
 
-**Step 3: Remove Unused Languages**
+##### Step 3: Remove Unused Languages
 
 Only include languages you actually use:
 
@@ -462,6 +463,7 @@ matrix:
 #### Example Configurations
 
 **FastAPI Backend (Python only)**:
+
 ```yaml
 codeql:
   continue-on-error: false
@@ -471,6 +473,7 @@ codeql:
 ```
 
 **React + Node.js App (TypeScript + JavaScript)**:
+
 ```yaml
 codeql:
   continue-on-error: false
@@ -480,6 +483,7 @@ codeql:
 ```
 
 **Microservices Monorepo (Go + Python)**:
+
 ```yaml
 codeql:
   continue-on-error: false
@@ -512,7 +516,7 @@ paths:
   - '.github/workflows/security.yml'
 ```
 
-#### Common Issues
+#### Troubleshooting CodeQL
 
 **"No source code seen during build"**:
 - CodeQL couldn't find code for the specified language

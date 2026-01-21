@@ -15,6 +15,12 @@ repomap.py
 scripts/
   record-demo.sh
   setup.sh
+  update-repomap.sh
+    def usage()
+    def check_dependencies()
+    def generate_repomap()
+    def k_repomap_current() {()
+    def  loc()
   validate-mermaid.sh
     def validate_markdown_file()
 scripts/autonomous-review/
@@ -24,3 +30,56 @@ scripts/validation/
 scripts/validation/tests/
   run-all.sh
   test-autonomous-fix-loop.sh
+src/
+  __init__.py
+src/core/
+  __init__.py
+  security.py
+    def sanitize_string()
+    def validate_slug()
+    def sanitize_path()
+    def validate_environment_secret()
+tests/
+  conftest.py
+    def sample_string()
+    def dangerous_string()
+    def path_traversal_string()
+    def valid_slug()
+    def invalid_slugs()
+tests/e2e/
+  __init__.py
+  test_cba_workflow.py
+    class TestCBAWorkflow
+      def test_issue_to_pr_workflow()
+      def test_pr_auto_review_workflow()
+      def test_dependabot_auto_merge_workflow()
+tests/integration/
+  __init__.py
+  test_validation_api.py
+    class TestAPIValidation
+      def test_valid_input_accepted()
+      def test_invalid_slug_rejected()
+      def test_missing_required_field_rejected()
+      def test_xss_attempt_sanitized()
+tests/unit/
+  __init__.py
+  test_security.py
+    class TestSanitizeString
+      def test_removes_control_characters()
+      def test_trims_whitespace()
+      def test_enforces_max_length()
+      def test_handles_none()
+      def test_removes_html_tags()
+    class TestValidateSlug
+      def test_valid_slug_passes()
+      def test_empty_slug_raises()
+      def test_leading_hyphen_raises()
+      def test_trailing_hyphen_raises()
+      def test_consecutive_hyphens_raises()
+      def test_uppercase_raises()
+      def test_special_characters_raises()
+    class TestSanitizePath
+      def test_blocks_path_traversal()
+      def test_allows_valid_path()
+      def test_normalizes_slashes()
+      def test_removes_null_bytes()

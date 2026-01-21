@@ -1,7 +1,10 @@
 name: PR Auto-Review
 
+# IMPORTANT: Uses pull_request_target to support fork PRs
+# This allows posting comments on PRs from forks while maintaining security
+# by only checking out code for diff analysis (not executing PR code)
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, ready_for_review]
 
 permissions:
@@ -24,7 +27,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # SECURITY: Check out base branch, not PR code
+          # We only analyze diffs via GitHub API, never execute PR code
+          ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 0
+
+      - name: Fetch PR branch for diff analysis
+        run: |
+          # Fetch PR branch without checking it out (security)
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-branch
 
       - name: Get changed files
         id: changed
@@ -44,7 +55,8 @@ jobs:
           FINDINGS=""
 
           # Check for hardcoded secrets patterns
-          if SECRETS_FOUND=$(git diff origin/main...HEAD | grep -iE "(password|secret|api_key|token)\s*=\s*['\"][^'\"]+['\"]" || true) && [ -n "$SECRETS_FOUND" ]; then
+          # Use pr-branch ref instead of HEAD for security (never checkout PR code)
+          if SECRETS_FOUND=$(git diff origin/${{ github.event.pull_request.base.ref }}...pr-branch | grep -iE "(password|secret|api_key|token)\s*=\s*['\"][^'\"]+['\"]" || true) && [ -n "$SECRETS_FOUND" ]; then
             FINDINGS="${FINDINGS}🔴 **CRITICAL**: Potential hardcoded secrets detected\n"
           fi
 
@@ -54,7 +66,7 @@ jobs:
           fi
 
           # Check for TODO/FIXME in security-sensitive areas
-          if TODO_FOUND=$(git diff origin/main...HEAD | grep -iE "(security|auth|password)" | grep -iE "(todo|fixme|hack)" || true) && [ -n "$TODO_FOUND" ]; then
+          if TODO_FOUND=$(git diff origin/${{ github.event.pull_request.base.ref }}...pr-branch | grep -iE "(security|auth|password)" | grep -iE "(todo|fixme|hack)" || true) && [ -n "$TODO_FOUND" ]; then
             FINDINGS="${FINDINGS}🟡 **WARNING**: TODO/FIXME in security-sensitive code\n"
           fi
 
@@ -74,7 +86,7 @@ jobs:
           FINDINGS=""
 
           # Check for large files
-          LARGE_FILES=$(git diff --stat origin/main...HEAD | grep -E "\+[0-9]{3,}" | head -5 || true)
+          LARGE_FILES=$(git diff --stat origin/${{ github.event.pull_request.base.ref }}...pr-branch | grep -E "\+[0-9]{3,}" | head -5 || true)
           if [ -n "$LARGE_FILES" ]; then
             FINDINGS="${FINDINGS}🟡 **WARNING**: Large changes detected - consider breaking into smaller PRs\n"
           fi
@@ -95,31 +107,56 @@ jobs:
 
       - name: Post review comment
         if: steps.security.outputs.has_findings == 'true' || steps.quality.outputs.has_findings == 'true'
-        run: |
-          COMMENT="## 🤖 Automated PR Review\n\n"
-
-          if [ "${{ steps.security.outputs.has_findings }}" == "true" ]; then
-            COMMENT="${COMMENT}### Security Findings\n${{ steps.security.outputs.findings }}\n"
-          fi
-
-          if [ "${{ steps.quality.outputs.has_findings }}" == "true" ]; then
-            COMMENT="${COMMENT}### Code Quality\n${{ steps.quality.outputs.findings }}\n"
-          fi
-
-          COMMENT="${COMMENT}\n---\n*This is an automated review. Please address any 🔴 CRITICAL issues before merging.*"
-
-          echo -e "$COMMENT" | gh pr comment ${{ github.event.pull_request.number }} --body-file -
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SECURITY_FINDINGS: ${{ steps.security.outputs.findings }}
+          QUALITY_FINDINGS: ${{ steps.quality.outputs.findings }}
+          HAS_SECURITY: ${{ steps.security.outputs.has_findings }}
+          HAS_QUALITY: ${{ steps.quality.outputs.has_findings }}
+        run: |
+          set -euo pipefail
+
+          # Build comment body
+          COMMENT="## 🤖 Automated PR Review
+
+"
+
+          if [ "$HAS_SECURITY" == "true" ]; then
+            COMMENT="${COMMENT}### Security Findings
+${SECURITY_FINDINGS}
+
+"
+          fi
+
+          if [ "$HAS_QUALITY" == "true" ]; then
+            COMMENT="${COMMENT}### Code Quality
+${QUALITY_FINDINGS}
+
+"
+          fi
+
+          COMMENT="${COMMENT}---
+*This is an automated review. Please address any 🔴 CRITICAL issues before merging.*"
+
+          # Post comment with explicit repository
+          echo "$COMMENT" | gh pr comment "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body-file -
 
       - name: Post success comment
         if: steps.security.outputs.has_findings == 'false' && steps.quality.outputs.has_findings == 'false'
-        run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "## 🤖 Automated PR Review
-
-          ✅ No security or code quality issues detected.
-
-          ---
-          *This is an automated review.*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr comment "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body "## 🤖 Automated PR Review
+
+✅ No security or code quality issues detected.
+
+---
+*This is an automated review.*"
