@@ -16,11 +16,12 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: false  # Complete deployment before starting new one
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,6 +31,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
@@ -48,8 +50,32 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  docs-deployment-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [build, deploy]
+    if: always()
+    steps:
+      - name: Generate summary
+        run: |
+          {
+            echo "## 📚 Documentation Deployment"
+            echo ""
+            echo "| Step | Status |"
+            echo "|------|--------|"
+            echo "| Build | ${{ needs.build.result == 'success' && '✅ Success' || '❌ Failed' }} |"
+            echo "| Deploy | ${{ needs.deploy.result == 'success' && '✅ Success' || '❌ Failed' }} |"
+            echo ""
+            if [ "${{ needs.deploy.result }}" == "success" ]; then
+              echo "**Status**: ✅ Deployment successful"
+            else
+              echo "**Status**: ❌ Deployment failed"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

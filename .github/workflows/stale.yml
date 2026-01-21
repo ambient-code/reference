@@ -10,9 +10,14 @@ permissions:
   issues: write
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false  # Scheduled jobs should complete, not race with each other
+
 jobs:
   stale:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/stale@v9
@@ -61,3 +66,30 @@ jobs:
 
           # Rate limiting
           operations-per-run: 100
+
+      - name: Generate summary
+        if: always()
+        run: |
+          {
+            echo "## 🧹 Stale Issue Management"
+            echo ""
+            echo "Automated maintenance run completed."
+            echo ""
+            echo "### Configuration"
+            echo "| Type | Days Until Stale | Days Until Close |"
+            echo "|------|------------------|------------------|"
+            echo "| Issues | 30 | 7 |"
+            echo "| Pull Requests | 14 | 7 |"
+            echo ""
+            echo "### Exemptions"
+            echo "- **Issue labels**: \`pinned\`, \`security\`, \`bug\`, \`help-wanted\`"
+            echo "- **PR labels**: \`pinned\`, \`security\`"
+            echo "- **Assignees**: All assigned items are exempt"
+            echo ""
+            echo "### Operations"
+            echo "- Marked inactive items as stale"
+            echo "- Closed items stale for 7+ days"
+            echo "- Removed stale label from updated items"
+            echo ""
+            echo "*Check the workflow logs for specific items processed*"
+          } >> "$GITHUB_STEP_SUMMARY"

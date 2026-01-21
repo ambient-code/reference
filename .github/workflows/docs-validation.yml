@@ -12,9 +12,14 @@ on:
       - "docs/**"
       - "**/*.md"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-mermaid:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +30,6 @@ jobs:
       - name: Validate Mermaid diagrams
         run: |
           if [ -f scripts/validate-mermaid.sh ]; then
-            chmod +x scripts/validate-mermaid.sh
             ./scripts/validate-mermaid.sh
           else
             echo "No Mermaid diagrams to validate"
@@ -35,6 +39,7 @@ jobs:
 
   lint-markdown:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -44,3 +49,29 @@ jobs:
         with:
           globs: "**/*.md"
           config: ".markdownlint.json"
+
+  docs-validation-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [validate-mermaid, lint-markdown]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          {
+            echo "## 📝 Documentation Validation Results"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            echo "| Mermaid Diagrams | ${{ needs.validate-mermaid.result == 'success' && '✅ Passed' || needs.validate-mermaid.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |"
+            echo "| Markdown Linting | ${{ needs.lint-markdown.result == 'success' && '✅ Passed' || '❌ Failed' }} |"
+            echo ""
+            if [ "${{ needs.validate-mermaid.result }}" == "failure" ] || [ "${{ needs.lint-markdown.result }}" == "failure" ]; then
+              echo "**Status**: ❌ Validation failed"
+              echo ""
+              echo "*Review the logs above for detailed error messages*"
+            else
+              echo "**Status**: ✅ All documentation validation checks passed"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

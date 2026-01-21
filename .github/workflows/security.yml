@@ -3,34 +3,175 @@ name: Security
 on:
   push:
     branches: [main]
+    paths:
+      - '**/*.py'
+      - '**/*.js'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '.github/workflows/security.yml'
   pull_request:
     branches: [main]
+    paths:
+      - '**/*.py'
+      - '**/*.js'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '.github/workflows/security.yml'
   schedule:
     - cron: "0 0 * * 0"  # Weekly on Sunday
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  security-scan:
+  # NOTE: This repository is documentation-only, so CodeQL may not find substantial code to analyze.
+  # This workflow demonstrates the CodeQL pattern for repositories with Python/JavaScript code.
+  # For production use, CodeQL is most valuable in repositories with significant application code.
+  codeql:
+    name: CodeQL Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['python', 'javascript']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  security-scan:
+    name: Security Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Check for secrets in documentation
         run: |
+          set -euo pipefail
           # Check for common secret patterns in docs
-          if grep -r -E '(api_key|secret|password|token).*=.*["\047][A-Za-z0-9+/]{20,}' docs/ README.md || true; then
-            echo "Warning: Potential secrets found in documentation"
+          # Exit code 1 from grep means "no match found" - that's good!
+          FINDINGS=false
+
+          for location in docs/ README.md; do
+            if [ ! -e "$location" ]; then
+              echo "⏭️  $location not found, skipping"
+              continue
+            fi
+
+            echo "🔍 Scanning ${location} for secret patterns..."
+            if grep -r -E '(api_key|secret|password|token).*=.*["\047][A-Za-z0-9+/]{20,}' "$location" 2>/dev/null; then
+              FINDINGS=true
+            fi
+          done
+
+          if [ "$FINDINGS" = "true" ]; then
+            # SECURITY POLICY: Fail workflow on secret detection
+            # NOTE: For documentation repos with intentional examples, patterns may match code snippets.
+            # If you need warning-only mode, remove the 'exit 1' below and keep only the echo statements.
+            echo "❌ ERROR: Potential secrets detected in documentation!"
+            echo "Review the matches above to ensure they are not real credentials."
+            echo ""
+            echo "If these are intentional code examples, consider:"
+            echo "  - Using placeholder values (e.g., 'your-api-key-here')"
+            echo "  - Shortening example secrets to <20 characters"
+            echo "  - Adding comments clarifying they are examples"
+            exit 1  # FAIL the workflow
+          else
+            echo "✅ No secret patterns detected in documentation"
           fi
 
       - name: Check for hardcoded URLs with credentials
         run: |
-          if grep -r -E 'https?://[^:]+:[^@]+@' docs/ README.md || true; then
-            echo "Warning: URLs with credentials found in documentation"
+          set -euo pipefail
+          # Check for URLs with embedded credentials (e.g., https://user:pass@example.com)
+          # Exit code 1 from grep means "no match found" - that's good!
+          FINDINGS=false
+
+          for location in docs/ README.md; do
+            if [ ! -e "$location" ]; then
+              echo "⏭️  $location not found, skipping"
+              continue
+            fi
+
+            echo "🔍 Scanning ${location} for URLs with credentials..."
+            if grep -r -E 'https?://[^:]+:[^@]+@' "$location" 2>/dev/null; then
+              FINDINGS=true
+            fi
+          done
+
+          if [ "$FINDINGS" = "true" ]; then
+            # SECURITY POLICY: Fail workflow on credential-in-URL detection
+            # NOTE: For documentation repos with intentional examples, patterns may match code snippets.
+            # If you need warning-only mode, remove the 'exit 1' below and keep only the echo statements.
+            echo "❌ ERROR: URLs with embedded credentials detected!"
+            echo "Credentials should never be in URLs. Use secure credential management instead."
+            echo ""
+            echo "If these are intentional examples in documentation:"
+            echo "  - Use placeholder credentials (e.g., https://user:pass@example.com → https://USER:PASS@example.com)"
+            echo "  - Add clear comments that these are NOT real credentials"
+            exit 1  # FAIL the workflow
+          else
+            echo "✅ No URLs with embedded credentials detected"
           fi
 
       - name: Verify no .env files committed
         run: |
+          set -euo pipefail
           if find . -name ".env*" -not -path "./.git/*" -not -name ".env.example" | grep -q .; then
             echo "Error: .env files should not be committed"
             exit 1
           fi
+          echo "✅ No .env files detected"
+
+  security-summary:
+    name: Security Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [codeql, security-scan]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          set -euo pipefail
+          {
+            echo "## 🔒 Security Scan Results"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            echo "| CodeQL Analysis (Python + JavaScript) | ${{ needs.codeql.result == 'success' && '✅ Passed' || needs.codeql.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |"
+            echo "| Secrets in Documentation | ${{ needs.security-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |"
+            echo "| Hardcoded URL Credentials | ${{ needs.security-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |"
+            echo "| .env Files | ${{ needs.security-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |"
+            echo ""
+            if [ "${{ needs.codeql.result }}" == "failure" ] || [ "${{ needs.security-scan.result }}" == "failure" ]; then
+              echo "**Status**: ❌ Security checks failed"
+              echo ""
+              echo "*Review detailed findings in the [Security tab](https://github.com/${{ github.repository }}/security/code-scanning)*"
+            else
+              echo "**Status**: ✅ All security checks passed"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

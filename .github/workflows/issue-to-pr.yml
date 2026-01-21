@@ -9,9 +9,14 @@ permissions:
   pull-requests: write
   issues: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
+  cancel-in-progress: false  # Don't cancel PR creation mid-process
+
 jobs:
   analyze-and-create-pr:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: github.event.label.name == 'ready-for-pr'
 
     steps:
@@ -22,12 +27,13 @@ jobs:
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
+          set -euo pipefail
           # Check for acceptance criteria indicators
           if echo "$ISSUE_BODY" | grep -qiE "(acceptance criteria|requirements|should|must|expected)"; then
-            echo "clear=true" >> $GITHUB_OUTPUT
+            echo "clear=true" >> "$GITHUB_OUTPUT"
             echo "Issue has clear requirements"
           else
-            echo "clear=false" >> $GITHUB_OUTPUT
+            echo "clear=false" >> "$GITHUB_OUTPUT"
             echo "Issue may need clarification"
           fi
 
@@ -37,6 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
+          set -euo pipefail
           gh issue comment "$ISSUE_NUMBER" --body "This issue was labeled ready-for-pr but may need more detail.
 
           Please provide:
@@ -52,9 +59,10 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
+          set -euo pipefail
           BRANCH_NAME="issue-${ISSUE_NUMBER}-$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | head -c 40)"
           git checkout -b "$BRANCH_NAME"
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME" >> "$GITHUB_ENV"
 
       - name: Create draft PR
         if: steps.analyze.outputs.clear == 'true'
@@ -63,6 +71,7 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
+          set -euo pipefail
           # Create a placeholder commit
           cat > IMPLEMENTATION.md << EOF
           # Implementation for Issue #${ISSUE_NUMBER}
@@ -94,3 +103,37 @@ jobs:
 
           ---
           Created automatically from issue #${ISSUE_NUMBER}"
+
+      - name: Generate summary
+        if: always()
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          BRANCH_NAME: ${{ env.BRANCH_NAME }}
+          ANALYZE_CLEAR: ${{ steps.analyze.outputs.clear }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## 🎫 Issue to PR Automation"
+            echo ""
+            echo "**Issue**: #$ISSUE_NUMBER - $ISSUE_TITLE"
+            echo ""
+            if [ "$ANALYZE_CLEAR" == "true" ]; then
+              echo "**Action**: ✅ Draft PR created"
+              echo ""
+              echo "A draft PR has been created with branch: \`$BRANCH_NAME\`"
+              echo ""
+              echo "Next steps:"
+              echo "- Implement the changes"
+              echo "- Mark PR as ready for review"
+            else
+              echo "**Action**: 💬 Clarification requested"
+              echo ""
+              echo "The issue needs more detail before a PR can be created."
+              echo ""
+              echo "A comment has been added requesting:"
+              echo "- Clear acceptance criteria"
+              echo "- Expected behavior"
+              echo "- Specific implementation requirements"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

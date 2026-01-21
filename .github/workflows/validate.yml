@@ -7,10 +7,15 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true  # Cancel outdated validation runs on new pushes
+
 jobs:
   aqe-validation:
     name: AQE Quality Checks
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -19,14 +24,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install markdownlint
         run: npm install -g markdownlint-cli
 
       - name: Run validation checks
-        run: |
-          chmod +x .github/scripts/check.sh
-          .github/scripts/check.sh
+        run: .github/scripts/check.sh
 
       - name: Markdown linting
         run: markdownlint docs/**/*.md README.md CLAUDE.md CONTRIBUTING.md
@@ -34,6 +38,7 @@ jobs:
   documentation-structure:
     name: Documentation Structure
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -52,3 +57,29 @@ jobs:
           test -f .claude/agents/codebase-agent.md || { echo "Error: codebase-agent.md missing"; exit 1; }
           test -d .claude/context || { echo "Error: .claude/context/ missing"; exit 1; }
           echo "All required configuration files present"
+
+  validation-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [aqe-validation, documentation-structure]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          {
+            echo "## ✅ AQE Validation Results"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            echo "| AQE Quality Checks | ${{ needs.aqe-validation.result == 'success' && '✅ Passed' || '❌ Failed' }} |"
+            echo "| Documentation Structure | ${{ needs.documentation-structure.result == 'success' && '✅ Passed' || '❌ Failed' }} |"
+            echo ""
+            if [ "${{ needs.aqe-validation.result }}" == "failure" ] || [ "${{ needs.documentation-structure.result }}" == "failure" ]; then
+              echo "**Status**: ❌ Validation failed"
+              echo ""
+              echo "*Review the logs above for detailed error messages*"
+            else
+              echo "**Status**: ✅ All validation checks passed"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -7,9 +7,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true  # Cancel outdated validation runs on new pushes
+
 jobs:
   documentation-structure:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +29,7 @@ jobs:
 
   repomap-validation:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -32,14 +38,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install repomap dependencies
         run: |
           pip install uv
+          # uv pip install works in both system and venv contexts
+          # No need for python -m pip or explicit venv checks
           uv pip install tree-sitter tree-sitter-python tree-sitter-javascript \
                          tree-sitter-typescript tree-sitter-go tree-sitter-bash
 
       - name: Validate repomap is current
-        run: |
-          chmod +x scripts/update-repomap.sh
-          ./scripts/update-repomap.sh --check
+        run: ./scripts/update-repomap.sh --check

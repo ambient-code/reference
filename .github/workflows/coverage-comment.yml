@@ -1,0 +1,212 @@
+name: Coverage Comment
+
+# DEMONSTRATION WORKFLOW - NOT FUNCTIONAL WITHOUT COVERAGE COLLECTION
+#
+# This workflow demonstrates fork PR coverage comment patterns using workflow_run trigger.
+# It shows best practices for:
+#   - Supporting fork PRs with write permissions (workflow_run pattern)
+#   - Security validation to prevent cross-PR comment injection
+#   - Update-or-create pattern for coverage comments
+#   - Graceful handling of missing coverage data
+#
+# To enable for your repository:
+#   1. Add coverage collection to your test workflow (e.g., pytest --cov, jest --coverage)
+#   2. Upload coverage data as artifacts with pattern: coverage-data-*
+#   3. Include these fields in JSON artifacts:
+#      - pr_number: PR number from the test workflow
+#      - component: Component name (e.g., "Backend", "Frontend")
+#      - pr_coverage: Coverage percentage for this PR
+#      - main_coverage: Coverage percentage on main branch
+#      - diff: Difference (pr_coverage - main_coverage)
+#
+# See docs/patterns/coverage-reporting.md for implementation details (when documented)
+
+on:
+  workflow_run:
+    workflows: ["E2E Pattern Tests"]
+    types: [completed]
+
+permissions:
+  pull-requests: write
+  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false  # Process all coverage data for this commit
+
+jobs:
+  post-coverage-comment:
+    name: Post Coverage Comment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Get PR number from workflow run
+        id: get-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Two-tier PR detection approach for maximum reliability
+          # Tier 1: Use workflow_run.pull_requests (works for same-repo PRs)
+          PR_NUMBER=$(echo '${{ toJSON(github.event.workflow_run.pull_requests) }}' | jq -r '.[0].number // ""')
+
+          # Tier 2: Fallback to branch lookup for fork PRs
+          if [ -z "$PR_NUMBER" ]; then
+            echo "PR not found in workflow_run.pull_requests, trying branch lookup..."
+            PR_NUMBER=$(gh pr view "${{ github.event.workflow_run.head_branch }}" \
+              --repo ${{ github.repository }} \
+              --json number \
+              --jq '.number' 2>/dev/null || echo "")
+          fi
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No PR found for branch ${{ github.event.workflow_run.head_branch }}"
+            exit 1
+          fi
+
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "Found PR #$PR_NUMBER"
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          pattern: coverage-data-*
+          path: coverage-data
+          merge-multiple: true
+
+      - name: Check for coverage data
+        id: check-coverage
+        run: |
+          set -euo pipefail
+          if [ -d "coverage-data" ] && [ "$(ls -A coverage-data/*.json 2>/dev/null)" ]; then
+            echo "has_coverage=true" >> "$GITHUB_OUTPUT"
+            echo "Coverage data found"
+          else
+            echo "has_coverage=false" >> "$GITHUB_OUTPUT"
+            echo "No coverage data found - skipping comment"
+          fi
+
+      - name: Security validation
+        if: steps.check-coverage.outputs.has_coverage == 'true'
+        run: |
+          set -euo pipefail
+          # Validate that PR number from artifact matches the trusted PR number
+          # This prevents cross-PR comment injection attacks
+          for coverage_file in coverage-data/*.json; do
+            if [ -f "$coverage_file" ]; then
+              # Validate PR number is numeric to prevent injection
+              ARTIFACT_PR_NUMBER=$(jq -r '.pr_number // ""' "$coverage_file" | grep -E '^[0-9]+$' || echo "")
+              TRUSTED_PR_NUMBER="${{ steps.get-pr.outputs.pr_number }}"
+
+              if [ -z "$ARTIFACT_PR_NUMBER" ]; then
+                echo "Warning: Invalid or missing pr_number in $coverage_file"
+                continue
+              fi
+
+              if [ "$ARTIFACT_PR_NUMBER" != "$TRUSTED_PR_NUMBER" ]; then
+                echo "Security violation: PR number mismatch"
+                echo "Artifact claims PR #$ARTIFACT_PR_NUMBER but workflow ran for PR #$TRUSTED_PR_NUMBER"
+                exit 1
+              fi
+            fi
+          done
+          echo "Security validation passed"
+
+      - name: Checkout repository
+        if: steps.check-coverage.outputs.has_coverage == 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        if: steps.check-coverage.outputs.has_coverage == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate coverage comment
+        if: steps.check-coverage.outputs.has_coverage == 'true'
+        id: generate-comment
+        run: |
+          set -euo pipefail
+          # Use Python script for cleaner, more maintainable coverage comment generation
+          COMMENT_FILE="coverage-comment.md"
+
+          python .github/scripts/generate_coverage_comment.py \
+            coverage-data \
+            "${{ github.event.workflow_run.id }}" \
+            "${{ github.event.workflow_run.html_url }}" \
+            > "$COMMENT_FILE"
+
+          # Store comment file path in output
+          echo "comment_file=$COMMENT_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Find existing coverage comment
+        if: steps.check-coverage.outputs.has_coverage == 'true'
+        id: find-comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Find existing coverage comment by looking for our marker
+          COMMENT_ID=$(gh api \
+            "repos/${{ github.repository }}/issues/${{ steps.get-pr.outputs.pr_number }}/comments" \
+            --jq '.[] | select(.body | contains("📊 Test Coverage Report")) | .id' \
+            | head -n 1)
+
+          if [ -n "$COMMENT_ID" ]; then
+            echo "existing_comment_id=$COMMENT_ID" >> "$GITHUB_OUTPUT"
+            echo "Found existing coverage comment: $COMMENT_ID"
+          else
+            echo "No existing coverage comment found"
+          fi
+
+      - name: Update or create coverage comment
+        if: steps.check-coverage.outputs.has_coverage == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          COMMENT_BODY=$(cat "${{ steps.generate-comment.outputs.comment_file }}")
+
+          if [ -n "${{ steps.find-comment.outputs.existing_comment_id }}" ]; then
+            # Try to update existing comment, with fallback to create if it was deleted
+            echo "Attempting to update existing comment #${{ steps.find-comment.outputs.existing_comment_id }}..."
+            if gh api \
+              --method PATCH \
+              "repos/${{ github.repository }}/issues/comments/${{ steps.find-comment.outputs.existing_comment_id }}" \
+              -f body="$COMMENT_BODY" 2>/dev/null; then
+              echo "✅ Updated existing coverage comment"
+            else
+              # Comment may have been deleted or is inaccessible - create new one
+              echo "⚠️  Failed to update comment (may have been deleted), creating new comment instead..."
+              gh pr comment ${{ steps.get-pr.outputs.pr_number }} \
+                --repo ${{ github.repository }} \
+                --body "$COMMENT_BODY"
+              echo "✅ Created new coverage comment"
+            fi
+          else
+            # Create new comment
+            gh pr comment ${{ steps.get-pr.outputs.pr_number }} \
+              --repo ${{ github.repository }} \
+              --body "$COMMENT_BODY"
+            echo "✅ Created new coverage comment"
+          fi
+
+      - name: Generate summary
+        if: always()
+        run: |
+          set -euo pipefail
+          {
+            echo "## 📊 Coverage Comment Status"
+            echo ""
+            if [ "${{ steps.check-coverage.outputs.has_coverage }}" == "true" ]; then
+              echo "✅ Coverage comment posted to PR #${{ steps.get-pr.outputs.pr_number }}"
+            else
+              echo "⏭️ No coverage data available - comment skipped"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

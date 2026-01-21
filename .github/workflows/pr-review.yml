@@ -8,9 +8,14 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true  # Re-review on each push, cancel old reviews
+
 jobs:
   auto-review:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # Skip draft PRs and PRs with skip-review label
     if: |
       github.event.pull_request.draft == false &&
@@ -23,15 +28,19 @@ jobs:
 
       - name: Get changed files
         id: changed
-        run: |
-          CHANGED_FILES=$(gh pr view ${{ github.event.pull_request.number }} --json files -q '.files[].path' | tr '\n' ' ')
-          echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          CHANGED_FILES=$(gh pr view "$PR_NUMBER" --json files -q '.files[].path' | tr '\n' ' ')
+          echo "files=$CHANGED_FILES" >> "$GITHUB_OUTPUT"
 
       - name: Security review
         id: security
+        env:
+          CHANGED_FILES: ${{ steps.changed.outputs.files }}
         run: |
+          set -euo pipefail
           FINDINGS=""
 
           # Check for hardcoded secrets patterns
@@ -40,7 +49,7 @@ jobs:
           fi
 
           # Check for .env file additions
-          if echo "${{ steps.changed.outputs.files }}" | grep -qE "\.env$"; then
+          if echo "$CHANGED_FILES" | grep -qE "\.env$"; then
             FINDINGS="${FINDINGS}🔴 **CRITICAL**: .env file should not be committed\n"
           fi
 
@@ -50,15 +59,18 @@ jobs:
           fi
 
           if [ -n "$FINDINGS" ]; then
-            echo "has_findings=true" >> $GITHUB_OUTPUT
-            echo -e "findings=$FINDINGS" >> $GITHUB_OUTPUT
+            echo "has_findings=true" >> "$GITHUB_OUTPUT"
+            echo -e "findings=$FINDINGS" >> "$GITHUB_OUTPUT"
           else
-            echo "has_findings=false" >> $GITHUB_OUTPUT
+            echo "has_findings=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Code quality review
         id: quality
+        env:
+          CHANGED_FILES: ${{ steps.changed.outputs.files }}
         run: |
+          set -euo pipefail
           FINDINGS=""
 
           # Check for large files
@@ -68,17 +80,17 @@ jobs:
           fi
 
           # Check for missing tests in code changes
-          CODE_CHANGED=$(echo "${{ steps.changed.outputs.files }}" | grep -E "\.(py|js|ts)$" | grep -v test || true)
-          TEST_CHANGED=$(echo "${{ steps.changed.outputs.files }}" | grep -E "test" || true)
+          CODE_CHANGED=$(echo "$CHANGED_FILES" | grep -E "\.(py|js|ts)$" | grep -v test || true)
+          TEST_CHANGED=$(echo "$CHANGED_FILES" | grep -E "test" || true)
           if [ -n "$CODE_CHANGED" ] && [ -z "$TEST_CHANGED" ]; then
             FINDINGS="${FINDINGS}🟡 **WARNING**: Code changes without corresponding tests\n"
           fi
 
           if [ -n "$FINDINGS" ]; then
-            echo "has_findings=true" >> $GITHUB_OUTPUT
-            echo -e "findings=$FINDINGS" >> $GITHUB_OUTPUT
+            echo "has_findings=true" >> "$GITHUB_OUTPUT"
+            echo -e "findings=$FINDINGS" >> "$GITHUB_OUTPUT"
           else
-            echo "has_findings=false" >> $GITHUB_OUTPUT
+            echo "has_findings=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Post review comment
