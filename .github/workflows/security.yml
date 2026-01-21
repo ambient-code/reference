@@ -33,14 +33,30 @@ jobs:
   # NOTE: This repository is documentation-only, so CodeQL may not find substantial code to analyze.
   # This workflow demonstrates the CodeQL pattern for repositories with Python/JavaScript code.
   # For production use, CodeQL is most valuable in repositories with significant application code.
+  #
+  # CUSTOMIZATION GUIDE FOR YOUR PROJECT:
+  # ======================================
+  # 1. Language Matrix: Update 'language' array to match YOUR codebase
+  #    - Supported: python, javascript, typescript, java, cpp, csharp, go, ruby, swift, kotlin
+  #    - Example: language: ['python', 'typescript', 'go']
+  #
+  # 2. continue-on-error: Set based on your requirements
+  #    - true:  Workflow succeeds even if a language has no code (good for templates/multi-language repos)
+  #    - false: Workflow fails if any language analysis fails (strict enforcement for production apps)
+  #    - RECOMMENDED: Set to 'false' for production applications to catch security issues
+  #
+  # 3. Remove languages you DON'T use to avoid unnecessary analysis time
+  #
+  # See .github/workflows/README.md for detailed customization instructions
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    continue-on-error: true  # TEMPLATE: Set to 'false' for production apps with actual code
     strategy:
       fail-fast: false
       matrix:
-        language: ['python', 'javascript']
+        language: ['python', 'javascript']  # TEMPLATE: Customize for your languages
 
     steps:
       - name: Checkout repository

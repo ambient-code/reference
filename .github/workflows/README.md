@@ -383,6 +383,149 @@ strategy:
 
 Used in: security.yml (CodeQL for Python and JavaScript)
 
+### 5. CodeQL Customization Pattern
+
+**IMPORTANT**: This is a template repository - customize CodeQL for YOUR project!
+
+#### Template Configuration (Current)
+
+```yaml
+codeql:
+  continue-on-error: true  # Allows workflow to succeed even if language has no code
+  strategy:
+    matrix:
+      language: ['python', 'javascript']  # Demo languages for template
+```
+
+**Why `continue-on-error: true` in this template**:
+- This repo is documentation-only with minimal Python scripts
+- No JavaScript/TypeScript code exists
+- Template demonstrates pattern for projects that DO use these languages
+- Without `continue-on-error`, JavaScript analysis would fail (no code to analyze)
+
+#### Customization for YOUR Project
+
+**Step 1: Update Language Matrix**
+
+Match the languages in YOUR codebase:
+
+```yaml
+# Example for a Python + TypeScript project:
+matrix:
+  language: ['python', 'typescript']
+
+# Example for a Go + Java project:
+matrix:
+  language: ['go', 'java']
+```
+
+**Supported languages**:
+- `python` - Python code
+- `javascript` - JavaScript/Node.js code
+- `typescript` - TypeScript code (includes .js and .ts files)
+- `java` - Java code
+- `cpp` - C/C++ code
+- `csharp` - C# code
+- `go` - Go code
+- `ruby` - Ruby code
+- `swift` - Swift code
+- `kotlin` - Kotlin code
+
+**Step 2: Set `continue-on-error` Appropriately**
+
+| Use Case | Setting | Rationale |
+|----------|---------|-----------|
+| **Production application** | `continue-on-error: false` | Fail workflow if security analysis fails - strict enforcement |
+| **Template/reference repo** | `continue-on-error: true` | Allow success even if language has no code |
+| **Multi-language monorepo** | `continue-on-error: false` | All declared languages should have code |
+
+**Recommended for most projects**:
+```yaml
+codeql:
+  continue-on-error: false  # Strict - fail if any analysis fails
+```
+
+**Step 3: Remove Unused Languages**
+
+Only include languages you actually use:
+
+```yaml
+# ❌ DON'T: Include languages you don't use
+matrix:
+  language: ['python', 'javascript', 'java', 'go']  # But you only use Python!
+
+# ✅ DO: Only include languages in your codebase
+matrix:
+  language: ['python']  # Just Python - faster analysis, clearer results
+```
+
+#### Example Configurations
+
+**FastAPI Backend (Python only)**:
+```yaml
+codeql:
+  continue-on-error: false
+  strategy:
+    matrix:
+      language: ['python']
+```
+
+**React + Node.js App (TypeScript + JavaScript)**:
+```yaml
+codeql:
+  continue-on-error: false
+  strategy:
+    matrix:
+      language: ['typescript']  # Includes both .ts and .js files
+```
+
+**Microservices Monorepo (Go + Python)**:
+```yaml
+codeql:
+  continue-on-error: false
+  strategy:
+    matrix:
+      language: ['go', 'python']
+```
+
+#### Path Filters for CodeQL
+
+The security.yml workflow includes path filters to avoid unnecessary runs:
+
+```yaml
+paths:
+  - '**/*.py'
+  - '**/*.js'
+  - '**/*.ts'
+  - '**/*.tsx'
+  - '.github/workflows/security.yml'
+```
+
+**Customize these** if you add other languages:
+
+```yaml
+# Example: Add Go and Java patterns
+paths:
+  - '**/*.py'
+  - '**/*.go'
+  - '**/*.java'
+  - '.github/workflows/security.yml'
+```
+
+#### Common Issues
+
+**"No source code seen during build"**:
+- CodeQL couldn't find code for the specified language
+- **Solution**: Remove that language from the matrix OR add `continue-on-error: true`
+
+**"CodeQL analysis timed out"**:
+- Large codebase exceeding timeout
+- **Solution**: Increase `timeout-minutes` or split into separate workflows
+
+**"Insufficient permissions"**:
+- Missing `security-events: write` permission
+- **Solution**: Already configured correctly in this template
+
 ---
 
 ## Best Practices Demonstrated
