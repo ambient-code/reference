@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# /// script
+# dependencies = [
+#     # Keep versions in sync with requirements.txt
+#     "tree-sitter>=0.20.0",
+#     "tree-sitter-python>=0.20.0",
+#     "tree-sitter-javascript>=0.20.0",
+#     "tree-sitter-typescript>=0.20.0",
+#     "tree-sitter-go>=0.20.0",
+#     "tree-sitter-bash>=0.20.0",
+# ]
+# ///
 """
 Repomap - Generate AI-friendly code structure maps using tree-sitter
 
