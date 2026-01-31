@@ -15,6 +15,7 @@ AI-assisted development patterns. Each pattern is standalone - adopt what you ne
 | Stale issues accumulate | [Stale Issue Management](docs/patterns/stale-issues.md) |
 | Security feels ad-hoc | [Security Patterns](docs/patterns/security-patterns.md) |
 | Tests are disorganized | [Testing Patterns](docs/patterns/testing-patterns.md) |
+| Domain knowledge trapped in experts | [Expert System](docs/patterns/expert-system.md) |
 
 ## Getting Started
 

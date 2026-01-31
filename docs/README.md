@@ -14,6 +14,7 @@ How to configure AI agents for consistent, safe, high-quality assistance.
 | [Self-Review Reflection](patterns/self-review-reflection.md) | Agent reviews own work before presenting | 5 min |
 | [Autonomous Quality Enforcement](patterns/autonomous-quality-enforcement.md) | Agent runs linters/tests automatically | 15 min |
 | [Multi-Agent Code Review](patterns/multi-agent-code-review.md) | Multiple specialized agents review in parallel | 1 hour |
+| [Expert System](patterns/expert-system.md) | Package domain expertise for humans and AI | 1 hour |
 
 **Start here if:** AI gives inconsistent answers, misses obvious bugs, or ignores conventions.
 
