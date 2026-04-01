@@ -38,6 +38,7 @@ env/
 # Claude Code
 .claude/plans/
 .claude/*.local.*
+.worktrees/
 
 # Testing
 .pytest_cache/

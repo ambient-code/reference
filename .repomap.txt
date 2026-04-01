@@ -12,6 +12,55 @@ repomap.py
     def _format_output()
     def generate()
     def main()
+.specify/scripts/bash/
+  check-prerequisites.sh
+  common.sh
+    def find_specify_root()
+    def get_repo_root()
+    def get_current_branch()
+    def has_git()
+    def check_feature_branch()
+    def get_feature_dir()
+    def find_feature_dir_by_prefix()
+    def get_feature_paths()
+    def has_jq()
+    def json_escape()
+    def check_file()
+    def k_dir() {()
+    def template() {
+   ()
+  create-new-feature.sh
+    def get_highest_from_specs()
+    def get_highest_from_branches()
+    def check_existing_branches()
+    def clean_branch_name()
+    def generate_branch_name()
+  setup-plan.sh
+  update-agent-context.sh
+    def g_info()()
+    def g_success()()
+    def error() {()
+    def warning() {()
+    def nup() {()
+    def date_environment() {()
+    def act_plan_field() {()
+    def e_plan_data() {()
+    def at_technology_stack() {()
+    def project_structure() {()
+    def commands_for_language() {()
+    def language_conventions() {()
+    def te_new_agent_file() {()
+    def te_existing_agent_file() {()
+    def te_agent_file() {()
+    def te_specific_agent() {()
+    def if_new() {
+   ()
+    def ll_existing_agents() {
+   ()
+    def mmary() {
+   ()
+    def 
+   ()
 scripts/
   record-demo.sh
   setup.sh
