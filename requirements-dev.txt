@@ -5,5 +5,5 @@ ruff>=0.1.0
 pre-commit>=3.6.0
 mkdocs>=1.6.0
 mkdocs-material>=9.5.0
-mkdocs-mermaid2-plugin>=1.1.0
+mkdocs-mermaid2-plugin>=1.2.3
 pymdown-extensions>=10.0.0
