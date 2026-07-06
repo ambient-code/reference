@@ -1,6 +1,6 @@
 # Repomap dependencies
 # Tree-sitter core library
-tree-sitter>=0.20.0
+tree-sitter>=0.26.0
 
 # Tree-sitter language grammars
 tree-sitter-python>=0.20.0
